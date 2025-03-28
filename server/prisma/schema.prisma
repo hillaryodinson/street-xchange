@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  firstName String 
+  middleName String
+  surName String
+  email String @unique
+  dob DateTime
+  residentialAddress String
+  PhoneNo String
+  nin String
+  password String
+  resetToken String?
+  actiToken String?
+  tokenExpiresAt DateTime?
+  isVerified Int @default(0)//0 = Pending, 1 = Verified, 2 =  Blocked
+  createAt DateTime @default(now())
+}
+
+model Admin {
+  id String @id @default(uuid())
+  name String
+  email String
+  password String
+}
+
+model GiftCardTransaction {
+  id String @id @default(uuid())
+  customerId String
+  cardType String //itunes,amazon, steam, ebay, razer gold, google
+  country String
+  type String //Physical, Ecode, Horizontal, white board
+  speed Int?
+  amount Int
+  isPending Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CryptoTransaction {
+  id String @id @default(uuid())
+  customerId String
+  type String //usdt/btc/eth
+  amount Float
+  amountNgn Float //converted from crypto type to naira
+  rate Float //xchange rate
+  isPending Boolean @default(true)
+}
+
+model FlightTransaction {
+  id String @id @default(uuid())
+  paymentMethod String
+  from String
+  to String
+  scheduledFlightDate DateTime
+  type String //Economy /Business /FirstClass
+}
+
+model Mail {
+  id String @id @default(uuid())
+  to String
+  subject String
+  content Json
+  from String
+  isDelivered Boolean @default(false)
+  createdAt DateTime @default(now())
+}

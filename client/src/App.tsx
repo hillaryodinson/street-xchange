@@ -7,6 +7,7 @@ import BackendLayout from "./components/layout/backend";
 import { BookFlightForm } from "./app/(account)/FlightBooking";
 import { SellGiftCardForm } from "./app/(account)/SellGiftCard";
 import { ExchangeCryptoForm } from "./app/(account)/ExchangeCrypto";
+import { TransactionsHistory } from "./app/(account)/Transaction";
 
 function App() {
 	const routes = createBrowserRouter([
@@ -43,6 +44,10 @@ function App() {
 				{
 					path: "/dashboard/sell/gift-card",
 					element: <SellGiftCardForm />,
+				},
+				{
+					path: "/dashboard/transaction-history",
+					element: <TransactionsHistory />,
 				},
 			],
 		},

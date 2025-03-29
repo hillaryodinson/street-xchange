@@ -1,4 +1,4 @@
-import { Gift, Plane, Wallet, Home } from "lucide-react";
+import { Gift, Plane, Wallet, Home, History } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -111,6 +111,30 @@ export function MobileNav({ activeTab }: MobileNavProps) {
 						</TooltipTrigger>
 						<TooltipContent side="right">
 							<p>Sell Gift Cards</p>
+						</TooltipContent>
+					</Tooltip>
+
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<NavLink
+								className={cn(
+									"h-12 w-12 rounded-full",
+									buttonVariants({
+										variant:
+											"/dashboard/transaction-history" ==
+											activeTab
+												? "default"
+												: "ghost",
+										size: "icon",
+									})
+								)}
+								to="/dashboard/transaction-history">
+								<History className="h-5 w-5" />
+								<span className="sr-only">Sell Gift Cards</span>
+							</NavLink>
+						</TooltipTrigger>
+						<TooltipContent side="right">
+							<p>Transaction History</p>
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>

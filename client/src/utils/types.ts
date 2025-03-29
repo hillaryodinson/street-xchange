@@ -84,3 +84,12 @@ export type AttributeType = {
 	valueType: string;
 	id?: string;
 };
+
+export interface Transaction {
+	id: string;
+	date: string;
+	type: "flight" | "crypto" | "giftcard";
+	description: string;
+	amount: number;
+	status: "pending" | "completed" | "failed";
+}

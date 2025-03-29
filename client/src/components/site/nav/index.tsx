@@ -71,7 +71,7 @@ const Nav = ({ className }: { className?: string }) => {
 						<ul className="buy-button list-none mb-0">
 							<li className="inline mb-0">
 								<Link
-									to="/dashboard"
+									to="/login"
 									className="btn btn-icon bg-orange-600 hover:bg-orange-700 border-orange-600 dark:border-orange-600 text-white !rounded-full">
 									<UserIcon width={18} height={18} />
 								</Link>

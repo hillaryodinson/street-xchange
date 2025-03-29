@@ -3889,6 +3889,11 @@
 		);
 	}
 
+
+	.bg-orange-300 {
+		background-color: var(--color-orange-300);
+	}
+
 	.bg-orange-600 {
 		background-color: var(--color-orange-600);
 	}
@@ -7957,6 +7962,12 @@ button {
 	background:var(--color-orange-100) url('/images/hero_bg_5.png');
 	background-repeat: no-repeat;
 	background-size: cover;
+
+}
+.hero-bg-2 {
+	background:var(--color-orange-100) url('/images/hero_bg_5.png');
+	background-repeat: no-repeat;
+	background-size: contain;
 
 }
 

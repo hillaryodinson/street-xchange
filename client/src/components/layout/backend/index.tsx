@@ -5,13 +5,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { CreditCard, Gift, Menu, Plane, Wallet } from "lucide-react";
-import { useState } from "react";
 import "@/backend.css";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const BackendLayout = () => {
-	const [activeTab, setActiveTab] = useState("dashboard");
 	const location = useLocation();
 
 	const getButtonVariant = (to: string) => {
@@ -35,10 +33,7 @@ const BackendLayout = () => {
 						</Button>
 					</SheetTrigger>
 					<SheetContent side="left" className="p-0 w-16">
-						<MobileNav
-							activeTab={activeTab}
-							setActiveTab={setActiveTab}
-						/>
+						<MobileNav activeTab={location.pathname} />
 					</SheetContent>
 				</Sheet>
 

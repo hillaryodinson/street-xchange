@@ -79,3 +79,15 @@ model Mail {
   isDelivered Boolean @default(false)
   createdAt DateTime @default(now())
 }
+
+model Transaction {
+  id String @id @default(uuid())
+  date DateTime @default(now())
+  type String
+  description String
+  amount Float
+  status String // e.g., Pending, Completed, Failed
+  customerId String
+  transId String
+  typeId String
+}

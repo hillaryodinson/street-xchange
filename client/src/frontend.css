@@ -3889,6 +3889,26 @@
 		);
 	}
 
+	.bg-orange-600 {
+		background-color: var(--color-orange-600);
+	}
+
+	.bg-orange-600\/5 {
+		background-color: color-mix(
+			in oklab,
+			var(--color-orange-600) 5%,
+			transparent
+		);
+	}
+
+	.bg-orange-600\/10 {
+		background-color: color-mix(
+			in oklab,
+			var(--color-orange-600) 10%,
+			transparent
+		);
+	}
+
 	.bg-neutral-900 {
 		background-color: var(--color-neutral-900);
 	}
@@ -6442,7 +6462,7 @@ button {
 				animation: sk-bounce 2s ease-in-out infinite;
 				background-color: color-mix(
 					in oklab,
-					var(--color-green-600) 60%,
+					var(--color-orange-600) 60%,
 					transparent
 				);
 				border-radius: calc(infinity * 1px);
@@ -6568,9 +6588,9 @@ button {
 				li {
 					&.active {
 						> a {
-							color: var(--color-green-600) !important;
+							color: var(--color-orange-600) !important;
 							&:where(.dark, .dark *) {
-								color: var(--color-green-600) !important;
+								color: var(--color-orange-600) !important;
 							}
 						}
 					}
@@ -6578,9 +6598,9 @@ button {
 			}
 			&.active {
 				.menu-arrow {
-					border-color: var(--color-green-600);
+					border-color: var(--color-orange-600);
 					&:where(.dark, .dark *) {
-						border-color: var(--color-green-600);
+						border-color: var(--color-orange-600);
 					}
 				}
 			}
@@ -6608,9 +6628,9 @@ button {
 			.has-submenu {
 				&:hover {
 					> .submenu-arrow {
-						border-color: var(--color-green-600);
+						border-color: var(--color-orange-600);
 						&:where(.dark, .dark *) {
-							border-color: var(--color-green-600);
+							border-color: var(--color-orange-600);
 						}
 					}
 				}
@@ -6618,15 +6638,15 @@ button {
 					.has-submenu {
 						&:hover {
 							.submenu-arrow {
-								border-color: var(--color-green-600);
+								border-color: var(--color-orange-600);
 								&:where(.dark, .dark *) {
-									border-color: var(--color-green-600);
+									border-color: var(--color-orange-600);
 								}
 							}
 							> .submenu-arrow {
-								border-color: var(--color-green-600);
+								border-color: var(--color-orange-600);
 								&:where(.dark, .dark *) {
-									border-color: var(--color-green-600);
+									border-color: var(--color-orange-600);
 								}
 							}
 						}
@@ -6682,7 +6702,7 @@ button {
 					width: 100%;
 				}
 				&:hover {
-					background-color: var(--color-green-600);
+					background-color: var(--color-orange-600);
 				}
 			}
 		}
@@ -6808,15 +6828,15 @@ button {
 				}
 				&:active,
 				&:hover {
-					color: var(--color-green-600);
+					color: var(--color-orange-600);
 				}
 			}
 			&.active,
 			&:hover {
 				> a {
-					color: var(--color-green-600) !important;
+					color: var(--color-orange-600) !important;
 					&:where(.dark, .dark *) {
-						color: var(--color-green-600) !important;
+						color: var(--color-orange-600) !important;
 					}
 				}
 			}
@@ -6914,12 +6934,12 @@ button {
 				&.active,
 				&:hover {
 					> a {
-						color: var(--color-green-600);
+						color: var(--color-orange-600);
 					}
 					> .menu-arrow {
-						border-color: var(--color-green-600);
+						border-color: var(--color-orange-600);
 						&:where(.dark, .dark *) {
-							border-color: var(--color-green-600);
+							border-color: var(--color-orange-600);
 						}
 					}
 				}
@@ -6982,24 +7002,24 @@ button {
 					}
 					&.active {
 						> a {
-							color: var(--color-green-600) !important;
+							color: var(--color-orange-600) !important;
 							&:where(.dark, .dark *) {
-								color: var(--color-green-600) !important;
+								color: var(--color-orange-600) !important;
 							}
 						}
 					}
 					&.active,
 					&:hover {
 						> .menu-arrow {
-							border-color: var(--color-green-600) !important;
+							border-color: var(--color-orange-600) !important;
 						}
 					}
 					&.active,
 					&:hover {
 						> a {
-							color: var(--color-green-600) !important;
+							color: var(--color-orange-600) !important;
 							&:where(.dark, .dark *) {
-								color: var(--color-green-600) !important;
+								color: var(--color-orange-600) !important;
 							}
 						}
 					}
@@ -7049,6 +7069,8 @@ button {
 	--tw-tracking: 1px;
 	letter-spacing: 1px;
 }
+
+
 @media (min-width: 1025px) {
 	#topnav {
 		.navigation-menu {
@@ -7130,9 +7152,9 @@ button {
 								color: var(--color-white);
 							}
 							&:hover {
-								color: var(--color-green-600) !important;
+								color: var(--color-orange-600) !important;
 								&:where(.dark, .dark *) {
-									color: var(--color-green-600) !important;
+									color: var(--color-orange-600) !important;
 								}
 							}
 						}
@@ -7185,18 +7207,18 @@ button {
 				}
 				&:hover {
 					> .menu-arrow {
-						border-color: var(--color-green-600);
+						border-color: var(--color-orange-600);
 						&:where(.dark, .dark *) {
-							border-color: var(--color-green-600);
+							border-color: var(--color-orange-600);
 						}
 					}
 				}
 				&.active,
 				&:hover {
 					> a {
-						color: var(--color-green-600) !important;
+						color: var(--color-orange-600) !important;
 						&:where(.dark, .dark *) {
-							color: var(--color-green-600) !important;
+							color: var(--color-orange-600) !important;
 						}
 					}
 				}
@@ -7409,7 +7431,7 @@ button {
 				&.has-submenu.open > a,
 				.submenu li a:hover,
 				> a:hover {
-					color: var(--color-green-600);
+					color: var(--color-orange-600);
 				}
 			}
 		}
@@ -7450,7 +7472,7 @@ button {
 			}
 			&.active {
 				a {
-					color: var(--color-green-600);
+					color: var(--color-orange-600);
 				}
 			}
 		}
@@ -7594,20 +7616,20 @@ button {
 		&.active,
 		&:hover {
 			.navbar-link {
-				color: var(--color-green-600);
+				color: var(--color-orange-600);
 			}
 		}
 	}
 	li {
 		&.active {
 			a {
-				color: var(--color-green-600);
+				color: var(--color-orange-600);
 			}
 		}
 		&.account-menu.active,
 		&.account-menu:hover {
 			.navbar-link {
-				background-color: var(--color-green-600) !important;
+				background-color: var(--color-orange-600) !important;
 				color: var(--color-white) !important;
 				&:where(.dark, .dark *) {
 					color: var(--color-slate-900) !important;
@@ -7817,7 +7839,7 @@ button {
 		color: var(--color-slate-200);
 	}
 	&:focus {
-		border-color: var(--color-green-600);
+		border-color: var(--color-orange-600);
 		--tw-ring-shadow: var(--tw-ring-inset) 0 0 0
 			calc(var(--tw-ring-offset-width)) var(--tw-ring-color, currentColor);
 		--tw-shadow: 0 0 #0000;
@@ -7861,10 +7883,10 @@ button {
 #success_page {
 	background-color: color-mix(
 		in oklab,
-		var(--color-green-600) 5%,
+		var(--color-orange-600) 5%,
 		transparent
 	);
-	color: var(--color-green-600);
+	color: var(--color-orange-600);
 }
 .subcribe-form {
 	form {
@@ -7930,6 +7952,14 @@ button {
 		}
 	}
 }
+
+.hero-bg {
+	background:var(--color-orange-100) url('/images/hero_bg_5.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+
+}
+
 .client-testi {
 	cursor: e-resize;
 	.content {
@@ -8052,8 +8082,8 @@ button {
 			);
 		}
 		&.tns-nav-active {
-			background-color: var(--color-green-600);
-			border-color: var(--color-green-600);
+			background-color: var(--color-orange-600);
+			border-color: var(--color-orange-600);
 		}
 	}
 }
@@ -8101,7 +8131,7 @@ button {
 			--tw-shadow-color: var(--color-gray-700);
 		}
 		&:hover {
-			background-color: var(--color-green-600);
+			background-color: var(--color-orange-600);
 			color: var(--color-white);
 		}
 	}
@@ -8130,7 +8160,7 @@ html[dir="rtl"] {
 		top: 48%;
 		z-index: 1;
 		--tw-translate-y: -50%;
-		color: var(--color-green-600);
+		color: var(--color-orange-600);
 		font-size: 20px;
 		translate: var(--tw-translate-x) var(--tw-translate-y);
 	}

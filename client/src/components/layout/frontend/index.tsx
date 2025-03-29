@@ -15,7 +15,7 @@ const FrontendLayout = () => {
 			) : (
 				<>
 					<TagLine />
-					<Nav className="tagline-height" />
+					<Nav className="tagline-height " />
 				</>
 			)}
 			<Outlet />

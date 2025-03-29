@@ -5,7 +5,8 @@ import LoginPage from "./app/(auth)/Login";
 import DashboardPage from "./app/(account)/Dashboard";
 import BackendLayout from "./components/layout/backend";
 import { BookFlightForm } from "./app/(account)/FlightBooking";
-import { ExchangeCryptoForm } from "./app/(account)/ExchangeCrypto/components/ExchangeCryptoForm";
+import { SellGiftCardForm } from "./app/(account)/SellGiftCard";
+import { ExchangeCryptoForm } from "./app/(account)/ExchangeCrypto";
 
 function App() {
 	const routes = createBrowserRouter([
@@ -41,7 +42,7 @@ function App() {
 				},
 				{
 					path: "/dashboard/sell/gift-card",
-					element: <BookFlightForm />,
+					element: <SellGiftCardForm />,
 				},
 			],
 		},

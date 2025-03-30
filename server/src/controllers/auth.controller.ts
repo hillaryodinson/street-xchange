@@ -22,7 +22,7 @@ import { randomUUID } from "crypto";
 import { NodemailerDB } from "../services/nodemailer-db";
 import dotenv from "dotenv";
 import { AppError, ERROR_CODES } from "../utils/errors";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { sendActivationEmail } from "../utils/helper";
 import { generateActivationToken } from "../services/token-gen";
 dotenv.config();
@@ -194,5 +194,65 @@ export const confirmPasswordReset = async (
 	res.status(200).json({
 		success: true,
 		message: "Password reset successful",
+	});
+};
+
+//Activate Account
+export const activateAccount = async (req: Request, res: Response) => {
+	const { token } = req.body;
+
+	if (!token) {
+		throw new AppError(
+			ERROR_CODES.VALIDATION_INVALID_TOKEN,
+			"Token is required"
+		);
+	}
+
+	// Find the user with the matching activation token
+	const user = await db.user.findFirst({
+		where: {
+			actiToken: token as string,
+		},
+	});
+
+	if (!user || (user.tokenExpiresAt && user.tokenExpiresAt < new Date())) {
+		if (user) {
+			await generateActivationToken(user);
+		}
+
+		throw new AppError(
+			ERROR_CODES.USER_NOT_FOUND,
+			"Invalid or expired token"
+		);
+	}
+
+	// Update the user's account status to active
+	await db.user.update({
+		where: {
+			id: user.id,
+		},
+		data: {
+			actiToken: null, // Clear the token after activation
+		},
+	});
+
+	//send pending activation email
+	const mailer = new NodemailerDB(db);
+	const SITENAME = process.env.APP_NAME || "APP NAME";
+	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
+	await mailer.sendMail({
+		to: user.email,
+		subject: "Welcome to " + SITENAME,
+		template: "welcome_email",
+		context: {
+			name: user.firstname,
+		},
+		from: SITEMAIL,
+	});
+
+	// Send successful response
+	res.json({
+		success: true,
+		message: "Account activated successfully",
 	});
 };

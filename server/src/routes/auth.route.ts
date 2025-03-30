@@ -1,7 +1,22 @@
 import { Request, Response, Router } from "express";
-import { confirmPasswordReset, login, resetPassword } from "../controllers/auth.controller";
-import { CustomResponse, TypedRequest, TypedRequestBody, TypedResponse } from "../configs/requests";
-import { ConfirmPasswordResetType, LoginType, ResetPasswordType, UserType } from "../configs/types";
+import {
+	activateAccount,
+	confirmPasswordReset,
+	login,
+	resetPassword,
+} from "../controllers/auth.controller";
+import {
+	CustomResponse,
+	TypedRequest,
+	TypedRequestBody,
+	TypedResponse,
+} from "../configs/requests";
+import {
+	ConfirmPasswordResetType,
+	LoginType,
+	ResetPasswordType,
+	UserType,
+} from "../configs/types";
 import { tryCatch } from "../middlewares/middleware";
 
 const AuthRoute = Router();
@@ -90,7 +105,10 @@ const AuthRoute = Router();
  *                   type: string
  *                   description: list of errors
  */
-AuthRoute.post('/login', tryCatch((req, res) => login(req as TypedRequest<{}, LoginType>, res)));
+AuthRoute.post(
+	"/login",
+	tryCatch((req, res) => login(req as TypedRequest<{}, LoginType>, res))
+);
 
 /**
  * @swagger
@@ -146,7 +164,12 @@ AuthRoute.post('/login', tryCatch((req, res) => login(req as TypedRequest<{}, Lo
  *                   type: string
  *                   description: list of errors
  */
-AuthRoute.post('/reset-password', tryCatch((req, res) => resetPassword(req as TypedRequest<{}, ResetPasswordType>, res)));
+AuthRoute.post(
+	"/reset-password",
+	tryCatch((req, res) =>
+		resetPassword(req as TypedRequest<{}, ResetPasswordType>, res)
+	)
+);
 
 /**
  * @swagger
@@ -199,6 +222,15 @@ AuthRoute.post('/reset-password', tryCatch((req, res) => resetPassword(req as Ty
  *                   type: string
  *                   description: list of errors
  */
-AuthRoute.post('/reset-password/confirm', tryCatch((req, res) => confirmPasswordReset(req as TypedRequest<{}, ConfirmPasswordResetType>, res)));
+AuthRoute.post(
+	"/reset-password/confirm",
+	tryCatch((req, res) =>
+		confirmPasswordReset(
+			req as TypedRequest<{}, ConfirmPasswordResetType>,
+			res
+		)
+	)
+);
 
+AuthRoute.post("/activate", tryCatch(activateAccount));
 export default AuthRoute;

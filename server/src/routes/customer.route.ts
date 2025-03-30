@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { tryCatch } from "../middlewares/middleware";
-import { activateAccount, register } from "../controllers/customer.controller";
+import { register } from "../controllers/customer.controller";
 
 const customerRoutes = Router();
 
 customerRoutes.post("/register", tryCatch(register));
-customerRoutes.post("/activate", tryCatch(activateAccount));
 
 //TODO: Get Customers
 //TODO: Get Single Customer

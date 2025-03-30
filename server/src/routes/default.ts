@@ -1,5 +1,3 @@
-import { activateAccount } from "../controllers/customer.controller";
-import { tryCatch } from "../middlewares/middleware";
 import authRoute from "./auth.route";
 import type { Express } from "express-serve-static-core";
 import customerRoutes from "./customer.route";

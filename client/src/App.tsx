@@ -16,6 +16,7 @@ import { AdminPendingTransactionsPage } from "./app/(admin)/Transactions/Pending
 import { AdminTransactionHistoryPage } from "./app/(admin)/Transactions/History";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
+import ActivationPage from "./app/(auth)/Activate";
 
 function App() {
 	const routes = createBrowserRouter([
@@ -32,6 +33,10 @@ function App() {
 		{
 			path: "/login",
 			element: <LoginPage />,
+		},
+		{
+			path: "/activate",
+			element: <ActivationPage />,
 		},
 		{
 			path: "/admin-login",

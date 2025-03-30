@@ -200,6 +200,7 @@ export const confirmPasswordReset = async (
 //Activate Account
 export const activateAccount = async (req: Request, res: Response) => {
 	const { token } = req.body;
+	console.log(token);
 
 	if (!token) {
 		throw new AppError(
@@ -233,6 +234,7 @@ export const activateAccount = async (req: Request, res: Response) => {
 		},
 		data: {
 			actiToken: null, // Clear the token after activation
+			tokenExpiresAt: null,
 		},
 	});
 

@@ -8,7 +8,22 @@ import {
 import { User } from "@prisma/client";
 
 export type LoginType = z.infer<typeof loginSchema>;
-export type UserType = Omit<User, "password">;
+export type UserType = Omit<
+	User,
+	"password, resetToken, actiToken, tokenExpiresAt, isVerified"
+>;
+export type PublicUserType = {
+	id: string;
+	firstname: string;
+	middlename: string | null;
+	surname: string;
+	email: string;
+	dob: Date;
+	residentialAddress: string;
+	phoneNo: string;
+	nin: string;
+	createAt: Date;
+};
 export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
 export type ConfirmPasswordResetType = z.infer<
 	typeof confirmPasswordResetSchema

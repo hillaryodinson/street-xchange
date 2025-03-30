@@ -90,13 +90,23 @@ export const login = async (
 		}
 	);
 
+	const { id, firstname, middlename, surname, email, createAt } = dbResponse;
+	const publicData = {
+		id,
+		firstname,
+		middlename,
+		surname,
+		email,
+		createAt,
+	};
+
 	//send the jwt token in the response
 	res.status(200).json({
 		success: true,
 		message: "User logged in successfully",
 		data: {
 			token,
-			user: { ...dbResponse, password: undefined } as UserType,
+			user: publicData,
 		},
 	});
 };

@@ -10,7 +10,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-const LoginPage = () => {
+const AdminLoginPage = () => {
 	const params = useParams();
 	const { setSession, isAuthenticated } = useAuthStore((state) => state);
 	const redirect = useNavigate();
@@ -32,7 +32,7 @@ const LoginPage = () => {
 		startTransition(() => {
 			console.log(data);
 			redirect("/dashboard");
-			api.post("/auth/login", data)
+			api.post("/auth/adminlogin", data)
 				.then((response) => {
 					if (response.status !== 200) {
 						throw new Error("Invalid username or password");
@@ -64,7 +64,7 @@ const LoginPage = () => {
 	};
 
 	if (isAuthenticated()) {
-		return <Navigate to="/dashboard" />;
+		return <Navigate to="/sxadmin/dashboard" />;
 	}
 
 	return (
@@ -81,7 +81,9 @@ const LoginPage = () => {
 								alt=""
 							/>
 						</Link>
-						<h5 className="my-6 text-xl font-semibold">Login</h5>
+						<h5 className="my-6 text-xl font-semibold">
+							Administrator Login
+						</h5>
 						<form
 							className="text-start"
 							onSubmit={handleSubmit(formSubmit)}>
@@ -162,17 +164,6 @@ const LoginPage = () => {
 										Sign in
 									</button>
 								</div>
-
-								<div className="text-center">
-									<span className="text-slate-400 me-2">
-										Don't have an account ?
-									</span>{" "}
-									<Link
-										to="/signup"
-										className="text-slate-900 dark:text-white font-bold">
-										Sign Up
-									</Link>
-								</div>
 							</div>
 						</form>
 					</div>
@@ -182,4 +173,4 @@ const LoginPage = () => {
 	);
 };
 
-export default LoginPage;
+export default AdminLoginPage;

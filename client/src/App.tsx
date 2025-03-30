@@ -8,6 +8,14 @@ import { BookFlightForm } from "./app/(account)/FlightBooking";
 import { SellGiftCardForm } from "./app/(account)/SellGiftCard";
 import { ExchangeCryptoForm } from "./app/(account)/ExchangeCrypto";
 import { TransactionsHistory } from "./app/(account)/Transaction";
+import { SignupPage } from "./app/(auth)/Registration";
+import AdminLoginPage from "./app/(auth)/AdminLogin";
+import AdminLayout from "./components/layout/admin";
+import AdminDashboardPage from "./app/(admin)/Dashboard";
+import { AdminPendingTransactionsPage } from "./app/(admin)/Transactions/Pending";
+import { AdminTransactionHistoryPage } from "./app/(admin)/Transactions/History";
+import ProtectedRoute from "./middleware/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
 
 function App() {
 	const routes = createBrowserRouter([
@@ -26,33 +34,82 @@ function App() {
 			element: <LoginPage />,
 		},
 		{
-			path: "/dashboard",
-			element: <BackendLayout />,
+			path: "/admin-login",
+			element: <AdminLoginPage />,
+		},
+		{
+			path: "/signup",
+			element: <SignupPage />,
+		},
+		{
+			path: "/",
+			element: (
+				<ProtectedRoute>
+					<BackendLayout />
+				</ProtectedRoute>
+			),
 			children: [
 				{
-					index: true,
+					path: "/dashboard",
 					element: <DashboardPage />,
 				},
 				{
-					path: "/dashboard/bookings",
+					path: "/bookings",
 					element: <BookFlightForm />,
 				},
 				{
-					path: "/dashboard/sell/crypto",
+					path: "/sell/crypto",
 					element: <ExchangeCryptoForm />,
 				},
 				{
-					path: "/dashboard/sell/gift-card",
+					path: "/sell/gift-card",
 					element: <SellGiftCardForm />,
 				},
 				{
-					path: "/dashboard/transaction-history",
+					path: "/transaction-history",
 					element: <TransactionsHistory />,
 				},
 			],
 		},
+		{
+			path: "/sxadmin/",
+			element: (
+				<ProtectedRoute>
+					<AdminLayout />
+				</ProtectedRoute>
+			),
+			children: [
+				{
+					index: true,
+					element: <AdminDashboardPage />,
+				},
+				{
+					path: "/sxadmin/dashboard",
+					element: <AdminDashboardPage />,
+				},
+				{
+					path: "/sxadmin/transactions/pending",
+					element: <AdminPendingTransactionsPage />,
+				},
+				{
+					path: "/sxadmin/user/verification/pending",
+				},
+				{
+					path: "/sxadmin/settings",
+				},
+				{
+					path: "/sxadmin/transaction/history",
+					element: <AdminTransactionHistoryPage />,
+				},
+			],
+		},
 	]);
-	return <RouterProvider router={routes} />;
+	return (
+		<>
+			<RouterProvider router={routes} />
+			<ToastContainer />
+		</>
+	);
 }
 
 export default App;

@@ -4,12 +4,19 @@ import { MobileNav } from "@/components/layout/backend/components/mobile-nav";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { CreditCard, Gift, History, Menu, Plane, Wallet } from "lucide-react";
+import {
+	History,
+	Home,
+	ListRestartIcon,
+	Menu,
+	Settings,
+	Verified,
+} from "lucide-react";
 import "@/backend.css";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-const BackendLayout = () => {
+const AdminLayout = () => {
 	const location = useLocation();
 
 	const getButtonVariant = (to: string) => {
@@ -52,57 +59,62 @@ const BackendLayout = () => {
 							className={cn(
 								"!justify-start",
 								buttonVariants({
-									variant: getButtonVariant("/dashboard"),
+									variant:
+										getButtonVariant("/sxadmin/dashboard"),
 								})
 							)}
-							to="/dashboard">
-							<CreditCard className="mr-2 h-4 w-4" />
+							to="/sxadmin/dashboard">
+							<Home className="mr-2 h-4 w-4" />
 							Dashboard
 						</NavLink>
 						<NavLink
 							className={cn(
 								"!justify-start",
 								buttonVariants({
-									variant: getButtonVariant("/bookings"),
+									variant: getButtonVariant(
+										"/sxadmin/transactions/pending"
+									),
 								})
 							)}
-							to="/bookings">
-							<Plane className="mr-2 h-4 w-4" />
-							Book Flights
-						</NavLink>
-						<NavLink
-							className={cn(
-								"!justify-start",
-								buttonVariants({
-									variant: getButtonVariant("/sell/crypto"),
-								})
-							)}
-							to="/sell/crypto">
-							<Wallet className="mr-2 h-4 w-4" />
-							Sell Cryptocurrency
-						</NavLink>
-						<NavLink
-							className={cn(
-								"!justify-start",
-								buttonVariants({
-									variant:
-										getButtonVariant("/sell/gift-card"),
-								})
-							)}
-							to="/sell/gift-card">
-							<Gift className="mr-2 h-4 w-4" />
-							Sell Gift Cards
+							to="/sxadmin/transactions/pending">
+							<ListRestartIcon className="mr-2 h-4 w-4" />
+							Pending Transactions
 						</NavLink>
 						<NavLink
 							className={cn(
 								"!justify-start",
 								buttonVariants({
 									variant: getButtonVariant(
-										"/dashboard/transaction-history"
+										"/sxadmin/user/verification/pending"
 									),
 								})
 							)}
-							to="/transaction-history">
+							to="/sxadmin/user/verification/pending">
+							<Verified className="mr-2 h-4 w-4" />
+							Pending Verification
+						</NavLink>
+						<NavLink
+							className={cn(
+								"!justify-start",
+								buttonVariants({
+									variant:
+										getButtonVariant("/sxadmin/settings"),
+								})
+							)}
+							to="/sxadmin/settings">
+							<Settings className="mr-2 h-4 w-4" />
+							Settings
+						</NavLink>
+						<NavLink
+							className={cn(
+								"!justify-start",
+								buttonVariants({
+									variant: getButtonVariant(
+										"/sxadmin/transaction/history"
+									),
+								})
+							)}
+							to="/sxadmin/transaction/history">
 							<History className="mr-2 h-4 w-4" />
 							Transaction History
 						</NavLink>
@@ -118,4 +130,4 @@ const BackendLayout = () => {
 	);
 };
 
-export default BackendLayout;
+export default AdminLayout;

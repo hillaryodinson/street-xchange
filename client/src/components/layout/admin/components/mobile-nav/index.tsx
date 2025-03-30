@@ -1,4 +1,4 @@
-import { Gift, Plane, Wallet, Home, History } from "lucide-react";
+import { Home, History, ListRestart, Verified, Settings } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -13,7 +13,7 @@ interface MobileNavProps {
 	activeTab: string;
 }
 
-export function MobileNav({ activeTab }: MobileNavProps) {
+export function AdminMobileNav({ activeTab }: MobileNavProps) {
 	return (
 		<div className="flex flex-col items-center h-full bg-background pt-16">
 			<div className="flex flex-col items-center gap-6 py-4">
@@ -25,13 +25,13 @@ export function MobileNav({ activeTab }: MobileNavProps) {
 									"h-12 w-12 rounded-full",
 									buttonVariants({
 										variant:
-											"/dashboard" == activeTab
+											"/sxadmin/dashboard" == activeTab
 												? "default"
 												: "ghost",
 										size: "icon",
 									})
 								)}
-								to="/dashboard">
+								to="/sxadmin/dashboard">
 								<Home className="h-5 w-5" />
 								<span className="sr-only">Dashboard</span>
 							</NavLink>
@@ -48,44 +48,22 @@ export function MobileNav({ activeTab }: MobileNavProps) {
 									"h-12 w-12 rounded-full",
 									buttonVariants({
 										variant:
-											"/bookings" == activeTab
+											"/sxadmin/transactions/pending" ==
+											activeTab
 												? "default"
 												: "ghost",
 										size: "icon",
 									})
 								)}
-								to="/bookings">
-								<Plane className="h-5 w-5" />
-								<span className="sr-only">Book Flights</span>
-							</NavLink>
-						</TooltipTrigger>
-						<TooltipContent side="right">
-							<p>Book Flights</p>
-						</TooltipContent>
-					</Tooltip>
-
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<NavLink
-								className={cn(
-									"h-12 w-12 rounded-full",
-									buttonVariants({
-										variant:
-											"/sell/crypto" == activeTab
-												? "default"
-												: "ghost",
-										size: "icon",
-									})
-								)}
-								to="/sell/crypto">
-								<Wallet className="h-5 w-5" />
+								to="/sxadmin/transactions/pending">
+								<ListRestart className="h-5 w-5" />
 								<span className="sr-only">
-									Sell Cryptocurrency
+									Pending Transactions
 								</span>
 							</NavLink>
 						</TooltipTrigger>
 						<TooltipContent side="right">
-							<p>Sell Cryptocurrency</p>
+							<p>Pending Transactions</p>
 						</TooltipContent>
 					</Tooltip>
 
@@ -96,19 +74,45 @@ export function MobileNav({ activeTab }: MobileNavProps) {
 									"h-12 w-12 rounded-full",
 									buttonVariants({
 										variant:
-											"/sell/gift-card" == activeTab
+											"/sxadmin/user/verification/pending" ==
+											activeTab
 												? "default"
 												: "ghost",
 										size: "icon",
 									})
 								)}
-								to="/sell/gift-card">
-								<Gift className="h-5 w-5" />
-								<span className="sr-only">Sell Gift Cards</span>
+								to="/sxadmin/user/verification/pending">
+								<Verified className="h-5 w-5" />
+								<span className="sr-only">
+									Pending Verification
+								</span>
 							</NavLink>
 						</TooltipTrigger>
 						<TooltipContent side="right">
-							<p>Sell Gift Cards</p>
+							<p>Pending Verification</p>
+						</TooltipContent>
+					</Tooltip>
+
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<NavLink
+								className={cn(
+									"h-12 w-12 rounded-full",
+									buttonVariants({
+										variant:
+											"/sxadmin/settings" == activeTab
+												? "default"
+												: "ghost",
+										size: "icon",
+									})
+								)}
+								to="/sxadmin/settings">
+								<Settings className="h-5 w-5" />
+								<span className="sr-only">Settings</span>
+							</NavLink>
+						</TooltipTrigger>
+						<TooltipContent side="right">
+							<p>Settings</p>
 						</TooltipContent>
 					</Tooltip>
 

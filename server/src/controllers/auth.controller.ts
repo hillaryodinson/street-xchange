@@ -80,7 +80,7 @@ export const login = async (
 	const token = JWT.sign(
 		{
 			id: dbResponse.id,
-			name: `${dbResponse.firstName} ${dbResponse.surName}`,
+			name: `${dbResponse.firstname} ${dbResponse.surname}`,
 			email: dbResponse.email,
 			role: "user",
 		},
@@ -142,7 +142,7 @@ export const resetPassword = async (
 		subject: "Password Reset",
 		template: "password-reset",
 		context: {
-			name: `${user.firstName} ${user.surName}`,
+			name: `${user.firstname} ${user.surname}`,
 			resetUrl,
 		},
 		from: "B9vY1@example.com",

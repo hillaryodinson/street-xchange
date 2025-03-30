@@ -31,15 +31,15 @@ export const register = async (req: Request, res: Response) => {
 	const activationToken = randomUUID();
 	const customer = await db.user.create({
 		data: {
-			firstName: payload.firstName,
-			surName: payload.surname,
-			middleName: payload.middleName,
+			firstname: payload.firstname,
+			surname: payload.surname,
+			middlename: payload.middlename,
 			email: payload.email,
 			password: hashedPassword,
 			residentialAddress: payload.address,
-			PhoneNo: payload.phoneNumber,
+			phoneNo: payload.phoneNumber,
 			nin: payload.ninNumber,
-			dob: payload.dateOfBirth,
+			dob: new Date(payload.dateOfBirth),
 			actiToken: activationToken,
 		},
 	});
@@ -47,15 +47,16 @@ export const register = async (req: Request, res: Response) => {
 	const mailer = new NodemailerDB(db);
 	const CLIENT_URL = process.env.CLIENT_URL || "localhost:3001";
 	const activationUrl = `${CLIENT_URL}/activate-account`;
+	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
 	await mailer.sendMail({
 		to: customer.email,
 		subject: "Activate Account",
-		template: "activation-email",
+		template: "activate_account",
 		context: {
-			name: customer.firstName,
+			name: customer.firstname,
 			activationUrl: activationUrl,
 		},
-		from: "no-reply@streetxchange.com",
+		from: SITEMAIL,
 	});
 
 	//send successful response
@@ -98,6 +99,20 @@ export const activateAccount = async (req: Request, res: Response) => {
 		data: {
 			actiToken: null, // Clear the token after activation
 		},
+	});
+
+	//send pending activation email
+	const mailer = new NodemailerDB(db);
+	const SITENAME = process.env.APP_NAME || "APP NAME";
+	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
+	await mailer.sendMail({
+		to: user.email,
+		subject: "Welcome to " + SITENAME,
+		template: "welcome_email",
+		context: {
+			name: user.firstname,
+		},
+		from: SITEMAIL,
 	});
 
 	// Send successful response

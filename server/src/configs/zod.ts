@@ -16,12 +16,10 @@ export const confirmPasswordResetSchema = z.object({
 
 export const newAccountSchema = z
 	.object({
-		firstName: z
+		firstname: z
 			.string()
 			.min(2, "First name must be at least 2 characters"),
-		middleName: z
-			.string()
-			.min(2, "Last name must be at least 2 characters"),
+		middlename: z.string().optional(),
 		surname: z.string().min(2, "Surname must be at least 2 characters"),
 		email: z.string().email("Please enter a valid email address"),
 		dateOfBirth: z.string().refine((date) => {

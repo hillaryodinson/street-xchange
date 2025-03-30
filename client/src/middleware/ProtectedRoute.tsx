@@ -26,7 +26,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 	if (
 		!protectedRoutes.userRoutes.includes(location.pathname) &&
 		user &&
-		user.role == "user"
+		user.role == "customer"
 	) {
 		return <Navigate to="/dashboard" />;
 	}
@@ -34,7 +34,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 	if (
 		protectedRoutes.userRoutes.includes(location.pathname) &&
 		user &&
-		user.role == "admin"
+		user.role == "sxadmin"
 	) {
 		return <Navigate to="/sxadmin/dashboard" />;
 	}

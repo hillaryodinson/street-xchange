@@ -17,10 +17,10 @@ export type UserType = {
 	id: string;
 	email: string;
 	role: string;
-	firstName: string;
-	middleName: string;
-	surName: string;
-	created_at: string;
+	firstname: string;
+	middlename: string;
+	surname: string;
+	createat: string;
 };
 
 export type ImageType = {

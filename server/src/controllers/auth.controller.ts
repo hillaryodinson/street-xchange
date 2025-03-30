@@ -5,17 +5,11 @@ import {
 } from "../configs/zod";
 import db from "../configs/db";
 import JWT from "jsonwebtoken";
-import {
-	CustomResponse,
-	TypedRequest,
-	TypedRequestBody,
-	TypedResponse,
-} from "../configs/requests";
+import { TypedRequest } from "../configs/requests";
 import {
 	ConfirmPasswordResetType,
 	LoginType,
 	ResetPasswordType,
-	UserType,
 } from "../configs/types";
 import argon2 from "argon2";
 import { randomUUID } from "crypto";
@@ -98,6 +92,7 @@ export const login = async (
 		surname,
 		email,
 		createAt,
+		role: "customer",
 	};
 
 	//send the jwt token in the response

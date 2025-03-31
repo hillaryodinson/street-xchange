@@ -27,7 +27,7 @@ model User {
   actiToken String?
   tokenExpiresAt DateTime?
   isVerified Int @default(0)//0 = Pending, 1 = Verified, 2 =  Blocked
-  createAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
   kyc Kyc[]
 }
@@ -96,7 +96,7 @@ model Transaction {
 model Kyc {
   id String @id @default(uuid())
   customerId String
-  customer User @relation(fields: [customerId], references: [id])
+  customer User @relation(fields: [customerId], references: [id], onDelete: Cascade)
   type String
   number String
   frontimage String

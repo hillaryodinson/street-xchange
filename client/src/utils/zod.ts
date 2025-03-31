@@ -24,7 +24,6 @@ export const registerFormSchema = z
 		}, "You must be at least 18 years old"),
 		address: z.string().min(5, "Please enter a valid address"),
 		phoneNumber: z.string().min(10, "Please enter a valid phone number"),
-		ninNumber: z.string().min(5, "Please enter a valid NIN number"),
 		password: z.string().min(8, "Password must be at least 8 characters"),
 		confirmPassword: z.string(),
 	})

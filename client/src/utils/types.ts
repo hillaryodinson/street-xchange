@@ -20,7 +20,7 @@ export type UserType = {
 	firstname: string;
 	middlename: string;
 	surname: string;
-	createat: string;
+	createdat: string;
 };
 
 export type ImageType = {

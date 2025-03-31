@@ -87,7 +87,7 @@ export const login = async (
 		}
 	);
 
-	const { id, firstname, middlename, surname, email, createAt } = dbResponse;
+	const { id, firstname, middlename, surname, email, createdAt } = dbResponse;
 
 	//send the jwt token in the response
 	res.status(200).json({
@@ -101,7 +101,7 @@ export const login = async (
 				middlename,
 				surname,
 				email,
-				createAt,
+				createdAt,
 				role: "customer",
 			},
 			hasKyc: dbResponse.kyc.length > 0,

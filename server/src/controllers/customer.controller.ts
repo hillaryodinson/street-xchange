@@ -45,7 +45,7 @@ export const register = async (req: Request, res: Response) => {
 	//send pending activation email
 	const mailer = new NodemailerDB(db);
 	const CLIENT_URL = process.env.CLIENT_URL || "localhost:3001";
-	const activationUrl = `${CLIENT_URL}/activate-account`;
+	const activationUrl = `${CLIENT_URL}activate?token=${activationToken}`;
 	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
 	await mailer.sendMail({
 		to: customer.email,
@@ -53,10 +53,12 @@ export const register = async (req: Request, res: Response) => {
 		template: "activate_account",
 		context: {
 			name: customer.firstname,
-			activationUrl: activationUrl,
+			activationURL: activationUrl,
 		},
 		from: SITEMAIL,
 	});
+
+	console.log(activationUrl);
 
 	//send successful response
 	res.json({

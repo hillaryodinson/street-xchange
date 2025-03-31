@@ -148,7 +148,7 @@ export const resetPassword = async (
 	await mailer.sendMail({
 		to: user.email,
 		subject: "Password Reset",
-		template: "password-reset",
+		template: "password_reset",
 		context: {
 			name: `${user.firstname} ${user.surname}`,
 			resetUrl,

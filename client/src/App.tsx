@@ -17,6 +17,7 @@ import { AdminTransactionHistoryPage } from "./app/(admin)/Transactions/History"
 import ProtectedRoute from "./middleware/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import ActivationPage from "./app/(auth)/Activate";
+import PasswordResetRequestPage from "./app/(auth)/Reset/Request";
 
 function App() {
 	const routes = createBrowserRouter([
@@ -45,6 +46,10 @@ function App() {
 		{
 			path: "/signup",
 			element: <SignupPage />,
+		},
+		{
+			path: "/reset-password",
+			element: <PasswordResetRequestPage />,
 		},
 		{
 			path: "/",

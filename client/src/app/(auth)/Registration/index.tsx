@@ -17,12 +17,13 @@ import { Link } from "react-router-dom";
 import { registerFormSchema } from "@/utils/zod";
 import api from "@/utils/api";
 import { ApiResponse } from "@/utils/types";
-import NotificationPage from "../Notification";
 import { toast } from "react-toastify";
 import LocationSelector from "@/components/site/location-picker";
 import { Country } from "react-phone-number-input";
 import { Logo } from "@/components/site/logo";
 import { Helmet } from "react-helmet";
+import { Home } from "lucide-react";
+import Notification from "@/components/site/notification";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();
@@ -65,7 +66,20 @@ export function SignupPage() {
 
 	if (regSuccess) {
 		return (
-			<NotificationPage message="Registration was succesful please check your email" />
+			<Notification variant="success">
+				<>
+					<p>
+						Registration was successful please check your email for
+						activation steps
+					</p>
+					<Link
+						to="/"
+						className="flex justify-center align-center gap-2">
+						<Home className="w-5 h-5" />
+						<span>Back to Home</span>
+					</Link>
+				</>
+			</Notification>
 		);
 	}
 

@@ -6,6 +6,7 @@ import { LoginSchema } from "@/utils/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useTransition } from "react";
+import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -69,113 +70,118 @@ const LoginPage = () => {
 	}
 
 	return (
-		<section className="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
-			<div className="absolute inset-0 image-wrap z-1 hero-bg-2"></div>
+		<>
+			<Helmet>
+				<title>{`Login | ${import.meta.env.VITE_APP_NAME}`}</title>
+			</Helmet>
+			<section className="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
+				<div className="absolute inset-0 image-wrap z-1 hero-bg-2"></div>
 
-			<div className="container relative z-3">
-				<div className="flex justify-center">
-					<div className="max-w-[400px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
-						<Logo className="mb-2" />
-						<h5 className="my-6 text-xl font-semibold text-center">
-							Login
-						</h5>
-						<form
-							className="text-start"
-							onSubmit={handleSubmit(formSubmit)}>
-							<div className="grid grid-cols-1">
-								<div className="mb-4">
-									<label
-										className="font-medium"
-										htmlFor="LoginEmail">
-										Email Address:
-									</label>
-									<input
-										id="LoginEmail"
-										type="email"
-										{...register("email")}
-										className="form-input border !border-gray-200 dark:!border-gray-800 mt-3"
-										placeholder="name@example.com"
-									/>
-									{errors.email && (
-										<p className="text-red-500 text-sm">
-											{errors.email?.message}
-										</p>
-									)}
-								</div>
-
-								<div className="mb-4">
-									<label
-										className="font-medium"
-										htmlFor="LoginPassword">
-										Password:
-									</label>
-									<input
-										id="LoginPassword"
-										type="password"
-										{...register("password")}
-										className="form-input border !border-gray-200 dark:!border-gray-800 mt-3"
-										placeholder="Password"
-										disabled={isLoading}
-									/>
-									{errors.password && (
-										<p className="text-red-500 text-sm">
-											{errors.password?.message}
-										</p>
-									)}
-								</div>
-
-								<div className="flex justify-between mb-4">
-									<div className="flex items-center mb-0">
+				<div className="container relative z-3">
+					<div className="flex justify-center">
+						<div className="max-w-[400px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
+							<Logo className="mb-2" />
+							<h5 className="my-6 text-xl font-semibold text-center">
+								Login
+							</h5>
+							<form
+								className="text-start"
+								onSubmit={handleSubmit(formSubmit)}>
+								<div className="grid grid-cols-1">
+									<div className="mb-4">
+										<label
+											className="font-medium"
+											htmlFor="LoginEmail">
+											Email Address:
+										</label>
 										<input
-											className="form-checkbox size-4 appearance-none rounded border border-gray-200 dark:border-gray-800 accent-green-600 checked:appearance-auto dark:accent-green-600 focus:border-green-300 focus:ring-0 focus:ring-offset-0 focus:ring-green-200 focus:ring-opacity-50 me-2"
-											type="checkbox"
-											value=""
-											id="RememberMe"
+											id="LoginEmail"
+											type="email"
+											{...register("email")}
+											className="form-input border !border-gray-200 dark:!border-gray-800 mt-3"
+											placeholder="name@example.com"
+										/>
+										{errors.email && (
+											<p className="text-red-500 text-sm">
+												{errors.email?.message}
+											</p>
+										)}
+									</div>
+
+									<div className="mb-4">
+										<label
+											className="font-medium"
+											htmlFor="LoginPassword">
+											Password:
+										</label>
+										<input
+											id="LoginPassword"
+											type="password"
+											{...register("password")}
+											className="form-input border !border-gray-200 dark:!border-gray-800 mt-3"
+											placeholder="Password"
 											disabled={isLoading}
 										/>
-										<label
-											className="form-checkbox-label text-slate-400"
-											htmlFor="RememberMe">
-											Remember me
-										</label>
-									</div>
-									<p className="text-slate-400 mb-0">
-										<Link
-											to="/reset-password"
-											className="text-slate-400">
-											Forgot password ?
-										</Link>
-									</p>
-								</div>
-
-								<div className="mb-4">
-									<button
-										type="submit"
-										className="btn bg-orange-600 hover:bg-orange-700 text-white rounded-md w-full"
-										disabled={isLoading}>
-										{isLoading && (
-											<Loader2 className="animated-spin" />
+										{errors.password && (
+											<p className="text-red-500 text-sm">
+												{errors.password?.message}
+											</p>
 										)}
-										Sign in
-									</button>
-								</div>
+									</div>
 
-								<div className="text-center">
-									<span className="text-slate-400 me-2">
-										Don't have an account ?
-									</span>{" "}
-									<Link
-										to="/signup"
-										className="text-slate-900 dark:text-white font-bold">
-										Sign Up
-									</Link>
+									<div className="flex justify-between mb-4">
+										<div className="flex items-center mb-0">
+											<input
+												className="form-checkbox size-4 appearance-none rounded border border-gray-200 dark:border-gray-800 accent-green-600 checked:appearance-auto dark:accent-green-600 focus:border-green-300 focus:ring-0 focus:ring-offset-0 focus:ring-green-200 focus:ring-opacity-50 me-2"
+												type="checkbox"
+												value=""
+												id="RememberMe"
+												disabled={isLoading}
+											/>
+											<label
+												className="form-checkbox-label text-slate-400"
+												htmlFor="RememberMe">
+												Remember me
+											</label>
+										</div>
+										<p className="text-slate-400 mb-0">
+											<Link
+												to="/reset-password"
+												className="text-slate-400">
+												Forgot password ?
+											</Link>
+										</p>
+									</div>
+
+									<div className="mb-4">
+										<button
+											type="submit"
+											className="btn bg-orange-600 hover:bg-orange-700 text-white rounded-md w-full"
+											disabled={isLoading}>
+											{isLoading && (
+												<Loader2 className="animated-spin" />
+											)}
+											Sign in
+										</button>
+									</div>
+
+									<div className="text-center">
+										<span className="text-slate-400 me-2">
+											Don't have an account ?
+										</span>{" "}
+										<Link
+											to="/signup"
+											className="text-slate-900 dark:text-white font-bold">
+											Sign Up
+										</Link>
+									</div>
 								</div>
-							</div>
-						</form>
+							</form>
+						</div>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		</>
 	);
 };
 

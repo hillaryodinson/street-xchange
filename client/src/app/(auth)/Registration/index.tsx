@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import LocationSelector from "@/components/site/location-picker";
 import { Country } from "react-phone-number-input";
 import { Logo } from "@/components/site/logo";
+import { Helmet } from "react-helmet";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();
@@ -69,181 +70,73 @@ export function SignupPage() {
 	}
 
 	return (
-		<section className="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
-			<div className="absolute inset-0 image-wrap z-1 hero-bg-2"></div>
+		<>
+			<Helmet>
+				<title>{`Signup | ${import.meta.env.VITE_APP_NAME}`}</title>
+			</Helmet>
+			<section className="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
+				<div className="absolute inset-0 image-wrap z-1 hero-bg-2"></div>
 
-			<div className="container relative z-3 mx-auto w-full">
-				<div className="flex justify-center w-full">
-					<div className="max-w-[600px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
-						<Logo />
-						<h5 className="my-6 text-xl font-semibold text-center">
-							Create your account
-						</h5>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit(onSubmit)}
-								className="space-y-4">
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-									<FormField
-										control={form.control}
-										name="firstname"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													First Name
-												</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="John"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="middlename"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Last Name</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="Doe"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								<FormField
-									control={form.control}
-									name="surname"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Surname</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Smith"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-									<FormField
-										control={form.control}
-										name="email"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Email</FormLabel>
-												<FormControl>
-													<Input
-														type="email"
-														placeholder="john.doe@example.com"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="phoneNumber"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Phone Number
-												</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="+1234567890"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								<FormField
-									control={form.control}
-									name="dateOfBirth"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Date of Birth</FormLabel>
-											<FormControl>
-												<Input type="date" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormItem>
-									<FormLabel>Select Country</FormLabel>
-									<FormControl>
-										<LocationSelector
-											onCountryChange={(country) => {
-												setCountryName(
-													country?.name || ""
-												);
-												setCountryIso(
-													country?.iso2 as Country
-												);
-											}}
-											onStateChange={(state) => {
-												setStateName(state?.name || "");
-											}}
+				<div className="container relative z-3 mx-auto w-full">
+					<div className="flex justify-center w-full">
+						<div className="max-w-[600px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
+							<Logo />
+							<h5 className="my-6 text-xl font-semibold text-center">
+								Create your account
+							</h5>
+							<Form {...form}>
+								<form
+									onSubmit={form.handleSubmit(onSubmit)}
+									className="space-y-4">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<FormField
+											control={form.control}
+											name="firstname"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														First Name
+													</FormLabel>
+													<FormControl>
+														<Input
+															placeholder="John"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
 										/>
-									</FormControl>
-									<FormDescription>
-										If your country has states, it will be
-										appear after selecting country
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
 
-								<FormField
-									control={form.control}
-									name="address"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Residential Address
-											</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="123 Main St"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+										<FormField
+											control={form.control}
+											name="middlename"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														Last Name
+													</FormLabel>
+													<FormControl>
+														<Input
+															placeholder="Doe"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
 
-								<div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
 									<FormField
 										control={form.control}
-										name="password"
+										name="surname"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Password</FormLabel>
+												<FormLabel>Surname</FormLabel>
 												<FormControl>
 													<Input
-														type="password"
+														placeholder="Smith"
 														{...field}
 													/>
 												</FormControl>
@@ -252,17 +145,56 @@ export function SignupPage() {
 										)}
 									/>
 
+									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+										<FormField
+											control={form.control}
+											name="email"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>Email</FormLabel>
+													<FormControl>
+														<Input
+															type="email"
+															placeholder="john.doe@example.com"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+
+										<FormField
+											control={form.control}
+											name="phoneNumber"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														Phone Number
+													</FormLabel>
+													<FormControl>
+														<Input
+															placeholder="+1234567890"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+
 									<FormField
 										control={form.control}
-										name="confirmPassword"
+										name="dateOfBirth"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>
-													Confirm Password
+													Date of Birth
 												</FormLabel>
 												<FormControl>
 													<Input
-														type="password"
+														type="date"
 														{...field}
 													/>
 												</FormControl>
@@ -270,30 +202,117 @@ export function SignupPage() {
 											</FormItem>
 										)}
 									/>
-								</div>
-								<Button
-									type="submit"
-									className="w-full"
-									disabled={isLoading}>
-									{isLoading ? "Registering..." : "Register"}
-								</Button>
-							</form>
-						</Form>
 
-						<div className="text-center text-sm">
-							<span className="text-muted-foreground">
-								Already have an account?
-							</span>{" "}
-							<Link
-								type="button"
-								className="text-primary underline font-medium"
-								to="/login">
-								Login
-							</Link>
+									<FormItem>
+										<FormLabel>Select Country</FormLabel>
+										<FormControl>
+											<LocationSelector
+												onCountryChange={(country) => {
+													setCountryName(
+														country?.name || ""
+													);
+													setCountryIso(
+														country?.iso2 as Country
+													);
+												}}
+												onStateChange={(state) => {
+													setStateName(
+														state?.name || ""
+													);
+												}}
+											/>
+										</FormControl>
+										<FormDescription>
+											If your country has states, it will
+											be appear after selecting country
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+
+									<FormField
+										control={form.control}
+										name="address"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>
+													Residential Address
+												</FormLabel>
+												<FormControl>
+													<Input
+														placeholder="123 Main St"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									<div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+										<FormField
+											control={form.control}
+											name="password"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														Password
+													</FormLabel>
+													<FormControl>
+														<Input
+															type="password"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+
+										<FormField
+											control={form.control}
+											name="confirmPassword"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														Confirm Password
+													</FormLabel>
+													<FormControl>
+														<Input
+															type="password"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+									<Button
+										type="submit"
+										className="w-full"
+										disabled={isLoading}>
+										{isLoading
+											? "Registering..."
+											: "Register"}
+									</Button>
+								</form>
+							</Form>
+
+							<div className="text-center text-sm">
+								<span className="text-muted-foreground">
+									Already have an account?
+								</span>{" "}
+								<Link
+									type="button"
+									className="text-primary underline font-medium"
+									to="/login">
+									Login
+								</Link>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		</>
 	);
 }

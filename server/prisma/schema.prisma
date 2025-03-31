@@ -22,13 +22,14 @@ model User {
   dob DateTime
   residentialAddress String
   phoneNo String
-  nin String
   password String
   resetToken String?
   actiToken String?
   tokenExpiresAt DateTime?
   isVerified Int @default(0)//0 = Pending, 1 = Verified, 2 =  Blocked
   createAt DateTime @default(now())
+
+  kyc Kyc[]
 }
 
 model Admin {
@@ -90,4 +91,16 @@ model Transaction {
   customerId String
   transId String
   typeId String
+}
+
+model Kyc {
+  id String @id @default(uuid())
+  customerId String
+  customer User @relation(fields: [customerId], references: [id])
+  type String
+  number String
+  frontimage String
+  backimage String?
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
 }

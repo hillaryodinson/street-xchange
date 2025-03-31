@@ -23,13 +23,6 @@ const AuthRoute = Router();
 
 /**
  * @swagger
- * tags:
- *   - name: Authentication
- *     description: Authentication routes
- */
-
-/**
- * @swagger
  * /auth/login:
  *   post:
  *     summary: login
@@ -76,18 +69,28 @@ const AuthRoute = Router();
  *                         id:
  *                           type: string
  *                           description: The user's id
+ *                         firstname:
+ *                           type: string
+ *                           description: The user's first name
+ *                         middlename:
+ *                           type: string
+ *                           description: The user's middle name
+ *                         surname:
+ *                           type: string
+ *                           description: The user's surname
  *                         email:
  *                           type: string
  *                           description: The user's email
+ *                         createAt:
+ *                           type: string
+ *                           description: The user's creation date
  *                         role:
  *                           type: string
  *                           description: The user's role
- *                         name:
- *                           type: string
- *                           description: The user's name
- *                         created_at:
- *                           type: string
- *                           description: The user's creation date
+ *                           example: customer
+ *                     hasKyc:
+ *                       type: boolean
+ *                       description: Whether the user has completed KYC
  *       400:
  *         description: Bad request
  *         content:

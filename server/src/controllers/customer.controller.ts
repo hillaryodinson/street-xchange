@@ -38,7 +38,6 @@ export const register = async (req: Request, res: Response) => {
 			password: hashedPassword,
 			residentialAddress: payload.address,
 			phoneNo: payload.phoneNumber,
-			nin: payload.ninNumber,
 			dob: new Date(payload.dateOfBirth),
 			actiToken: activationToken,
 		},

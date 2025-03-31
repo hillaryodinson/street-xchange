@@ -6,7 +6,7 @@ const options = {
 		info: {
 			title: "Apartu API",
 			version: "1.0.0",
-			description: "Apartu API documentation",
+			description: "StreetXchange API documentation",
 		},
 		servers: [
 			{
@@ -40,26 +40,52 @@ const options = {
 				User: {
 					type: "object",
 					properties: {
-						name: {
+						firstname: {
 							type: "string",
-							example: "Jane Samuel",
-							description: "Full name of the user",
+							example: "Jane",
+							description: "First name of the user",
+						},
+						middlename: {
+							type: "string",
+							example: "Samuel",
+							description: "Middle name of the user",
+						},
+						surname: {
+							type: "string",
+							example: "Smith",
+							description: "Surname of the user",
 						},
 						email: {
 							type: "string",
 							example: "jane.samuel@gmail.com",
 							description: "The email address of the user",
 						},
-						password: {
-							type: "string",
-							example: "password",
-							description: "The password of the user",
-						},
+
 						role: {
 							type: "string",
-							enum: ["landlord", "caretaker", "admin", "tenant"],
-							example: "tenant",
+							enum: ["customer"],
+							example: "customer",
 							description: "The role of the user",
+						},
+
+						residentialAddress: {
+							type: "string",
+							example: "123 Main St, Springfield",
+							description: "The residential address of the user",
+						},
+
+						phoneNo: {
+							type: "string",
+							example: "+1234567890",
+							description: "The phone number of the user",
+						},
+
+						dateOfBirth: {
+							type: "string",
+							format: "date",
+							example: "1990-01-01",
+							description:
+								"The date of birth of the user in YYYY-MM-DD format",
 						},
 					},
 				},

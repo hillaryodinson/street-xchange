@@ -36,6 +36,9 @@ export const login = async (
 		where: {
 			email: data.email,
 		},
+		include: {
+			kyc: true,
+		},
 	});
 
 	if (!dbResponse)
@@ -85,15 +88,6 @@ export const login = async (
 	);
 
 	const { id, firstname, middlename, surname, email, createAt } = dbResponse;
-	const publicData = {
-		id,
-		firstname,
-		middlename,
-		surname,
-		email,
-		createAt,
-		role: "customer",
-	};
 
 	//send the jwt token in the response
 	res.status(200).json({
@@ -101,7 +95,16 @@ export const login = async (
 		message: "User logged in successfully",
 		data: {
 			token,
-			user: publicData,
+			user: {
+				id,
+				firstname,
+				middlename,
+				surname,
+				email,
+				createAt,
+				role: "customer",
+			},
+			hasKyc: dbResponse.kyc.length > 0,
 		},
 	});
 };

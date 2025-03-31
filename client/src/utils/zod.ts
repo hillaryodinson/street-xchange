@@ -36,6 +36,16 @@ export const ResetPasswordSchema = z.object({
 	email: z.string().email(),
 });
 
+export const PasswordConfirmationSchema = z
+	.object({
+		password: z.string().min(8, "Password must be at least 8 characters"),
+		confirmPassword: z.string(),
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords do not match",
+		path: ["confirmPassword"],
+	});
+
 export const ImageSchema = z.object({
 	image: z.string(),
 	thumb: z.string(),

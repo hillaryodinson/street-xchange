@@ -18,6 +18,7 @@ import ProtectedRoute from "./middleware/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import ActivationPage from "./app/(auth)/Activate";
 import PasswordResetRequestPage from "./app/(auth)/Reset/Request";
+import PasswordResetConfirmationPage from "./app/(auth)/Reset/Confirm";
 
 function App() {
 	const routes = createBrowserRouter([
@@ -50,6 +51,10 @@ function App() {
 		{
 			path: "/reset-password",
 			element: <PasswordResetRequestPage />,
+		},
+		{
+			path: "/reset/confirm",
+			element: <PasswordResetConfirmationPage />,
 		},
 		{
 			path: "/",

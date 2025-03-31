@@ -21,6 +21,7 @@ import NotificationPage from "../Notification";
 import { toast } from "react-toastify";
 import LocationSelector from "@/components/site/location-picker";
 import { Country } from "react-phone-number-input";
+import { Logo } from "@/components/site/logo";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();
@@ -40,7 +41,6 @@ export function SignupPage() {
 			dateOfBirth: "",
 			address: "",
 			phoneNumber: "",
-			ninNumber: "",
 			password: "",
 			confirmPassword: "",
 		},
@@ -75,14 +75,8 @@ export function SignupPage() {
 			<div className="container relative z-3 mx-auto w-full">
 				<div className="flex justify-center w-full">
 					<div className="max-w-[600px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
-						<Link to="/">
-							<img
-								src="assets/images/logo.png"
-								className="mx-auto"
-								alt=""
-							/>
-						</Link>
-						<h5 className="my-6 text-xl font-semibold">
+						<Logo />
+						<h5 className="my-6 text-xl font-semibold text-center">
 							Create your account
 						</h5>
 						<Form {...form}>
@@ -144,39 +138,25 @@ export function SignupPage() {
 									)}
 								/>
 
-								<FormField
-									control={form.control}
-									name="email"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Email</FormLabel>
-											<FormControl>
-												<Input
-													type="email"
-													placeholder="john.doe@example.com"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="dateOfBirth"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Date of Birth</FormLabel>
-											<FormControl>
-												<Input type="date" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
 								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+									<FormField
+										control={form.control}
+										name="email"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Email</FormLabel>
+												<FormControl>
+													<Input
+														type="email"
+														placeholder="john.doe@example.com"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
 									<FormField
 										control={form.control}
 										name="phoneNumber"
@@ -195,26 +175,21 @@ export function SignupPage() {
 											</FormItem>
 										)}
 									/>
-
-									<FormField
-										control={form.control}
-										name="ninNumber"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													NIN Number
-												</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="12345678"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
 								</div>
+
+								<FormField
+									control={form.control}
+									name="dateOfBirth"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Date of Birth</FormLabel>
+											<FormControl>
+												<Input type="date" {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 
 								<FormItem>
 									<FormLabel>Select Country</FormLabel>

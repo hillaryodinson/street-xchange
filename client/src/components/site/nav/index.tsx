@@ -2,6 +2,7 @@ import { UserIcon } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { Logo } from "../logo";
 
 const Nav = ({ className }: { className?: string }) => {
 	const location = useLocation();
@@ -33,23 +34,7 @@ const Nav = ({ className }: { className?: string }) => {
 		<>
 			<nav id="topnav" className={`defaultscroll is-sticky ${className}`}>
 				<div className="container relative flex items-center justify-between">
-					<div className="flex-1">
-						<Link className="logo" to="/">
-							{/* <img
-							src="assets/images/logo-dark.png"
-							className="inline-block dark:hidden"
-							alt=""
-						/>
-						<img
-							src="assets/images/logo-light.png"
-							className="hidden dark:inline-block"
-							alt=""
-						/> */}
-							<h3 className="m-0 text-sm w-[100px]">
-								Street Xchange
-							</h3>
-						</Link>
-					</div>
+					<Logo className="w-[200px] sm:w-[300px]" />
 
 					<div className=" w-full">
 						<div className="menu-extras">

@@ -1,3 +1,4 @@
+import { Logo } from "@/components/site/logo";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import api from "@/utils/api";
 import { ApiResponse, AuthResponse } from "@/utils/types";
@@ -74,14 +75,10 @@ const LoginPage = () => {
 			<div className="container relative z-3">
 				<div className="flex justify-center">
 					<div className="max-w-[400px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
-						<Link to="/">
-							<img
-								src="assets/images/logo.png"
-								className="mx-auto"
-								alt=""
-							/>
-						</Link>
-						<h5 className="my-6 text-xl font-semibold">Login</h5>
+						<Logo className="mb-2" />
+						<h5 className="my-6 text-xl font-semibold text-center">
+							Login
+						</h5>
 						<form
 							className="text-start"
 							onSubmit={handleSubmit(formSubmit)}>

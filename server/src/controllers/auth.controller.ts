@@ -171,17 +171,17 @@ export const confirmPasswordReset = async (
 
 	//gets the token and verifies if its valid
 	const { token, password } = zodResponse.data;
-	const result = await db.user.findFirst({
+	const user = await db.user.findFirst({
 		where: {
 			resetToken: token,
 		},
 	});
-	if (!result)
+	if (!user)
 		throw new AppError(
 			ERROR_CODES.USER_INVALID_CREDENTIALS,
 			"Invalid token"
 		);
-	if (result.tokenExpiresAt && Date.now() > result.tokenExpiresAt.getTime())
+	if (user.tokenExpiresAt && Date.now() > user.tokenExpiresAt.getTime())
 		throw new Error("Token has expired");
 
 	//hash the new password
@@ -190,13 +190,26 @@ export const confirmPasswordReset = async (
 	//update the password in the database
 	await db.user.update({
 		where: {
-			id: result.id,
+			id: user.id,
 		},
 		data: {
 			password: hashedPassword,
 			resetToken: null,
 			tokenExpiresAt: null,
 		},
+	});
+
+	const mailer = new NodemailerDB(db);
+	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
+
+	await mailer.sendMail({
+		to: user.email,
+		subject: "Password Reset",
+		template: "password_reset_success",
+		context: {
+			name: `${user.firstname} ${user.surname}`,
+		},
+		from: SITEMAIL,
 	});
 
 	res.status(200).json({

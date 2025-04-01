@@ -69,6 +69,7 @@ model FlightTransaction {
   to String
   scheduledFlightDate DateTime
   type String //Economy /Business /FirstClass
+  status String //pending price, pending payment, booked
 }
 
 model Mail {

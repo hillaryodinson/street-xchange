@@ -12,13 +12,16 @@ import {
 import { Gift, Plane, Wallet } from "lucide-react";
 
 import "@/backend.css";
+import { useAuthStore } from "@/lib/stores/auth-store";
 
 const DashboardPage = () => {
+	const user = useAuthStore((state) => state.user);
+
 	return (
 		<div className="flex flex-col gap-8">
 			<div>
 				<h1 className="text-3xl font-bold tracking-tight">
-					Welcome back, John
+					Welcome back, {user && user.firstname}
 				</h1>
 				<p className="text-muted-foreground">
 					Here's what you can do on your dashboard today.

@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
 	ArrowLeft,
 	ArrowRight,
+	CalendarIcon,
 	Check,
 	ChevronsUpDown,
 	Plane,
@@ -53,70 +54,30 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-
-const airports = [
-	{ value: "jfk", label: "New York (JFK)" },
-	{ value: "lax", label: "Los Angeles (LAX)" },
-	{ value: "lhr", label: "London (LHR)" },
-	{ value: "cdg", label: "Paris (CDG)" },
-	{ value: "dxb", label: "Dubai (DXB)" },
-	{ value: "hnd", label: "Tokyo (HND)" },
-	{ value: "sin", label: "Singapore (SIN)" },
-	{ value: "syd", label: "Sydney (SYD)" },
-] as const;
-
-const cryptocurrencies = [
-	{ value: "btc", label: "Bitcoin (BTC)" },
-	{ value: "eth", label: "Ethereum (ETH)" },
-	{ value: "usdt", label: "Tether (USDT)" },
-	{ value: "bnb", label: "Binance Coin (BNB)" },
-	{ value: "sol", label: "Solana (SOL)" },
-	{ value: "xrp", label: "Ripple (XRP)" },
-] as const;
-
-const formSchema = z
-	.object({
-		from: z.string({
-			required_error: "Please select a departure airport.",
-		}),
-		to: z.string({
-			required_error: "Please select a destination airport.",
-		}),
-		scheduledFlightDate: z.string({
-			required_error: "Please select a flight date.",
-		}),
-		type: z.enum(["economy", "business", "firstClass"], {
-			required_error: "Please select a flight class.",
-		}),
-		paymentMethod: z.string({
-			required_error: "Please select a cryptocurrency for payment.",
-		}),
-		passengers: z.coerce.number().min(1).max(10),
-	})
-	.refine((data) => data.from !== data.to, {
-		message: "Departure and destination airports cannot be the same.",
-		path: ["to"],
-	});
+import { airports, cryptocurrencies } from "@/lib/data";
+import { FlightBookinSchema } from "@/utils/zod";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
 
 export function BookFlightForm() {
 	const [step, setStep] = useState(1);
 	const [flightDetails, setFlightDetails] = useState<z.infer<
-		typeof formSchema
+		typeof FlightBookinSchema
 	> | null>(null);
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<z.infer<typeof FlightBookinSchema>>({
+		resolver: zodResolver(FlightBookinSchema),
 		defaultValues: {
 			passengers: 1,
 			type: "economy",
 			paymentMethod: "", // Add this line to initialize paymentMethod
 			from: "", // Add this line to initialize from
 			to: "", // Add this line to initialize to
-			scheduledFlightDate: "", // Add this line to initialize scheduledFlightDate
+			scheduledFlightDate: undefined, // Add this line to initialize scheduledFlightDate
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	function onSubmit(values: z.infer<typeof FlightBookinSchema>) {
 		setFlightDetails(values);
 		setStep(2);
 	}
@@ -371,17 +332,53 @@ export function BookFlightForm() {
 												<FormLabel>
 													Flight Date
 												</FormLabel>
-												<FormControl>
-													<Input
-														type="date"
-														{...field}
-														min={
-															new Date()
-																.toISOString()
-																.split("T")[0]
-														}
-													/>
-												</FormControl>
+
+												<Popover>
+													<PopoverTrigger asChild>
+														<FormControl>
+															<Button
+																variant={
+																	"outline"
+																}
+																className={cn(
+																	"w-[240px] pl-3 text-left font-normal",
+																	!field.value &&
+																		"text-muted-foreground"
+																)}>
+																{field.value ? (
+																	format(
+																		field.value,
+																		"PPP"
+																	)
+																) : (
+																	<span>
+																		Pick a
+																		date
+																	</span>
+																)}
+																<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+															</Button>
+														</FormControl>
+													</PopoverTrigger>
+													<PopoverContent
+														className="w-auto p-0"
+														align="start">
+														<Calendar
+															mode="single"
+															selected={
+																field.value
+															}
+															onSelect={
+																field.onChange
+															}
+															disabled={{
+																before: new Date(),
+															}}
+															initialFocus
+														/>
+													</PopoverContent>
+												</Popover>
+
 												<FormDescription>
 													Date of flight
 												</FormDescription>

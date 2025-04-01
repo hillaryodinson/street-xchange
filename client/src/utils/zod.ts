@@ -46,6 +46,30 @@ export const PasswordConfirmationSchema = z
 		path: ["confirmPassword"],
 	});
 
+export const FlightBookinSchema = z
+	.object({
+		from: z.string({
+			required_error: "Please select a departure airport.",
+		}),
+		to: z.string({
+			required_error: "Please select a destination airport.",
+		}),
+		scheduledFlightDate: z.date({
+			required_error: "Please select a flight date.",
+		}),
+		type: z.enum(["economy", "business", "firstClass"], {
+			required_error: "Please select a flight class.",
+		}),
+		paymentMethod: z.string({
+			required_error: "Please select a cryptocurrency for payment.",
+		}),
+		passengers: z.coerce.number().min(1).max(10),
+	})
+	.refine((data) => data.from !== data.to, {
+		message: "Departure and destination airports cannot be the same.",
+		path: ["to"],
+	});
+
 export const ImageSchema = z.object({
 	image: z.string(),
 	thumb: z.string(),

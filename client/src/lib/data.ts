@@ -201,3 +201,14 @@ export const allTransactions: Transaction[] = [
 		status: "pending",
 	},
 ];
+
+export const airports = [
+	{ value: "jfk", label: "New York (JFK)" },
+	{ value: "lax", label: "Los Angeles (LAX)" },
+	{ value: "lhr", label: "London (LHR)" },
+	{ value: "cdg", label: "Paris (CDG)" },
+	{ value: "dxb", label: "Dubai (DXB)" },
+	{ value: "hnd", label: "Tokyo (HND)" },
+	{ value: "sin", label: "Singapore (SIN)" },
+	{ value: "syd", label: "Sydney (SYD)" },
+] as const;

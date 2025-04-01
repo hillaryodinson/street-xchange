@@ -39,38 +39,6 @@ model Admin {
   password String
 }
 
-model GiftCardTransaction {
-  id String @id @default(uuid())
-  customerId String
-  cardType String //itunes,amazon, steam, ebay, razer gold, google
-  country String
-  type String //Physical, Ecode, Horizontal, white board
-  speed Int?
-  amount Int
-  isPending Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model CryptoTransaction {
-  id String @id @default(uuid())
-  customerId String
-  type String //usdt/btc/eth
-  amount Float
-  amountNgn Float //converted from crypto type to naira
-  rate Float //xchange rate
-  isPending Boolean @default(true)
-}
-
-model FlightTransaction {
-  id String @id @default(uuid())
-  paymentMethod String
-  from String
-  to String
-  scheduledFlightDate DateTime
-  type String //Economy /Business /FirstClass
-  status String //pending price, pending payment, booked
-}
 
 model Mail {
   id String @id @default(uuid())
@@ -80,18 +48,6 @@ model Mail {
   from String
   isDelivered Boolean @default(false)
   createdAt DateTime @default(now())
-}
-
-model Transaction {
-  id String @id @default(uuid())
-  date DateTime @default(now())
-  type String
-  description String
-  amount Float
-  status String // e.g., Pending, Completed, Failed
-  customerId String
-  transId String
-  typeId String
 }
 
 model Kyc {
@@ -104,4 +60,84 @@ model Kyc {
   backimage String?
   isApproved Boolean @default(false)
   createdAt DateTime @default(now())
+}
+
+model GiftCardTransaction {
+  id String @id @default(uuid())
+  customerId String
+  cardType String //itunes,amazon, steam, ebay, razer gold, google
+  country String
+  type String //Physical, Ecode, Horizontal, white board
+  speed Int?
+  amount Int
+  isPending Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Transaction Transaction[]
+}
+
+model CryptoTransaction {
+  id String @id @default(uuid())
+  customerId String
+  type String //usdt/btc/eth
+  amount Float
+  amountNgn Float //converted from crypto type to naira
+  rate Float //xchange rate
+  isPending Boolean @default(true)
+
+  Transaction Transaction[]
+}
+
+enum BookingStatus {
+  PendingAvailability
+  FlightUnavailable
+  PendingPayment
+  Booked
+  Cancelled
+}
+
+model FlightTransaction {
+  id String @id @default(uuid())
+  customerId String
+  paymentMethod String //btc usdt eth
+  from String
+  to String
+  scheduledFlightDate DateTime
+  type String //Economy /Business /FirstClass
+  passengers Int @default(1)
+  
+  walletAddress String?
+  walletNetwork String?
+  flightCost String? 
+
+  status BookingStatus @default(PendingAvailability) 
+  note String? //for more information when flights not available
+  
+  transaction Transaction[]
+}
+
+enum TransactionStatus {
+  Pending
+  Completed
+  Failed
+}
+
+model Transaction {
+  id String @id @default(uuid())
+  description String
+  transId String
+  transType String
+  status TransactionStatus
+
+  cryptoTransId String?
+  cryptoTrans CryptoTransaction? @relation(fields: [cryptoTransId], references: [id])
+
+  flightTransId String?
+  flightTrans FlightTransaction? @relation(fields: [flightTransId], references: [id])
+
+  giftcardTransId String?
+  giftcardTrans GiftCardTransaction? @relation(fields: [giftcardTransId], references: [id])
+  
+  createdDate DateTime @default(now())
 }

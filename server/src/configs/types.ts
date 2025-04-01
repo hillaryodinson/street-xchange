@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+	bookingSchema,
 	confirmPasswordResetSchema,
 	loginSchema,
 	newAccountSchema,
@@ -34,4 +35,11 @@ export type AccessTokenType = {
 	name: string;
 	email: string;
 	role: string;
+};
+
+export type FlightBookingType = z.infer<typeof bookingSchema>;
+export type TransactionType = {
+	transType: string;
+	description: string;
+	transId: string;
 };

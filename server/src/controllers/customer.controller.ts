@@ -66,3 +66,13 @@ export const register = async (req: Request, res: Response) => {
 		message: "Registration successful",
 	});
 };
+
+export const addBankAccount = async (req: Request, res: Response) => {};
+
+export const deleteBankAccount = async (req: Request, res: Response) => {};
+
+export const confirmAddBankAccount = async (req: Request, res: Response) => {};
+export const confirmDeleteBankAccount = async (
+	req: Request,
+	res: Response
+) => {};

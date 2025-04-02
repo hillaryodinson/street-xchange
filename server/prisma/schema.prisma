@@ -30,6 +30,7 @@ model User {
   createdAt DateTime @default(now())
 
   kyc Kyc[]
+  customerBank CustomerBank[]
 }
 
 model Admin {
@@ -140,4 +141,16 @@ model Transaction {
   giftcardTrans GiftCardTransaction? @relation(fields: [giftcardTransId], references: [id])
   
   createdDate DateTime @default(now())
+}
+
+model CustomerBank {
+  id String @id @default(uuid())
+  bankName String
+  accountNo String
+  accountName String
+  otp String?
+  createdAt DateTime
+
+  customerId String
+  customer User  @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }

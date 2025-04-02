@@ -74,6 +74,9 @@ export const bookFlight = async (
 		success: true,
 		message:
 			"Flight request has been sent. We will get back to you on the cost",
+		data: {
+			bookingRef: transactionDetails.transId,
+		},
 	});
 };
 

@@ -32,7 +32,6 @@ const LoginPage = () => {
 
 	const formSubmit = (data: z.infer<typeof LoginSchema>) => {
 		startTransition(() => {
-			console.log(data);
 			redirect("/dashboard");
 			api.post("/auth/login", data)
 				.then((response) => {
@@ -48,6 +47,7 @@ const LoginPage = () => {
 
 							// context.login(data);
 							setSession(data.user, data.token);
+							console.log(data.token);
 							//check for callbackurl
 							setTimeout(() => {
 								const callback =

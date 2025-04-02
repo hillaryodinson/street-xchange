@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
 	ArrowLeft,
-	ArrowRight,
 	CalendarIcon,
 	Check,
 	ChevronsUpDown,
@@ -17,7 +16,6 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -58,12 +56,19 @@ import { airports, cryptocurrencies } from "@/lib/data";
 import { FlightBookinSchema } from "@/utils/zod";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
+import FlightConfirmationSection from "@/components/site/booking-flight-confirmation-section";
+import api from "@/utils/api";
+import { ApiResponse } from "@/utils/types";
+import { toast } from "react-toastify";
+import BookingConfirmedPage from "@/components/site/booking-confirmed-section";
 
 export function BookFlightForm() {
 	const [step, setStep] = useState(1);
 	const [flightDetails, setFlightDetails] = useState<z.infer<
 		typeof FlightBookinSchema
 	> | null>(null);
+	const [bookingRef, setBookingRef] = useState("");
+	const [successMessage, setSuccessMessage] = useState("");
 
 	const form = useForm<z.infer<typeof FlightBookinSchema>>({
 		resolver: zodResolver(FlightBookinSchema),
@@ -82,43 +87,30 @@ export function BookFlightForm() {
 		setStep(2);
 	}
 
-	const getFlightPrice = () => {
-		if (!flightDetails) return 0;
+	async function onConfirm() {
+		try {
+			//send the data to the backend
+			const response = await api.post(
+				"/transactions/flight/book",
+				flightDetails
+			);
+			const result = response.data as ApiResponse<{ bookingRef: string }>;
+			if (result.success && result.data?.bookingRef) {
+				setStep(3);
+				setBookingRef(result.data?.bookingRef);
+				setSuccessMessage(result.message);
+			} else {
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			const errorMessage =
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(error as any)?.message ||
+				"An error occured. Please contact admin";
 
-		const basePrice = 250; // Base price for economy
-		const typeMultiplier =
-			flightDetails.type === "economy"
-				? 1
-				: flightDetails.type === "business"
-				? 2.5
-				: 4; // First class
-
-		return basePrice * typeMultiplier * flightDetails.passengers;
-	};
-
-	const getCryptoAmount = () => {
-		if (!flightDetails) return 0;
-
-		const price = getFlightPrice();
-		const cryptoRates = {
-			btc: 43250, // 1 BTC = $43,250
-			eth: 3150, // 1 ETH = $3,150
-			usdt: 1, // 1 USDT = $1
-			bnb: 530, // 1 BNB = $530
-			sol: 102, // 1 SOL = $102
-			xrp: 0.5, // 1 XRP = $0.50
-		};
-
-		const selectedCrypto =
-			flightDetails.paymentMethod as keyof typeof cryptoRates;
-		return (price / cryptoRates[selectedCrypto]).toFixed(6);
-	};
-
-	const handleConfirmBooking = () => {
-		// Here you would handle the actual booking process
-		// For now, we'll just show a success message
-		setStep(3);
-	};
+			toast.error(errorMessage);
+		}
+	}
 
 	return (
 		<div className="mx-auto max-w-3xl">
@@ -504,212 +496,18 @@ export function BookFlightForm() {
 			)}
 			{/* Step 2: Review and Confirm */}
 			{step === 2 && flightDetails && (
-				<Card>
-					<CardHeader>
-						<CardTitle>Review Your Booking</CardTitle>
-						<CardDescription>
-							Please review your flight details before confirming
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-6">
-						<div className="rounded-md bg-muted p-4 space-y-4">
-							<div className="flex justify-between items-center border-b pb-2">
-								<h3 className="font-medium">Flight Details</h3>
-								<Button
-									variant="outline"
-									size="sm"
-									onClick={() => setStep(1)}>
-									Edit
-								</Button>
-							</div>
-
-							<div className="grid grid-cols-2 gap-4">
-								<div>
-									<p className="text-sm text-muted-foreground">
-										From
-									</p>
-									<p className="font-medium">
-										{
-											airports.find(
-												(a) =>
-													a.value ===
-													flightDetails.from
-											)?.label
-										}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										To
-									</p>
-									<p className="font-medium">
-										{
-											airports.find(
-												(a) =>
-													a.value === flightDetails.to
-											)?.label
-										}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Date
-									</p>
-									<p className="font-medium">
-										{new Date(
-											flightDetails.scheduledFlightDate
-										).toLocaleDateString("en-US", {
-											weekday: "long",
-											year: "numeric",
-											month: "long",
-											day: "numeric",
-										})}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Class
-									</p>
-									<p className="font-medium capitalize">
-										{flightDetails.type === "firstClass"
-											? "First Class"
-											: flightDetails.type}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Passengers
-									</p>
-									<p className="font-medium">
-										{flightDetails.passengers}
-									</p>
-								</div>
-							</div>
-						</div>
-
-						<div className="rounded-md bg-muted p-4 space-y-4">
-							<div className="border-b pb-2">
-								<h3 className="font-medium">Payment Details</h3>
-							</div>
-
-							<div className="space-y-2">
-								<div className="flex justify-between">
-									<p className="text-sm">Payment Method</p>
-									<p className="font-medium">
-										{
-											cryptocurrencies.find(
-												(c) =>
-													c.value ===
-													flightDetails.paymentMethod
-											)?.label
-										}
-									</p>
-								</div>
-								<div className="flex justify-between">
-									<p className="text-sm">Price in USD</p>
-									<p className="font-medium">
-										${getFlightPrice().toLocaleString()}
-									</p>
-								</div>
-								<div className="flex justify-between">
-									<p className="text-sm">
-										Amount in{" "}
-										{
-											cryptocurrencies
-												.find(
-													(c) =>
-														c.value ===
-														flightDetails.paymentMethod
-												)
-												?.label.split(" ")[0]
-										}
-									</p>
-									<p className="font-medium">
-										{getCryptoAmount()}{" "}
-										{flightDetails.paymentMethod.toUpperCase()}
-									</p>
-								</div>
-							</div>
-						</div>
-					</CardContent>
-					<CardFooter className="flex flex-col gap-4">
-						<Button
-							onClick={handleConfirmBooking}
-							className="w-full">
-							Confirm and Pay
-						</Button>
-						<Button
-							variant="outline"
-							onClick={() => setStep(1)}
-							className="w-full">
-							Go Back
-						</Button>
-					</CardFooter>
-				</Card>
+				<FlightConfirmationSection
+					flightDetails={flightDetails}
+					goback={() => setStep(1)}
+					onSubmit={() => onConfirm()}
+				/>
 			)}
-			{/* Step 3: Confirmation */}
+			{/* Step 3: Show success Message */}
 			{step === 3 && (
-				<Card>
-					<CardHeader className="text-center">
-						<div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-							<Check className="h-8 w-8 text-primary" />
-						</div>
-						<CardTitle className="text-2xl">
-							Booking Confirmed!
-						</CardTitle>
-						<CardDescription>
-							Your flight has been booked successfully. You will
-							receive a confirmation email shortly.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-4">
-						<div className="rounded-md bg-muted p-4">
-							<div className="text-center">
-								<p className="text-sm text-muted-foreground">
-									Booking Reference
-								</p>
-								<p className="text-xl font-bold tracking-wider">
-									XCH
-									{Math.floor(Math.random() * 1000000)
-										.toString()
-										.padStart(6, "0")}
-								</p>
-							</div>
-						</div>
-
-						<div className="border-t pt-4">
-							<h3 className="font-medium mb-2">What's Next?</h3>
-							<ul className="space-y-2">
-								<li className="flex items-start gap-2">
-									<ArrowRight className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-									<span>
-										Check your email for booking
-										confirmation details
-									</span>
-								</li>
-								<li className="flex items-start gap-2">
-									<ArrowRight className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-									<span>
-										You can view your booking in the "My
-										Trips" section
-									</span>
-								</li>
-								<li className="flex items-start gap-2">
-									<ArrowRight className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-									<span>
-										Online check-in will be available 24
-										hours before departure
-									</span>
-								</li>
-							</ul>
-						</div>
-					</CardContent>
-					<CardFooter>
-						<Button asChild className="w-full">
-							<Link to="/dashboard">Return to Dashboard</Link>
-						</Button>
-					</CardFooter>
-				</Card>
+				<BookingConfirmedPage
+					message={successMessage}
+					bookingRef={bookingRef}
+				/>
 			)}
 		</div>
 	);

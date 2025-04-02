@@ -47,7 +47,7 @@ export const bookingSchema = z
 		to: z.string({
 			required_error: "Please select a destination airport.",
 		}),
-		scheduledFlightDate: z.date({
+		scheduledFlightDate: z.coerce.date({
 			required_error: "Please select a flight date.",
 		}),
 		type: z.enum(["economy", "business", "firstClass"], {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ImageSchema } from "./zod";
+import { BankSchema, ImageSchema } from "./zod";
 
 export type ApiResponse<T> = {
 	success: boolean;
@@ -38,3 +38,5 @@ export interface Transaction {
 	amount: number;
 	status: "pending" | "completed" | "failed";
 }
+
+export type BankType = z.infer<typeof BankSchema>;

@@ -70,6 +70,12 @@ export const FlightBookinSchema = z
 		path: ["to"],
 	});
 
+export const BankSchema = z.object({
+	bankName: z.string(),
+	accountNo: z.string(),
+	accountName: z.string(),
+});
+
 export const ImageSchema = z.object({
 	image: z.string(),
 	thumb: z.string(),

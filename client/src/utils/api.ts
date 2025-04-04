@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/lib/stores/auth-store";
 import axios from "axios";
 
 // Create an instance of axios
@@ -12,10 +13,8 @@ const api = axios.create({
 api.interceptors.request.use(
 	(config) => {
 		// Get the token from localStorage
-		const state = localStorage.getItem("user-store");
-		if (state) {
-			const parsedState = JSON.parse(state);
-			const token = parsedState.state.token;
+		const token = useAuthStore.getState().token;
+		if (token) {
 			console.log("TOKEN", token);
 
 			// If the token exists, add it to the Authorization header
@@ -43,7 +42,8 @@ api.interceptors.response.use(
 		// Check if the error response status is 401
 		if (error.response && error.response.status === 401) {
 			// Remove the token from localStorage
-			localStorage.removeItem("user-store");
+			const clearSession = useAuthStore.getState().clearSession;
+			clearSession();
 
 			// Get the current visited URL
 			const currentUrl = window.location.href;

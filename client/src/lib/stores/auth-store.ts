@@ -1,6 +1,6 @@
 import { UserType } from "@/utils/types";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { create } from "zustand";
+import { create, StateCreator } from "zustand";
 
 interface authStoreState {
 	user: UserType | undefined | null;
@@ -9,6 +9,7 @@ interface authStoreState {
 	clearSession: () => void;
 	validateToken: () => void;
 	isAuthenticated: () => boolean;
+	isVerified: boolean;
 }
 
 const validateToken = (token: string | null): boolean => {
@@ -24,46 +25,42 @@ const validateToken = (token: string | null): boolean => {
 		return false;
 	}
 };
-
-export const useAuthStore = create<authStoreState>()(
-	persist(
-		(set, get) => ({
+const authStoreSlice: StateCreator<authStoreState> = (set, get) => ({
+	user: null,
+	token: null,
+	isVerified: false,
+	setSession: (user: UserType, token: string) => {
+		set({
+			user,
+			token,
+		});
+	},
+	clearSession: () => {
+		set({
 			user: null,
 			token: null,
-			setSession: (user: UserType, token: string) => {
-				set({
-					user,
-					token,
-				});
-			},
-			clearSession: () => {
-				set({
-					user: null,
-					token: null,
-				});
-			},
-			validateToken: () => {
-				const { clearSession, token } = get();
+		});
+	},
+	validateToken: () => {
+		const { clearSession, token } = get();
 
-				if (!validateToken(token as string)) {
-					clearSession();
-				}
-			},
-			isAuthenticated: () => {
-				const token = get().token;
-				return validateToken(token as string);
-			},
-		}),
-		{
-			name: "user-store",
-			storage: createJSONStorage(() => localStorage),
-			onRehydrateStorage: () => (state) => {
-				if (state) {
-					state.validateToken();
-				}
-			},
+		if (!validateToken(token as string)) {
+			clearSession();
 		}
-	)
-);
+	},
+	isAuthenticated: () => {
+		const token = get().token;
+		return validateToken(token as string);
+	},
+});
 
-export const userStore = useAuthStore.getState();
+const persistedAuthStore = persist(authStoreSlice, {
+	name: "user-store",
+	storage: createJSONStorage(() => localStorage),
+	onRehydrateStorage: () => (state) => {
+		if (state) {
+			state.validateToken();
+		}
+	},
+});
+export const useAuthStore = create(persistedAuthStore);

@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const UserDropdown = () => {
 	const user = useAuthStore((state) => state.user);
+	const navigate = useNavigate();
 	const logout = useAuthStore((state) => state.clearSession);
 	const getUserInitials = () => {
 		if (!user) return "U";
@@ -46,7 +48,7 @@ const UserDropdown = () => {
 					</div>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>
+				<DropdownMenuItem onClick={() => navigate("/my-profile")}>
 					<User className="mr-2 h-4 w-4" />
 					<span>Profile</span>
 				</DropdownMenuItem>

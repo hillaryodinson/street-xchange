@@ -9,6 +9,7 @@ const protectedRoutes = {
 		"/sell/crypto",
 		"/sell/gift-card",
 		"/transaction-history",
+		"/my-profile",
 	],
 };
 

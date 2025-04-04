@@ -5,8 +5,9 @@ import {
 } from "../configs/zod";
 import db from "../configs/db";
 import JWT from "jsonwebtoken";
-import { TypedRequest } from "../configs/requests";
+import { RequestWithUser, TypedRequest } from "../configs/requests";
 import {
+	AccessTokenType,
 	ConfirmPasswordResetType,
 	LoginType,
 	ResetPasswordType,
@@ -279,3 +280,45 @@ export const activateAccount = async (req: Request, res: Response) => {
 		message: "Account activated successfully",
 	});
 };
+
+export const refreshToken = async (req: Request, res: Response) => {
+	// Read the refresh token from the HttpOnly cookie
+	const refreshToken = req.cookies["refresh-token"];
+
+	if (!refreshToken) {
+		return res.status(403).send({ message: "No refresh token provided" });
+	}
+
+	try {
+		// Verify the refresh token
+		const tokenInfo = JWT.verify(
+			refreshToken,
+			process.env.JWT_SECRET as string
+		) as AccessTokenType;
+
+		// If the token is valid and not expired, issue a new access token
+		const newAccessToken = generateNewAccessToken(tokenInfo);
+		return res.json({ success: true, data: { token: newAccessToken } });
+	} catch (err) {
+		// Handle errors, including expired tokens
+		if (err instanceof JWT.TokenExpiredError) {
+			return res
+				.status(403)
+				.json({ success: false, message: "Refresh token expired" });
+		}
+
+		// Handle any other error (e.g., invalid token signature)
+		return res.status(403).json({
+			success: false,
+			message: "Invalid or expired refresh token",
+		});
+	}
+};
+
+function generateNewAccessToken(data: AccessTokenType) {
+	return JWT.sign(
+		{ ...data },
+		process.env.JWT_SECRET as string,
+		{ expiresIn: "30d" } // Token expires in 30 days
+	);
+}

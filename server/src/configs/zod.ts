@@ -72,6 +72,12 @@ export const transactionSchema = z.object({
 	typeId: z.string(),
 });
 
+export const bankSchema = z.object({
+	bankName: z.string(),
+	accountNo: z.string(),
+	accountName: z.string(),
+});
+
 export const imageSchema = z.object({
 	image: z.string(),
 	thumb: z.string(),

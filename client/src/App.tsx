@@ -19,8 +19,25 @@ import { ToastContainer } from "react-toastify";
 import ActivationPage from "./app/(auth)/Activate";
 import PasswordResetRequestPage from "./app/(auth)/Reset/Request";
 import PasswordResetConfirmationPage from "./app/(auth)/Reset/Confirm";
+import MyProfilePage from "./app/(account)/Profile";
+import NotFoundPage from "./app/(public)/Home/errors/notFound";
+import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+function ErrorFallback({ error }: { error: Error }) {
+	const { resetBoundary } = useErrorBoundary();
+
+	return (
+		<div role="alert">
+			<p>Something went wrong:</p>
+			<pre style={{ color: "red" }}>{error.message}</pre>
+			<button onClick={resetBoundary}>Try again</button>
+		</div>
+	);
+}
 
 function App() {
+	const queryClient = new QueryClient();
 	const routes = createBrowserRouter([
 		{
 			path: "/",
@@ -29,6 +46,10 @@ function App() {
 				{
 					index: true,
 					element: <HomePage />,
+				},
+				{
+					path: "*",
+					element: <NotFoundPage />,
 				},
 			],
 		},
@@ -56,12 +77,18 @@ function App() {
 			path: "/reset/confirm",
 			element: <PasswordResetConfirmationPage />,
 		},
+
 		{
 			path: "/",
 			element: (
-				<ProtectedRoute>
-					<BackendLayout />
-				</ProtectedRoute>
+				<ErrorBoundary
+					fallbackRender={({ error }) => (
+						<ErrorFallback error={error} />
+					)}>
+					<ProtectedRoute>
+						<BackendLayout />
+					</ProtectedRoute>
+				</ErrorBoundary>
 			),
 			children: [
 				{
@@ -83,6 +110,10 @@ function App() {
 				{
 					path: "/transaction-history",
 					element: <TransactionsHistory />,
+				},
+				{
+					path: "/my-profile",
+					element: <MyProfilePage />,
 				},
 			],
 		},
@@ -121,8 +152,10 @@ function App() {
 	]);
 	return (
 		<>
-			<RouterProvider router={routes} />
-			<ToastContainer />
+			<QueryClientProvider client={queryClient}>
+				<RouterProvider router={routes} />
+				<ToastContainer />
+			</QueryClientProvider>
 		</>
 	);
 }

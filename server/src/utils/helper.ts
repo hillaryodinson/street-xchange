@@ -35,6 +35,19 @@ export function generateRandomString(length: number) {
 	return randomString;
 }
 
+export function generateRandomNumbers(length: number) {
+	const charset = "0123456789"; // You can customize the character set
+	let randomString = "";
+
+	// Loop to generate a random string of the specified length
+	for (let i = 0; i < length; i++) {
+		const randomIndex = Math.floor(Math.random() * charset.length);
+		randomString += charset[randomIndex];
+	}
+
+	return randomString;
+}
+
 export function generateUniqueRandomStrings(count: number, length: number) {
 	const uniqueStrings = new Set(); // Set will automatically handle uniqueness
 

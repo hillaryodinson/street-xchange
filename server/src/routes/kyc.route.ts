@@ -10,7 +10,7 @@ const kycRoute = Express.Router();
 
 /**
  * @swagger
- * /:
+ * /kyc:
  *   post:
  *     summary: Submit a new KYC request
  *     tags: [KYC Verification]
@@ -105,7 +105,7 @@ const kycRoute = Express.Router();
 kycRoute.post("/", authorize, tryCatch(addKYC));
 /**
  * @swagger
- * /process:
+ * /kyc/process:
  *   post:
  *     summary: Process a KYC request
  *     tags: [KYC Verification]
@@ -196,7 +196,7 @@ kycRoute.post("/", authorize, tryCatch(addKYC));
 kycRoute.post("/process", authorize, tryCatch(processKYCRequest));
 /**
  * @swagger
- * /:
+ * /kyc:
  *   get:
  *     summary: List all KYC requests
  *     tags: [KYC Verification]

@@ -27,6 +27,10 @@ const options = {
 				name: "User",
 				description: "User related endpoints",
 			},
+			{
+				name: "KYC Verification",
+				description: "Endpoints related to KYC verification processes",
+			},
 		],
 		components: {
 			securitySchemes: {

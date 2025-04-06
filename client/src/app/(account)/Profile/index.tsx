@@ -22,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/utils/api";
 import { ApiResponse, BankType } from "@/utils/types";
 import { toast } from "react-toastify";
+import KYCForm from "./components/KYC/KYCForm";
 
 type BankTypewithID = BankType & { id: string };
 const MyProfilePage = () => {
@@ -151,7 +152,7 @@ const MyProfilePage = () => {
 				open={openVerifyModal}
 				setOpen={setOpenVerifyModal}
 				title="Fill KYC Form">
-				<p>Add Bank</p>
+				<KYCForm onComplete={() => {}} />
 			</Modal>
 			<Modal
 				open={openPasswordModal}

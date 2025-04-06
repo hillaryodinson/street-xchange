@@ -26,7 +26,7 @@ model User {
   resetToken String?
   actiToken String?
   tokenExpiresAt DateTime?
-  isVerified Int @default(0)//0 = Pending, 1 = Verified, 2 =  Blocked
+  isVerified Int @default(0)//0 = Pending, 1 = Verified, 2 =  Verification Failed, 3 = Blocked
   createdAt DateTime @default(now())
 
   kyc Kyc[]

@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
 	bookingSchema,
 	confirmPasswordResetSchema,
+	kycSchema,
 	loginSchema,
 	newAccountSchema,
 	resetPasswordSchema,
@@ -43,3 +44,5 @@ export type TransactionType = {
 	description: string;
 	transId: string;
 };
+
+export type KYCType = z.infer<typeof kycSchema>;

@@ -63,6 +63,13 @@ export const bookingSchema = z
 		path: ["to"],
 	});
 
+export const kycSchema = z.object({
+	type: z.string(),
+	number: z.string(),
+	frontimage: z.string(),
+	backimage: z.string().optional(),
+});
+
 export const transactionSchema = z.object({
 	transType: z.string(),
 	description: z.string(),

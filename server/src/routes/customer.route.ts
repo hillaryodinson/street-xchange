@@ -1,15 +1,16 @@
 import { Router } from "express";
-import { tryCatch } from "../middlewares/middleware";
-import { register } from "../controllers/customer.controller";
+import { authorize, tryCatch } from "../middlewares/middleware";
+import { changePassword, register } from "../controllers/customer.controller";
 
 const customerRoutes = Router();
 
 /**
  * @swagger
- * /register:
+ * /customer/register:
  *   post:
  *     summary: Registers a new customer in the system.
  *     description: Registers a new customer with the provided details.
+ *     tags: [User]
  *     parameters:
  *       - in: query
  *         name: withKYC
@@ -83,6 +84,61 @@ const customerRoutes = Router();
  */
 customerRoutes.post("/register", tryCatch(register));
 
+/**
+ * @swagger
+ * /customer/change-password:
+ *   post:
+ *     summary: Registers a new customer in the system.
+ *     description: Registers a new customer with the provided details.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 description: The new password for the customer's account.
+ *               oldpassword:
+ *                 type: string
+ *                 description: The old password for the customer's account.
+ *     responses:
+ *       200:
+ *         description: Registration successful.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Password changed successfully
+ *       400:
+ *         description: Registration failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Registration failed
+ *                 error:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
+customerRoutes.post("/change-password", authorize, tryCatch(changePassword));
 //TODO: Get Customers
 //TODO: Get Single Customer
 //TODO: Blacklist Customer

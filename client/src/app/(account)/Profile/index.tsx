@@ -23,14 +23,13 @@ import api from "@/utils/api";
 import { ApiResponse, BankType } from "@/utils/types";
 import { toast } from "react-toastify";
 import KYCForm from "./components/KYC/KYCForm";
+import { useAuthStore } from "@/lib/stores/auth-store";
 
 type BankTypewithID = BankType & { id: string };
 const MyProfilePage = () => {
 	const APP_NAME = import.meta.env.VITE_APP_NAME || "My App";
 	const [addBankStep, setAddBankStep] = useState(1);
-	const [isVerified, setIsVerified] = useState<
-		"pending" | "verified" | "not-verified"
-	>("not-verified");
+	const isVerified = useAuthStore((state) => state.isVerified);
 
 	const [openBankModal, setOpenBankModal] = useState(false);
 	const [openVerifyModal, setOpenVerifyModal] = useState(false);
@@ -76,7 +75,10 @@ const MyProfilePage = () => {
 						<div className="space-y-4">
 							{accounts && accounts.length > 0 ? (
 								accounts.map((account) => (
-									<BankAccountCard account={account} />
+									<BankAccountCard
+										account={account}
+										key={account.id}
+									/>
 								))
 							) : (
 								<div className="">
@@ -152,7 +154,11 @@ const MyProfilePage = () => {
 				open={openVerifyModal}
 				setOpen={setOpenVerifyModal}
 				title="Fill KYC Form">
-				<KYCForm onComplete={() => {}} />
+				<KYCForm
+					onComplete={() => {
+						setOpenVerifyModal(false);
+					}}
+				/>
 			</Modal>
 			<Modal
 				open={openPasswordModal}

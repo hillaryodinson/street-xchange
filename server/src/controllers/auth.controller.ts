@@ -88,7 +88,8 @@ export const login = async (
 		}
 	);
 
-	const { id, firstname, middlename, surname, email, createdAt } = dbResponse;
+	const { id, firstname, middlename, surname, email, createdAt, isVerified } =
+		dbResponse;
 
 	//send the jwt token in the response
 	res.status(200).json({
@@ -105,7 +106,12 @@ export const login = async (
 				createdAt,
 				role: "customer",
 			},
-			hasKyc: dbResponse.kyc.length > 0,
+			isVerified:
+				isVerified == 0 && dbResponse.kyc.length > 0
+					? "pending"
+					: isVerified == 1
+					? "verified"
+					: "not-verified",
 		},
 	});
 };

@@ -10,14 +10,14 @@ import { toast } from "react-toastify";
 
 interface FileUploaderProps {
 	onFileUpload: (file: File | null) => void;
-	preview?: string | null;
+	defaultImg?: string | undefined;
 	accept?: string;
 	maxSize?: number; // in MB
 }
 
 export function FileUploader({
 	onFileUpload,
-	preview,
+	defaultImg = "",
 	accept = "*",
 	maxSize = 10,
 }: FileUploaderProps) {
@@ -25,15 +25,17 @@ export function FileUploader({
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [file, setFile] = useState<File>();
 	const [fileType, setFileType] = useState<string>();
+	const [preview, setPreview] = useState(defaultImg);
 
 	useEffect(() => {
 		// Clean up the URL when component unmounts or when file changes
 		return () => {
-			if (preview) {
-				URL.revokeObjectURL(preview);
+			if (defaultImg) {
+				URL.revokeObjectURL(defaultImg);
+				setPreview(defaultImg);
 			}
 		};
-	}, [preview]);
+	}, [defaultImg]);
 
 	const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
@@ -109,10 +111,12 @@ export function FileUploader({
 
 	const handleRemoveFile = (e: React.MouseEvent) => {
 		e.stopPropagation(); // Prevent triggering the parent div's onClick
-		onFileUpload(null);
+		//onFileUpload(null);
 		if (fileInputRef.current) {
 			fileInputRef.current.value = "";
 		}
+
+		setPreview("");
 	};
 
 	const formatFileSize = (bytes: number): string => {
@@ -172,6 +176,7 @@ export function FileUploader({
 								<Dialog>
 									<DialogTrigger asChild>
 										<Button
+											type="button"
 											variant="ghost"
 											size="icon"
 											className="absolute top-2 right-2 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm opacity-80 hover:opacity-100 transition-opacity">
@@ -236,6 +241,7 @@ export function FileUploader({
 							</div>
 							<div className="flex items-center space-x-1">
 								<Button
+									type="button"
 									variant="ghost"
 									size="sm"
 									className="h-8 text-xs"
@@ -243,6 +249,7 @@ export function FileUploader({
 									Change
 								</Button>
 								<Button
+									type="button"
 									variant="ghost"
 									size="icon"
 									className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"

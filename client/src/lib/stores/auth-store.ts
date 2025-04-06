@@ -1,15 +1,20 @@
-import { UserType } from "@/utils/types";
+import { UserType, VerificationType } from "@/utils/types";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { create, StateCreator } from "zustand";
 
 interface authStoreState {
 	user: UserType | undefined | null;
 	token: string | undefined | null;
-	setSession: (user: UserType, token: string) => void;
+	setSession: (
+		user: UserType,
+		token: string,
+		isVerified: VerificationType
+	) => void;
 	clearSession: () => void;
 	validateToken: () => void;
 	isAuthenticated: () => boolean;
-	isVerified: boolean;
+	isVerified: VerificationType;
+	updateVerificationStatus: (status: VerificationType) => void;
 }
 
 const validateToken = (token: string | null): boolean => {
@@ -28,13 +33,15 @@ const validateToken = (token: string | null): boolean => {
 const authStoreSlice: StateCreator<authStoreState> = (set, get) => ({
 	user: null,
 	token: null,
-	isVerified: false,
-	setSession: (user: UserType, token: string) => {
+	isVerified: "not-verified",
+	setSession: (user: UserType, token: string, isVerified: string) => {
 		set({
 			user,
 			token,
+			isVerified: isVerified as VerificationType,
 		});
 	},
+
 	clearSession: () => {
 		set({
 			user: null,
@@ -51,6 +58,12 @@ const authStoreSlice: StateCreator<authStoreState> = (set, get) => ({
 	isAuthenticated: () => {
 		const token = get().token;
 		return validateToken(token as string);
+	},
+
+	updateVerificationStatus: (status: VerificationType) => {
+		set({
+			isVerified: status,
+		});
 	},
 });
 

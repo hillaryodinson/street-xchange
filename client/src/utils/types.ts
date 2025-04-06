@@ -7,10 +7,11 @@ export type ApiResponse<T> = {
 	data?: T;
 	errors?: Record<string, unknown>;
 };
-
+export type VerificationType = "pending" | "verified" | "not-verified";
 export type AuthResponse = {
 	token: string;
 	user: UserType;
+	isVerified: VerificationType;
 };
 
 export type UserType = {

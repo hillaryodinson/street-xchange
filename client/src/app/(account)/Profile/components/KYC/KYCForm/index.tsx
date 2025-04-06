@@ -25,6 +25,7 @@ import {
 
 import { FileUploader } from "@/components/site/file-uploader";
 import { useState } from "react";
+import { useAuthStore } from "@/lib/stores/auth-store";
 
 const KYCSchema = z.object({
 	type: z.string(),
@@ -48,6 +49,9 @@ const allowedIdentityTypes = [
 
 const KYCForm = ({ onComplete }: { onComplete: () => void }) => {
 	const [currentID, setCurrentID] = useState("");
+	const updateVerificationStatus = useAuthStore(
+		(state) => state.updateVerificationStatus
+	);
 	const form = useForm({
 		resolver: zodResolver<KYCType>(KYCSchema),
 		values: {
@@ -64,6 +68,7 @@ const KYCForm = ({ onComplete }: { onComplete: () => void }) => {
 			const result = response.data as ApiResponse<undefined>;
 			if (result.success) {
 				toast.success(result.message);
+				updateVerificationStatus("pending");
 				onComplete();
 			} else {
 				throw new Error(result.message);
@@ -194,7 +199,7 @@ const KYCForm = ({ onComplete }: { onComplete: () => void }) => {
 								onFileUpload={handleFrontDocumentUpload}
 								accept="image/*"
 								maxSize={1}
-								preview={form.getValues("frontimage")}
+								defaultImg={form.getValues("frontimage")}
 							/>
 						</FormItem>
 					)}
@@ -209,7 +214,7 @@ const KYCForm = ({ onComplete }: { onComplete: () => void }) => {
 								onFileUpload={handleBackDocumentUpload}
 								accept="image/*"
 								maxSize={1}
-								preview={form.getValues("backimage")}
+								defaultImg={form.getValues("backimage")}
 							/>
 						</FormItem>
 					)}

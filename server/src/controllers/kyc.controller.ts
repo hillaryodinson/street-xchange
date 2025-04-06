@@ -9,6 +9,7 @@ import {
 import { KYCType } from "../configs/types";
 import { AppError, ERROR_CODES } from "../utils/errors";
 import db from "../configs/db";
+import { moveImageToLive } from "../utils/helper";
 
 export const addKYC = async (
 	req: Request,
@@ -29,17 +30,39 @@ export const addKYC = async (
 	const zodResponse = kycSchema.safeParse(req.body);
 	if (zodResponse.error) throw zodResponse;
 
-	//create KYC request in db
-	const kycData = await db.kyc.create({
-		data: {
-			...zodResponse.data,
-			customer: {
-				connect: {
-					id: customer,
-				},
-			},
+	//check if kyc is already existing for the customer.
+	const userKyc = await db.kyc.findFirst({
+		where: {
+			customerId: customer,
 		},
 	});
+
+	if (userKyc) {
+		await db.kyc.update({
+			where: { id: userKyc.id },
+			data: {
+				...zodResponse.data,
+				isApproved: false,
+				customer: {
+					update: {
+						isVerified: 0,
+					},
+				},
+			},
+		});
+	} else {
+		//create KYC request in db
+		const kycData = await db.kyc.create({
+			data: {
+				...zodResponse.data,
+				customer: {
+					connect: {
+						id: customer,
+					},
+				},
+			},
+		});
+	}
 
 	//return success message
 	res.status(201).json({
@@ -59,6 +82,8 @@ export const processKYCRequest = async (
 	}>;
 	const { id, action } = request.query;
 	const user = request.user;
+	let frontUrl = null;
+	let backUrl = undefined;
 
 	if (action !== "approve" && action !== "decline")
 		throw new AppError(
@@ -83,6 +108,7 @@ export const processKYCRequest = async (
 	const kyc = await db.kyc.findFirst({
 		where: { id },
 	});
+
 	if (!kyc)
 		throw new AppError(
 			ERROR_CODES.DB_RECORD_NOT_FOUND,
@@ -90,10 +116,25 @@ export const processKYCRequest = async (
 			400
 		);
 
+	frontUrl = kyc?.frontimage;
+	backUrl = kyc?.backimage;
+
+	if (action == "approve") {
+		const BASEURL = process.env.SERVER_URL || "http://localhost:3000";
+		const newFrontPath = moveImageToLive(kyc.frontimage, kyc.customerId);
+		frontUrl = `${BASEURL}/${newFrontPath}`;
+		if (backUrl) {
+			const newBackPath = moveImageToLive(backUrl, kyc.customerId);
+			backUrl = `${BASEURL}/${newBackPath}`;
+		}
+	}
+
 	//mark kyc as approved
 	await db.kyc.update({
 		data: {
 			isApproved: resolution.isApproved,
+			frontimage: frontUrl,
+			backimage: backUrl,
 		},
 		where: {
 			id,

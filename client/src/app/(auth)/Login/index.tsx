@@ -46,8 +46,8 @@ const LoginPage = () => {
 							toast.success("Login was successful");
 
 							// context.login(data);
-							setSession(data.user, data.token);
-							console.log(data.token);
+							setSession(data.user, data.token, data.isVerified);
+
 							//check for callbackurl
 							setTimeout(() => {
 								const callback =

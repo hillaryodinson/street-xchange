@@ -15,6 +15,7 @@ export const initApp = () => {
 
 	// Serve static files (images, etc.) from the 'uploads' folder
 	app.use("/uploads", express.static(path.join(__dirname, "../", "uploads")));
+	app.use("/temp", express.static(path.join(__dirname, "../", "temp")));
 	app.set("views", path.join(__dirname, "/views"));
 	app.use(bodyParser.urlencoded({ extended: true }));
 

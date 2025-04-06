@@ -1,5 +1,5 @@
 import { ServiceCard } from "@/components/site/service-card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
 	CardHeader,
@@ -9,50 +9,77 @@ import {
 	CardFooter,
 } from "@/components/ui/card";
 
-import { Gift, Plane, Wallet } from "lucide-react";
+import { Gift, Plane, Verified, Wallet } from "lucide-react";
 
 import "@/backend.css";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 const DashboardPage = () => {
 	const user = useAuthStore((state) => state.user);
+	const isVerified = useAuthStore((state) => state.isVerified);
 
 	return (
 		<div className="flex flex-col gap-8">
-			<div>
-				<h1 className="text-3xl font-bold tracking-tight">
-					Welcome back, {user && user.firstname}
-				</h1>
-				<p className="text-muted-foreground">
-					Here's what you can do on your dashboard today.
-				</p>
-			</div>
+			{isVerified == "not-verified" ? (
+				<div>
+					<h1 className="text-3xl font-bold tracking-tight">
+						Welcome, {user && user.firstname}
+					</h1>
+					<p className="text-muted-foreground">
+						Please verify your account to access all features. Click
+						the button to start.{" "}
+						<Link
+							to="/my-profile"
+							className={cn(
+								buttonVariants({
+									variant: "default",
+									size: "sm",
+								})
+							)}>
+							<Verified />
+							Get Started
+						</Link>
+					</p>
+				</div>
+			) : (
+				<>
+					<div>
+						<h1 className="text-3xl font-bold tracking-tight">
+							Welcome back, {user && user.firstname}
+						</h1>
+						<p className="text-muted-foreground">
+							Here's what you can do on your dashboard today.
+						</p>
+					</div>
+					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+						<ServiceCard
+							icon={<Plane className="h-6 w-6" />}
+							title="Book Flights"
+							description="Search and book flights to any destination worldwide."
+							linkText="Book Now"
+							linkHref="/customer-dashboard/flights"
+						/>
 
-			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				<ServiceCard
-					icon={<Plane className="h-6 w-6" />}
-					title="Book Flights"
-					description="Search and book flights to any destination worldwide."
-					linkText="Book Now"
-					linkHref="/customer-dashboard/flights"
-				/>
+						<ServiceCard
+							icon={<Wallet className="h-6 w-6" />}
+							title="Sell Cryptocurrency"
+							description="Convert your crypto assets to cash at competitive rates."
+							linkText="Sell Crypto"
+							linkHref="/customer-dashboard/crypto"
+						/>
 
-				<ServiceCard
-					icon={<Wallet className="h-6 w-6" />}
-					title="Sell Cryptocurrency"
-					description="Convert your crypto assets to cash at competitive rates."
-					linkText="Sell Crypto"
-					linkHref="/customer-dashboard/crypto"
-				/>
-
-				<ServiceCard
-					icon={<Gift className="h-6 w-6" />}
-					title="Sell Gift Cards"
-					description="Exchange your gift cards for cash instantly."
-					linkText="Sell Cards"
-					linkHref="/customer-dashboard/giftcards"
-				/>
-			</div>
+						<ServiceCard
+							icon={<Gift className="h-6 w-6" />}
+							title="Sell Gift Cards"
+							description="Exchange your gift cards for cash instantly."
+							linkText="Sell Cards"
+							linkHref="/customer-dashboard/giftcards"
+						/>
+					</div>
+				</>
+			)}
 
 			<div className="grid gap-6 md:grid-cols-2">
 				<Card>

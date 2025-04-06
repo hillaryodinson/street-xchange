@@ -6,7 +6,7 @@ const customerRoutes = Router();
 
 /**
  * @swagger
- * /customer/register:
+ * /customers/register:
  *   post:
  *     summary: Registers a new customer in the system.
  *     description: Registers a new customer with the provided details.
@@ -86,7 +86,7 @@ customerRoutes.post("/register", tryCatch(register));
 
 /**
  * @swagger
- * /customer/change-password:
+ * /customers/change-password:
  *   post:
  *     summary: Registers a new customer in the system.
  *     description: Registers a new customer with the provided details.

@@ -120,6 +120,18 @@ export const changePassword = async (req: Request, res: Response) => {
 		where: { id: user.id },
 	});
 
+	const mailer = new NodemailerDB(db);
+	const SITEMAIL = process.env.APP_NO_REPLY || "noreply@appname.com";
+	await mailer.sendMail({
+		to: validatedUser.email,
+		from: SITEMAIL,
+		subject: "Password change successful",
+		template: "password_change_notification",
+		context: {
+			name: `${validatedUser.firstname} ${validatedUser.surname}`,
+		},
+	});
+
 	res.status(200).json({
 		success: true,
 		message: "Password changed successfully",

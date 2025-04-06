@@ -12,9 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import api from "@/utils/api";
-import { ApiResponse } from "@/utils/types";
+import { ApiResponse, KYCType } from "@/utils/types";
 import { toast } from "react-toastify";
-import { z } from "zod";
 import {
 	Select,
 	SelectContent,
@@ -26,14 +25,7 @@ import {
 import { FileUploader } from "@/components/site/file-uploader";
 import { useState } from "react";
 import { useAuthStore } from "@/lib/stores/auth-store";
-
-const KYCSchema = z.object({
-	type: z.string(),
-	number: z.string(),
-	frontimage: z.string(),
-	backimage: z.string().optional(),
-});
-type KYCType = z.infer<typeof KYCSchema>;
+import { KYCSchema } from "@/utils/zod";
 
 const allowedIdentityTypes = [
 	{
@@ -74,7 +66,6 @@ const KYCForm = ({ onComplete }: { onComplete: () => void }) => {
 				throw new Error(result.message);
 			}
 		} catch (error) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			toast.error((error as any)?.response.data.message);
 			console.log(error);
 		}

@@ -24,6 +24,7 @@ import { ApiResponse, BankType } from "@/utils/types";
 import { toast } from "react-toastify";
 import KYCForm from "./components/KYC/KYCForm";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import ChangePasswordForm from "./components/ChangePassword";
 
 type BankTypewithID = BankType & { id: string };
 const MyProfilePage = () => {
@@ -164,7 +165,11 @@ const MyProfilePage = () => {
 				open={openPasswordModal}
 				setOpen={setOpenPasswordModal}
 				title="Change Password">
-				<p>Add Bank</p>
+				<ChangePasswordForm
+					onComplete={() => {
+						setOpenPasswordModal(false);
+					}}
+				/>
 			</Modal>
 		</div>
 	);

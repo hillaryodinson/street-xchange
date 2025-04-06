@@ -76,6 +76,24 @@ export const BankSchema = z.object({
 	accountName: z.string(),
 });
 
+export const KYCSchema = z.object({
+	type: z.string(),
+	number: z.string(),
+	frontimage: z.string(),
+	backimage: z.string().optional(),
+});
+
+export const ChangePasswordSchema = z
+	.object({
+		oldpassword: z.string(),
+		password: z.string(),
+		confirm_password: z.string(),
+	})
+	.refine((data) => data.password === data.confirm_password, {
+		message: "Passwords do not match",
+		path: ["confirmPassword"],
+	});
+
 export const ImageSchema = z.object({
 	image: z.string(),
 	thumb: z.string(),

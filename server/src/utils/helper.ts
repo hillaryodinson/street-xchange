@@ -1,6 +1,8 @@
 import { User } from "@prisma/client";
 import { NodemailerDB } from "../services/nodemailer-db";
 import db from "../configs/db";
+import path from "path";
+import fs from "fs";
 
 export const sendActivationEmail = async (token: string, user: User) => {
 	//verify email address
@@ -59,3 +61,32 @@ export function generateUniqueRandomStrings(count: number, length: number) {
 	// Convert the Set back to an array and return it
 	return Array.from(uniqueStrings);
 }
+
+/**
+ * Helper method to move an image from temp to live directory
+ * @param publicUrl - The public URL of the image
+ * @param customer - The customer ID
+ */
+export const moveImageToLive = async (
+	publicUrl: string,
+	customerId: string
+) => {
+	const imagePath = new URL(publicUrl).pathname; // Extract the path from the URL
+	const tempPath = path.join("temp", customerId, imagePath.split("/").pop()!);
+	const livePath = path.join("live", customerId, imagePath.split("/").pop()!);
+
+	// Ensure live/customer directory exists
+	const liveCustomerPath = path.join("live", customerId);
+	if (!fs.existsSync(liveCustomerPath)) {
+		fs.mkdirSync(liveCustomerPath, { recursive: true });
+	}
+
+	// Move the file from temp to live
+	fs.renameSync(tempPath, livePath);
+
+	// Delete all images in temp/customer folder
+	const tempCustomerPath = path.join("temp", customerId);
+	fs.rmSync(tempCustomerPath, { recursive: true, force: true });
+
+	return livePath;
+};

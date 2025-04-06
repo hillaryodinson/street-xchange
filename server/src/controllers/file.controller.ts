@@ -20,7 +20,11 @@ export const uploadFile = async (
 	const customer = request.user?.id;
 
 	if (!customer)
-		throw new AppError(ERROR_CODES.USER_NOT_AUTHORIZED, "Unathorized", 401);
+		throw new AppError(
+			ERROR_CODES.USER_NOT_AUTHORIZED,
+			"Unauthorized",
+			401
+		);
 
 	if (!files || files.length === 0) {
 		throw new AppError(
@@ -30,52 +34,55 @@ export const uploadFile = async (
 		);
 	}
 
+	// Ensure temp/customer directory exists
+	const tempCustomerPath = path.join("temp", customer);
+	if (!fs.existsSync(tempCustomerPath)) {
+		fs.mkdirSync(tempCustomerPath, { recursive: true });
+	}
+
 	const response = await Promise.all(
 		files.map(async (file) => {
-			const thumbPath = path.join(
-				"uploads",
-				customer,
+			const tempThumbPath = path.join(
+				tempCustomerPath,
 				"thumb",
 				file.filename
 			);
-			const mainPath = path.join(
-				"uploads",
-				customer,
+			const tempMainPath = path.join(
+				tempCustomerPath,
 				"main",
 				file.filename
 			);
 
-			// Ensure thumb and main directories exist
-			if (!fs.existsSync(`uploads/${customer}`)) {
-				fs.mkdirSync(`uploads/${customer}`);
-			}
-			if (
-				generateThumbnails &&
-				!fs.existsSync(`uploads/${customer}/thumb`)
-			) {
-				fs.mkdirSync(`uploads/${customer}/thumb`);
+			// Ensure temp/thumb and temp/main directories exist
+			if (generateThumbnails) {
+				const tempThumbDir = path.join(tempCustomerPath, "thumb");
+				if (!fs.existsSync(tempThumbDir)) {
+					fs.mkdirSync(tempThumbDir, { recursive: true });
+				}
 			}
 
-			if (!fs.existsSync(`uploads/${customer}/main`)) {
-				fs.mkdirSync(`uploads/${customer}/main`);
+			const tempMainDir = path.join(tempCustomerPath, "main");
+			if (!fs.existsSync(tempMainDir)) {
+				fs.mkdirSync(tempMainDir, { recursive: true });
 			}
 
-			if (generateThumbnails)
+			if (generateThumbnails) {
 				// Resize the image to thumbnail
-				await sharp(file.path).resize(150, 150).toFile(thumbPath);
+				await sharp(file.path).resize(150, 150).toFile(tempThumbPath);
+			}
 
 			// Resize the image to main size
-			await sharp(file.path).resize(800, 800).toFile(mainPath);
+			await sharp(file.path).resize(800, 800).toFile(tempMainPath);
 
 			// Return paths for thumb and main images
-			const BASEURL = process.env.SEVER_URL || "http://localhost:3000";
+			const BASEURL = process.env.SERVER_URL || "http://localhost:3000";
 			return generateThumbnails
 				? {
-						thumb: `${BASEURL}/${thumbPath}`,
-						main: `${BASEURL}/${mainPath}`,
+						thumb: `${BASEURL}/${tempThumbPath}`,
+						main: `${BASEURL}/${tempMainPath}`,
 				  }
 				: {
-						main: `${BASEURL}/${mainPath}`,
+						main: `${BASEURL}/${tempMainPath}`,
 				  };
 		})
 	);

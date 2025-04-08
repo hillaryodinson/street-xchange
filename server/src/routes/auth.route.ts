@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import {
 	activateAccount,
+	adminLogin,
 	confirmPasswordReset,
 	login,
 	resetPassword,
@@ -111,6 +112,86 @@ const AuthRoute = Router();
 AuthRoute.post(
 	"/login",
 	tryCatch((req, res) => login(req as TypedRequest<{}, LoginType>, res))
+);
+
+/**
+ * @swagger
+ * /auth/adminlogin:
+ *   post:
+ *     summary: login
+ *     description: Logs in an admin and returns a JWT token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The user's email
+ *                 example: admin@admin.com
+ *               password:
+ *                 type: string
+ *                 description: The user's password
+ *                 example: password
+ *     responses:
+ *       200:
+ *         description: User authenticated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: whether the login was successful
+ *                 message:
+ *                   type: string
+ *                   description: a success message
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token:
+ *                       type: string
+ *                       description: The JWT token
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           description: The user's id
+ *                         namee:
+ *                           type: string
+ *                           description: The user's first name
+ *                         email:
+ *                           type: string
+ *                           description: The user's email
+ *                         role:
+ *                           type: string
+ *                           description: The user's role
+ *                           example: customer
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: whether the login was successful
+ *                 message:
+ *                   type: string
+ *                   description: an error message
+ *                 errors:
+ *                   type: string
+ *                   description: list of errors
+ */
+AuthRoute.post(
+	"/adminlogin",
+	tryCatch((req, res) => adminLogin(req as TypedRequest<{}, LoginType>, res))
 );
 
 /**
@@ -236,4 +317,5 @@ AuthRoute.post(
 );
 
 AuthRoute.post("/activate", tryCatch(activateAccount));
+
 export default AuthRoute;

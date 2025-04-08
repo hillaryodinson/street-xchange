@@ -321,6 +321,69 @@ export const refreshToken = async (req: Request, res: Response) => {
 	}
 };
 
+export const adminLogin = async (req: Request, res: Response) => {
+	//validate the user input
+	const data = req.body;
+	const zodResponse = loginSchema.safeParse(data);
+
+	if (zodResponse.error) throw zodResponse.error;
+
+	//get the user data from the database
+	const dbResponse = await db.admin.findUnique({
+		where: {
+			email: data.email,
+		},
+	});
+
+	if (!dbResponse)
+		throw new AppError(
+			ERROR_CODES.USER_NOT_FOUND,
+			"Invalid Username or Password"
+		);
+
+	//check if the password is correct
+	const isValidPassword = await argon2.verify(
+		dbResponse.password,
+		data.password
+	);
+	if (!isValidPassword)
+		throw new AppError(
+			ERROR_CODES.USER_PASSWORD_INCORRECT,
+			"Invalid Username or Password"
+		);
+
+	//create a jwt token
+	const token = JWT.sign(
+		{
+			id: dbResponse.id,
+			name: dbResponse.name,
+			email: dbResponse.email,
+			role: "sxadmin",
+		},
+		process.env.JWT_SECRET as string,
+		{
+			expiresIn: "1h",
+		}
+	);
+
+	const { id, name, email } = dbResponse;
+
+	//send the jwt token in the response
+	res.status(200).json({
+		success: true,
+		message: "Login successfully",
+		data: {
+			token,
+			user: {
+				id,
+				name,
+				email,
+				role: "sxadmin",
+			},
+		},
+	});
+};
+
 function generateNewAccessToken(data: AccessTokenType) {
 	return JWT.sign(
 		{ ...data },

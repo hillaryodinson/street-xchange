@@ -36,7 +36,7 @@ model User {
 model Admin {
   id String @id @default(uuid())
   name String
-  email String
+  email String @unique
   password String
 }
 
@@ -159,4 +159,14 @@ model CustomerBank {
 model Setting {
   key String @unique
   value String
+}
+
+model WalletAddress {
+  id String @id @default(uuid())
+  crypto String // e.g., BTC, ETH, USDT
+  address String
+  network String // e.g., ERC20, BEP20, TRC20
+  isActive Boolean @default(true) // Indicates if the wallet address is active
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -1,4 +1,3 @@
 export const SettingColunns = {
-	WALLET: "wallet",
-	APPNAME: "appname",
+	NGN_RATE: "ngn_rate",
 } as const;

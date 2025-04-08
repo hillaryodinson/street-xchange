@@ -18,6 +18,10 @@ export type AuthResponse = {
 	user: UserType;
 	isVerified: VerificationType;
 };
+export type AuthAdminResponse = {
+	token: string;
+	user: AdminType;
+};
 
 export type UserType = {
 	id: string;
@@ -27,6 +31,14 @@ export type UserType = {
 	middlename: string;
 	surname: string;
 	createdat: string;
+};
+
+export type AdminType = {
+	id: string;
+	email: string;
+	role: string;
+	name: string;
+	middlename: string;
 };
 
 export type ImageType = {

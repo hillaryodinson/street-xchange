@@ -62,7 +62,7 @@ export function ExchangeCryptoForm() {
 			cryptoType: "",
 			amount: undefined,
 			targetCurrency: "usd",
-			walletAddress: "",
+			walletAddress: "1L1LdwwB6F5tbZ7GeSAQkvhnhy8dNi3Xji",
 			bankName: "",
 			accountNumber: "",
 			accountName: "",
@@ -271,6 +271,7 @@ export function ExchangeCryptoForm() {
 												<Input
 													placeholder="Enter your wallet address"
 													{...field}
+													disabled={true}
 												/>
 											</FormControl>
 											<FormDescription>

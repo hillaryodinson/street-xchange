@@ -4,7 +4,7 @@ const options = {
 	definition: {
 		openapi: "3.0.0",
 		info: {
-			title: "Apartu API",
+			title: "StreetXchange API",
 			version: "1.0.0",
 			description: "StreetXchange API documentation",
 		},

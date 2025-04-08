@@ -6,6 +6,7 @@ import {
 	loginSchema,
 	newAccountSchema,
 	resetPasswordSchema,
+	WalletSchema,
 } from "./zod";
 import { User } from "@prisma/client";
 
@@ -46,3 +47,5 @@ export type TransactionType = {
 };
 
 export type KYCType = z.infer<typeof kycSchema>;
+
+export type WalletType = z.infer<typeof WalletSchema>;

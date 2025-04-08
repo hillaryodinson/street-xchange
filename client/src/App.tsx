@@ -23,6 +23,8 @@ import MyProfilePage from "./app/(account)/Profile";
 import NotFoundPage from "./app/(public)/Home/errors/notFound";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AdminProtectedRoute from "./middleware/AdminProtectedRoute";
+import SettingsPage from "./app/(admin)/Setting";
 
 function ErrorFallback({ error }: { error: Error }) {
 	const { resetBoundary } = useErrorBoundary();
@@ -120,9 +122,9 @@ function App() {
 		{
 			path: "/sxadmin/",
 			element: (
-				<ProtectedRoute>
+				<AdminProtectedRoute>
 					<AdminLayout />
-				</ProtectedRoute>
+				</AdminProtectedRoute>
 			),
 			children: [
 				{
@@ -142,6 +144,7 @@ function App() {
 				},
 				{
 					path: "/sxadmin/settings",
+					element: <SettingsPage />,
 				},
 				{
 					path: "/sxadmin/transaction/history",

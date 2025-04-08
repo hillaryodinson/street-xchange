@@ -32,7 +32,6 @@ const LoginPage = () => {
 
 	const formSubmit = (data: z.infer<typeof LoginSchema>) => {
 		startTransition(() => {
-			redirect("/dashboard");
 			api.post("/auth/login", data)
 				.then((response) => {
 					if (response.status !== 200) {

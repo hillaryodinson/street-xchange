@@ -1,6 +1,6 @@
-import { useAuthStore } from "@/lib/stores/auth-store";
+import { useAuthAdminStore } from "@/lib/stores/auth-admin-store";
 import api from "@/utils/api";
-import { ApiResponse, AuthResponse } from "@/utils/types";
+import { ApiResponse, AuthAdminResponse } from "@/utils/types";
 import { LoginSchema } from "@/utils/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -12,7 +12,7 @@ import { z } from "zod";
 
 const AdminLoginPage = () => {
 	const params = useParams();
-	const { setSession, isAuthenticated } = useAuthStore((state) => state);
+	const { setSession, isAuthenticated } = useAuthAdminStore((state) => state);
 	const redirect = useNavigate();
 	const [isLoading, startTransition] = useTransition();
 
@@ -30,8 +30,6 @@ const AdminLoginPage = () => {
 
 	const formSubmit = (data: z.infer<typeof LoginSchema>) => {
 		startTransition(() => {
-			console.log(data);
-			redirect("/dashboard");
 			api.post("/auth/adminlogin", data)
 				.then((response) => {
 					if (response.status !== 200) {
@@ -39,7 +37,7 @@ const AdminLoginPage = () => {
 					}
 
 					const { data, success, message } =
-						response.data as ApiResponse<AuthResponse>;
+						response.data as ApiResponse<AuthAdminResponse>;
 					if (success) {
 						if (data) {
 							toast.success("Login was successful");
@@ -49,7 +47,7 @@ const AdminLoginPage = () => {
 							//check for callbackurl
 							setTimeout(() => {
 								const callback =
-									params.redirect || "/dashboard";
+									params.redirect || "/sxadmin/dashboard";
 								redirect(callback);
 							}, 3000);
 						}

@@ -32,14 +32,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 		return <Navigate to="/dashboard" />;
 	}
 
-	if (
-		protectedRoutes.userRoutes.includes(location.pathname) &&
-		user &&
-		user.role == "sxadmin"
-	) {
-		return <Navigate to="/sxadmin/dashboard" />;
-	}
-
 	return <>{children}</>;
 };
 

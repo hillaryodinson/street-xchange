@@ -50,6 +50,35 @@ export const fetchWallets = async (req: Request, res: Response) => {
 	});
 };
 
+export const fetchRandomWalletAddress = async (req: Request, res: Response) => {
+	const request = req as TypedRequestQuery<{
+		crypto: string;
+		network: string;
+	}>;
+
+	if (!request.query.crypto || !request.query.network)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_MISSING_FIELD,
+			"Please specify a crypto and network",
+			400
+		);
+
+	//get all wallets
+	const result = await db.walletAddress.findMany({
+		where: {
+			crypto: request.query.crypto,
+			network: request.query.network,
+			isActive: true,
+		},
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "Ok",
+		data: result,
+	});
+};
+
 export const manageWallet = async (req: Request, res: Response) => {
 	//validate if its admins work
 	const request = req as TypedRequestQuery<{

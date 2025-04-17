@@ -2,6 +2,7 @@ import Express from "express";
 import { authorize, tryCatch } from "../middlewares/middleware";
 import {
 	addWallet,
+	fetchRandomWalletAddress,
 	fetchWallets,
 	manageWallet,
 } from "../controllers/wallet.controller";
@@ -98,8 +99,6 @@ walletRoute.post("/", authorize, tryCatch(addWallet));
  *   get:
  *     summary: Fetch all wallets
  *     tags: [Wallet]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of wallets retrieved successfully
@@ -182,6 +181,110 @@ walletRoute.post("/", authorize, tryCatch(addWallet));
  *                   example: Unauthorized
  */
 walletRoute.get("/", tryCatch(fetchWallets));
+
+/**
+ * @swagger
+ * /wallets/random:
+ *   get:
+ *     summary: Fetch random wallet address
+ *     tags: [Wallet]
+ *     parameters:
+ *       - in: query
+ *         name: crypto
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Name of the wallet
+ *         example: BTC
+ *       - in: query
+ *         name: network
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Wallet network
+ *         example: ETH
+ *     responses:
+ *       200:
+ *         description: List of wallets retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Wallets fetched successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                      type: object
+ *                      properties:
+ *                          id:
+ *                              type: string
+ *                              description: Unique identifier for the wallet
+ *                          crypto:
+ *                              type: string
+ *                              description: Name of the cryptocurrency
+ *                          network:
+ *                              type: string
+ *                              description: Blockchain network of the wallet
+ *                          addresses:
+ *                              description: Array of wallet addresses
+ *                              type: array
+ *                              items:
+ *                                  type: string
+ *                          createdAt:
+ *                              type: string
+ *                              format: date-time
+ *                              description: Timestamp when the wallet was created
+ *                          updatedAt:
+ *                              type: string
+ *                              format: date-time
+ *                              description: Timestamp when the wallet was last updated
+ *       400:
+ *         description: Invalid request parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Bad Request
+ *       401:
+ *         description: User is not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthenticated
+ *       403:
+ *         description: User does not have the necessary permissions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ */
+walletRoute.get("/", tryCatch(fetchRandomWalletAddress));
 
 /**
  * @swagger

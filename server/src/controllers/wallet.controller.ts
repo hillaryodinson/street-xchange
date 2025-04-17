@@ -72,10 +72,21 @@ export const fetchRandomWalletAddress = async (req: Request, res: Response) => {
 		},
 	});
 
+	if (result.length === 0) {
+		res.status(404).json({
+			success: false,
+			message: "No wallet addresses found",
+		});
+		return;
+	}
+
+	const randomIndex = Math.floor(Math.random() * result.length);
+	const randomWallet = result[randomIndex];
+
 	res.status(200).json({
 		success: true,
 		message: "Ok",
-		data: result,
+		data: randomWallet,
 	});
 };
 

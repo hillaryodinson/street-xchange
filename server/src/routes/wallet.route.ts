@@ -129,9 +129,7 @@ walletRoute.post("/", authorize, tryCatch(addWallet));
  *                              description: Blockchain network of the wallet
  *                          addresses:
  *                              description: Array of wallet addresses
- *                              type: array
- *                              items:
- *                                  type: string
+ *                              type: string
  *                          createdAt:
  *                              type: string
  *                              format: date-time
@@ -218,10 +216,8 @@ walletRoute.get("/", tryCatch(fetchWallets));
  *                   type: string
  *                   example: Wallets fetched successfully
  *                 data:
- *                   type: array
- *                   items:
- *                      type: object
- *                      properties:
+ *                    type: object
+ *                    properties:
  *                          id:
  *                              type: string
  *                              description: Unique identifier for the wallet
@@ -233,9 +229,7 @@ walletRoute.get("/", tryCatch(fetchWallets));
  *                              description: Blockchain network of the wallet
  *                          addresses:
  *                              description: Array of wallet addresses
- *                              type: array
- *                              items:
- *                                  type: string
+ *                              type: string
  *                          createdAt:
  *                              type: string
  *                              format: date-time
@@ -284,7 +278,7 @@ walletRoute.get("/", tryCatch(fetchWallets));
  *                   type: string
  *                   example: Unauthorized
  */
-walletRoute.get("/", tryCatch(fetchRandomWalletAddress));
+walletRoute.get("/random", tryCatch(fetchRandomWalletAddress));
 
 /**
  * @swagger

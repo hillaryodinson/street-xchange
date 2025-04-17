@@ -13,6 +13,7 @@ import { WalletTable } from "@/components/site/wallet-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/utils/api";
 import { ApiResponse, WalletType } from "@/utils/types";
+import { toast } from "react-toastify";
 
 const WalletSetting = () => {
 	const [isAddWalletModalOpen, setIsAddWalletModalOpen] = useState(false);
@@ -32,17 +33,45 @@ const WalletSetting = () => {
 		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
 	};
 
-	const onDeleteWallet = () => {
+	const onDeleteWallet = async () => {
 		setIsAddWalletModalOpen(false);
-		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+		const response = await api.delete("/wallets");
+		const result = response.data as ApiResponse<undefined>;
+		if (result.success) {
+			toast.success("Your wallet have been deleted successfully.");
+			// Invalidate the query to refetch the wallets
+			query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+		} else {
+			toast.error("Failed to delete wallet.");
+		}
 	};
-	const onActivateWallet = () => {
-		setIsAddWalletModalOpen(false);
-		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+
+	const onActivateWallet = async (id: string) => {
+		const response = await api.post(
+			`/wallets/manage?id=${id}&action=activate`
+		);
+		const result = response.data as ApiResponse<undefined>;
+		if (result.success) {
+			toast.success("Your wallet have been activated successfully.");
+			// Invalidate the query to refetch the wallets
+			query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+		} else {
+			toast.error("Failed to activate wallet.");
+		}
 	};
-	const onDeactivateWallet = () => {
-		setIsAddWalletModalOpen(false);
-		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+
+	const onDeactivateWallet = async (id: string) => {
+		const response = await api.post(
+			`/wallets/manage?id=${id}&action=deactivate`
+		);
+		const result = response.data as ApiResponse<undefined>;
+		if (result.success) {
+			toast.success("Your wallet have been deactivated successfully.");
+			// Invalidate the query to refetch the wallets
+			query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+		} else {
+			toast.error("Failed to deactivate wallet.");
+		}
 	};
 
 	return (

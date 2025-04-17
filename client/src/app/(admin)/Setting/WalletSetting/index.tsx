@@ -1,4 +1,3 @@
-import { TransactionsTable } from "@/components/site/transaction-table";
 import {
 	Card,
 	CardHeader,
@@ -10,9 +9,29 @@ import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddWalletModal from "./components/AddWalletModal";
 import { useState } from "react";
+import { WalletTable } from "@/components/site/wallet-table";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import api from "@/utils/api";
+import { ApiResponse, WalletType } from "@/utils/types";
 
 const WalletSetting = () => {
 	const [isAddWalletModalOpen, setIsAddWalletModalOpen] = useState(false);
+	const query = useQueryClient();
+
+	const { data: wallets, isLoading } = useQuery({
+		queryKey: ["fetch_wallets"],
+		queryFn: async () => {
+			const response = await api.get("/wallets");
+			const result = response.data as ApiResponse<WalletType[]>;
+			if (result.success) return result.data;
+		},
+	});
+
+	const onAddWallet = () => {
+		setIsAddWalletModalOpen(false);
+		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+	};
+
 	return (
 		<>
 			<Card>
@@ -35,12 +54,15 @@ const WalletSetting = () => {
 					</div>
 				</CardHeader>
 				<CardContent>
-					<TransactionsTable transactions={[]} />
+					<WalletTable
+						wallets={wallets || []}
+						isLoading={isLoading}
+					/>
 				</CardContent>
 			</Card>
 			<AddWalletModal
 				open={isAddWalletModalOpen}
-				onOpenChange={setIsAddWalletModalOpen}
+				onOpenChange={onAddWallet}
 			/>
 		</>
 	);

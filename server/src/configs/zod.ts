@@ -93,5 +93,5 @@ export const imageSchema = z.object({
 export const WalletSchema = z.object({
 	crypto: z.string(),
 	network: z.string(),
-	address: z.array(z.string()),
+	address: z.string(),
 });

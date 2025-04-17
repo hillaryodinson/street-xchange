@@ -25,7 +25,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { WalletFormValues } from "@/utils/types";
+import { ApiResponse, WalletFormValues } from "@/utils/types";
+import { adminApi } from "@/utils/api";
 
 const AddWalletModal = ({
 	open,
@@ -50,13 +51,28 @@ const AddWalletModal = ({
 		setIsGeneralSubmitting(true);
 
 		// Simulate API call
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		console.log("General settings updated:", data);
-		toast.success("Your wallet have been added successfully.");
-
+		//await new Promise((resolve) => setTimeout(resolve, 1000));
+		try {
+			const response = await adminApi.post("/wallets", data);
+			const result = response.data as ApiResponse<undefined>;
+			if (result.success) {
+				toast.success("Your wallet have been added successfully.");
+				onOpenChange(false);
+			} else if (result.errors) {
+				throw new Error(result.message);
+			} else {
+				throw new Error(
+					"An error occured please contact administrator"
+				);
+			}
+		} catch (error) {
+			const errorMessage =
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(error as any)?.message ||
+				"An error occured. Please contact admin";
+			toast.error(errorMessage);
+		}
 		setIsGeneralSubmitting(false);
-		onOpenChange(false);
 	};
 
 	return (

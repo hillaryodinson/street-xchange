@@ -65,3 +65,11 @@ export type ChangePasswordType = z.infer<typeof ChangePasswordSchema>;
 
 export type GeneralFormValues = z.infer<typeof generalFormSchema>;
 export type WalletFormValues = z.infer<typeof walletFormSchema>;
+export type WalletType = {
+	id?: string;
+	crypto: string;
+	address: string;
+	network: string;
+	isActive: boolean;
+	createdAt: string;
+};

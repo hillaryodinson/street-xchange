@@ -1,4 +1,4 @@
-import { Check, Loader2 } from "lucide-react";
+import { Check, CheckCircle, Loader2, Trash2, XCircle } from "lucide-react";
 import {
 	Table,
 	TableBody,
@@ -8,13 +8,23 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { WalletType } from "@/utils/types";
+import { Button } from "@/components/ui/button";
 
 interface walletsTableProps {
 	wallets: WalletType[];
 	isLoading: boolean;
+	onActivate: (id: string) => void;
+	onDeactivate: (id: string) => void;
+	onDelete: (id: string) => void;
 }
 
-export function WalletTable({ wallets, isLoading }: walletsTableProps) {
+export function WalletTable({
+	wallets,
+	isLoading,
+	onActivate,
+	onDeactivate,
+	onDelete,
+}: walletsTableProps) {
 	const getStatusBadge = (status: WalletType["isActive"]) => {
 		switch (status) {
 			case true:
@@ -49,6 +59,7 @@ export function WalletTable({ wallets, isLoading }: walletsTableProps) {
 						<TableHead>Network</TableHead>
 						<TableHead>Address</TableHead>
 						<TableHead className="text-right">Status</TableHead>
+						<TableHead>Options</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -68,12 +79,12 @@ export function WalletTable({ wallets, isLoading }: walletsTableProps) {
 							</TableCell>
 						</TableRow>
 					) : (
-						wallets.map((wallet) => (
+						wallets.map((wallet, index) => (
 							<TableRow
 								key={wallet.id}
 								className="border-b border-muted/30 hover:bg-muted/30">
 								<TableCell className="font-mono text-xs">
-									{wallet.id}
+									{index + 1}
 								</TableCell>
 								<TableCell>{wallet.crypto}</TableCell>
 								<TableCell>
@@ -86,6 +97,41 @@ export function WalletTable({ wallets, isLoading }: walletsTableProps) {
 								<TableCell>{wallet.address}</TableCell>
 								<TableCell className="text-right">
 									{getStatusBadge(wallet.isActive)}
+								</TableCell>
+								<TableCell className="text-right flex justify-end gap-2">
+									{wallet.isActive ? (
+										<Button
+											variant={"outline"}
+											size={"icon"}
+											onClick={() =>
+												onDeactivate(wallet.id!)
+											}>
+											<XCircle className="h-4 w-4 text-red-500" />
+											<span className="sr-only">
+												Deactivate
+											</span>
+										</Button>
+									) : (
+										<Button
+											variant={"outline"}
+											size={"icon"}
+											onClick={() =>
+												onActivate(wallet.id!)
+											}>
+											<CheckCircle className="h-4 w-4 text-green-500" />
+											<span className="sr-only">
+												Activate
+											</span>
+										</Button>
+									)}
+
+									<Button
+										variant="outline"
+										size="icon"
+										onClick={() => onDelete(wallet.id!)}>
+										<Trash2 className="h-4 w-4 text-dark" />
+										<span className="sr-only">Delete</span>
+									</Button>
 								</TableCell>
 							</TableRow>
 						))

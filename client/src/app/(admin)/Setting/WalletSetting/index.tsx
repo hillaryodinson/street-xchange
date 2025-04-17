@@ -32,6 +32,19 @@ const WalletSetting = () => {
 		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
 	};
 
+	const onDeleteWallet = () => {
+		setIsAddWalletModalOpen(false);
+		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+	};
+	const onActivateWallet = () => {
+		setIsAddWalletModalOpen(false);
+		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+	};
+	const onDeactivateWallet = () => {
+		setIsAddWalletModalOpen(false);
+		query.invalidateQueries({ queryKey: ["fetch_wallets"] });
+	};
+
 	return (
 		<>
 			<Card>
@@ -57,6 +70,9 @@ const WalletSetting = () => {
 					<WalletTable
 						wallets={wallets || []}
 						isLoading={isLoading}
+						onActivate={onActivateWallet}
+						onDeactivate={onDeactivateWallet}
+						onDelete={onDeleteWallet}
 					/>
 				</CardContent>
 			</Card>

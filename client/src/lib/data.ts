@@ -871,3 +871,62 @@ export const banks = [
 		code: "057",
 	},
 ] as const;
+
+export const cryptoes = [
+	{
+		name: "Bitcoin",
+		symbol: "BTC",
+		networks: ["Bitcoin Mainnet", "Lightning Network", "Testnet"],
+	},
+	{
+		name: "Ethereum",
+		symbol: "ETH",
+		networks: [
+			"Ethereum Mainnet",
+			"Goerli Testnet",
+			"Sepolia Testnet",
+			"Arbitrum",
+			"Optimism",
+			"Polygon",
+			"zkSync",
+			"Base",
+		],
+	},
+	{
+		name: "Binance Coin",
+		symbol: "BNB",
+		networks: [
+			"BNB Beacon Chain (BEP2)",
+			"BNB Smart Chain (BEP20)",
+			"BNB Greenfield",
+		],
+	},
+	{
+		name: "Solana",
+		symbol: "SOL",
+		networks: ["Solana Mainnet Beta", "Solana Testnet", "Solana Devnet"],
+	},
+	{
+		name: "Cardano",
+		symbol: "ADA",
+		networks: ["Cardano Mainnet", "Preprod Testnet", "Preview Testnet"],
+	},
+	{
+		name: "Tether",
+		symbol: "USDT",
+		networks: [
+			"Ethereum (ERC-20)",
+			"Tron (TRC-20)",
+			"BNB Smart Chain (BEP-20)",
+			"Polygon",
+			"Solana",
+			"Algorand",
+			"Avalanche",
+			"Arbitrum",
+			"Optimism",
+			"Near",
+			"EOS",
+			"Omni",
+		],
+	},
+] as const;

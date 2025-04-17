@@ -94,6 +94,18 @@ export const ChangePasswordSchema = z
 		path: ["confirmPassword"],
 	});
 
+export const generalFormSchema = z.object({
+	currentRate: z.coerce.number().positive({
+		message: "Rate must be a positive number.",
+	}),
+});
+
+export const walletFormSchema = z.object({
+	crypto: z.string().min(1, "Wallet name is required."),
+	address: z.string().min(1, "Wallet address is required."),
+	network: z.string().min(1, "Wallet network is required."),
+});
+
 export const ImageSchema = z.object({
 	image: z.string(),
 	thumb: z.string(),

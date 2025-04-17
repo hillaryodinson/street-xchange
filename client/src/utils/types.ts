@@ -2,8 +2,10 @@ import { z } from "zod";
 import {
 	BankSchema,
 	ChangePasswordSchema,
+	generalFormSchema,
 	ImageSchema,
 	KYCSchema,
+	walletFormSchema,
 } from "./zod";
 
 export type ApiResponse<T> = {
@@ -60,3 +62,6 @@ export interface Transaction {
 export type BankType = z.infer<typeof BankSchema>;
 export type KYCType = z.infer<typeof KYCSchema>;
 export type ChangePasswordType = z.infer<typeof ChangePasswordSchema>;
+
+export type GeneralFormValues = z.infer<typeof generalFormSchema>;
+export type WalletFormValues = z.infer<typeof walletFormSchema>;

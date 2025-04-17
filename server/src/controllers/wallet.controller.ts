@@ -132,3 +132,101 @@ export const manageWallet = async (req: Request, res: Response) => {
 		message: `Wallet was ${action}d successfully`,
 	});
 };
+
+export const deleteWallet = async (req: Request, res: Response) => {
+	const request = req as TypedRequestQuery<{
+		id: string;
+	}>;
+	const user = request.user;
+	const id = request.query.id;
+	if (!id)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_MISSING_FIELD,
+			"ID is missing",
+			400
+		);
+	if (!user || user.role !== "sxadmin")
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHORIZED,
+			"Unauthorized",
+			403
+		);
+
+	//delete wallet
+	const result = await db.walletAddress.delete({
+		where: {
+			id,
+		},
+	});
+	if (!result)
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"Wallet not found",
+			404
+		);
+	res.status(200).json({
+		success: true,
+		message: "Wallet was deleted successfully",
+	});
+};
+
+export const fetchSupportedCrypto = async (req: Request, res: Response) => {
+	const result = await db.walletAddress.findMany({
+		select: {
+			id: true,
+			crypto: true,
+		},
+		where: {
+			isActive: true,
+		},
+		distinct: ["crypto"],
+	});
+
+	if (result.length === 0) {
+		res.status(404).json({
+			success: false,
+			message: "No wallet addresses found",
+		});
+		return;
+	}
+
+	res.status(200).json({
+		success: true,
+		message: "Ok",
+		data: result,
+	});
+};
+
+export const fetchSupportedCryptoNetworks = async (
+	req: Request,
+	res: Response
+) => {
+	const request = req as TypedRequestQuery<{
+		crypto: string;
+	}>;
+
+	if (!request.query.crypto)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_MISSING_FIELD,
+			"Please specify a crypto",
+			400
+		);
+
+	const result = await db.walletAddress.findMany({
+		select: {
+			id: true,
+			network: true,
+		},
+		where: {
+			isActive: true,
+			crypto: request.query.crypto,
+		},
+		distinct: ["network"],
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "Ok",
+		data: result,
+	});
+};

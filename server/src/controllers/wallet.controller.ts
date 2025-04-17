@@ -37,11 +37,7 @@ export const addWallet = async (req: Request, res: Response) => {
 
 export const fetchWallets = async (req: Request, res: Response) => {
 	//get all wallets
-	const result = await db.walletAddress.findMany({
-		where: {
-			isActive: true,
-		},
-	});
+	const result = await db.walletAddress.findMany();
 
 	res.status(200).json({
 		success: true,

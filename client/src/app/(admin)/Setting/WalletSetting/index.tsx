@@ -11,7 +11,7 @@ import AddWalletModal from "./components/AddWalletModal";
 import { useState } from "react";
 import { WalletTable } from "@/components/site/wallet-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import api from "@/utils/api";
+import { adminApi } from "@/utils/api";
 import { ApiResponse, WalletType } from "@/utils/types";
 import { toast } from "react-toastify";
 
@@ -22,7 +22,7 @@ const WalletSetting = () => {
 	const { data: wallets, isLoading } = useQuery({
 		queryKey: ["fetch_wallets"],
 		queryFn: async () => {
-			const response = await api.get("/wallets");
+			const response = await adminApi.get("/wallets");
 			const result = response.data as ApiResponse<WalletType[]>;
 			if (result.success) return result.data;
 		},
@@ -35,7 +35,7 @@ const WalletSetting = () => {
 
 	const onDeleteWallet = async () => {
 		setIsAddWalletModalOpen(false);
-		const response = await api.delete("/wallets");
+		const response = await adminApi.delete("/wallets");
 		const result = response.data as ApiResponse<undefined>;
 		if (result.success) {
 			toast.success("Your wallet have been deleted successfully.");
@@ -47,7 +47,7 @@ const WalletSetting = () => {
 	};
 
 	const onActivateWallet = async (id: string) => {
-		const response = await api.post(
+		const response = await adminApi.post(
 			`/wallets/manage?id=${id}&action=activate`
 		);
 		const result = response.data as ApiResponse<undefined>;
@@ -61,7 +61,7 @@ const WalletSetting = () => {
 	};
 
 	const onDeactivateWallet = async (id: string) => {
-		const response = await api.post(
+		const response = await adminApi.post(
 			`/wallets/manage?id=${id}&action=deactivate`
 		);
 		const result = response.data as ApiResponse<undefined>;

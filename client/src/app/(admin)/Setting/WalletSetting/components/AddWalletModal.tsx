@@ -57,6 +57,7 @@ const AddWalletModal = ({
 			const result = response.data as ApiResponse<undefined>;
 			if (result.success) {
 				toast.success("Your wallet have been added successfully.");
+				walletForm.reset();
 				onOpenChange(false);
 			} else if (result.errors) {
 				throw new Error(result.message);

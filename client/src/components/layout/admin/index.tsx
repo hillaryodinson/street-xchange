@@ -1,4 +1,3 @@
-import { DashboardHeader } from "@/components/layout/backend/components/dashboard-header";
 import { MobileNav } from "@/components/layout/backend/components/mobile-nav";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import {
 import "@/backend.css";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { AdminDashboardHeader } from "./components/admin-dashboard-header";
 
 const AdminLayout = () => {
 	const location = useLocation();
@@ -25,7 +25,7 @@ const AdminLayout = () => {
 
 	return (
 		<div className="flex min-h-screen flex-col">
-			<DashboardHeader />
+			<AdminDashboardHeader />
 
 			<div className="flex flex-1">
 				<div

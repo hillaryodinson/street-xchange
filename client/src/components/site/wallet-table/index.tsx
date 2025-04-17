@@ -58,8 +58,8 @@ export function WalletTable({
 						<TableHead>Name</TableHead>
 						<TableHead>Network</TableHead>
 						<TableHead>Address</TableHead>
-						<TableHead className="text-right">Status</TableHead>
-						<TableHead>Options</TableHead>
+						<TableHead>Status</TableHead>
+						<TableHead className="text-end">Options</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>

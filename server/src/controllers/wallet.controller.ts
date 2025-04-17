@@ -21,12 +21,10 @@ export const addWallet = async (req: Request, res: Response) => {
 	const zodResponse = WalletSchema.safeParse(req.body);
 	if (zodResponse.error) throw zodResponse;
 
-	const addresses = zodResponse.data.address.join(", ");
 	//add wallet to db
 	const wallet = await db.walletAddress.create({
 		data: {
 			...zodResponse.data,
-			address: addresses,
 		},
 	});
 
@@ -45,19 +43,10 @@ export const fetchWallets = async (req: Request, res: Response) => {
 		},
 	});
 
-	const wallets = result.map((wallet) => ({
-		id: wallet.id,
-		asset: wallet.crypto,
-		network: wallet.network,
-		addresses: wallet.address.split(", "),
-		createdAt: wallet.createdAt,
-		updatedAt: wallet.updatedAt,
-	}));
-
 	res.status(200).json({
 		success: true,
 		message: "Ok",
-		data: wallets,
+		data: result,
 	});
 };
 

@@ -147,7 +147,10 @@ const MyProfilePage = () => {
 				)}
 				{addBankStep == 2 && (
 					<BankAccountConfirmForm
-						onComplete={() => setAddBankStep(2)}
+						onComplete={() => {
+							setAddBankStep(1);
+							setOpenBankModal(false);
+						}}
 					/>
 				)}
 			</Modal>

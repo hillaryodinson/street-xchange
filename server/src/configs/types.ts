@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
 	bookingSchema,
 	confirmPasswordResetSchema,
+	CryptoTransactionSchema,
 	kycSchema,
 	loginSchema,
 	newAccountSchema,
@@ -49,3 +50,9 @@ export type TransactionType = {
 export type KYCType = z.infer<typeof kycSchema>;
 
 export type WalletType = z.infer<typeof WalletSchema>;
+
+export type CryptoTransactionType = z.infer<typeof CryptoTransactionSchema> & {
+	id?: string;
+	isPending?: boolean;
+	customerId?: string;
+};

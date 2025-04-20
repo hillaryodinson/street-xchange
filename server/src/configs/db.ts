@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { SettingColunns } from "./constants";
+import { DefaultSettings, SettingColunns } from "./constants";
 require("dotenv").config();
 
 let prisma: PrismaClient;
@@ -51,7 +51,7 @@ export const populateDB = async () => {
 				await prisma.setting.createMany({
 					data: missingKeys.map((key) => ({
 						key,
-						value: "", // Provide default values as needed
+						value: String(DefaultSettings[key]), // Convert default values to string
 					})),
 				});
 				console.log("Settings field configured");

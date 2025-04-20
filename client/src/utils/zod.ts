@@ -111,3 +111,24 @@ export const ImageSchema = z.object({
 	image: z.string(),
 	thumb: z.string(),
 });
+
+export const cryptoTransactionFormSchema = z.object({
+	cryptoTypeSent: z.string().min(1, "Cryptocurrency type is required."),
+	cryptoAmountSent: z.coerce
+		.number()
+		.positive("Crypto amount must be a positive number."),
+	fiatAmountReceived: z.coerce
+		.number()
+		.positive("Fiat amount must be a positive number."),
+	fiatCurrency: z.string().min(1, "Fiat currency is required."),
+	fiatRate: z.coerce
+		.number()
+		.positive("Fiat rate must be a positive number."),
+	currentUSDRate: z.coerce
+		.number()
+		.positive("Current USD rate must be a positive number."),
+	walletAddress: z.string().min(1, "Wallet address is required."),
+	walletNetwork: z.string().min(1, "Wallet network is required."),
+
+	...BankSchema.shape,
+});

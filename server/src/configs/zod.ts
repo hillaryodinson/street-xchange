@@ -96,3 +96,26 @@ export const WalletSchema = z.object({
 	network: z.string(),
 	address: z.string(),
 });
+
+/*
+  cryptoTypeSent String //usdt/btc/eth
+  cryptoAmountSent Float
+  fiatAmountReceived Float //converted from crypto type to naira
+  fiatCurrency Float //converted from crypto type to naira
+  fiatRate Float //xchange rate
+  currentUSDRate Float
+  walletAddress String
+  walletNetwork String
+
+*/
+export const CryptoTransactionSchema = z.object({
+	cryptoTypeSent: z.string(),
+	cryptoAmountSent: z.coerce.number(),
+	fiatAmountReceived: z.coerce.number(),
+	fiatCurrency: z.string(),
+	fiatRate: z.coerce.number(),
+	currentUSDRate: z.coerce.number(),
+	walletAddress: z.string(),
+	walletNetwork: z.string(),
+	...bankSchema.shape,
+});

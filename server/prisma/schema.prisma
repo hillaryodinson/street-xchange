@@ -78,15 +78,30 @@ model GiftCardTransaction {
   Transaction Transaction[]
 }
 
+
+enum CryptoTransactionStatus {
+  PendingPayment
+  PaymentDone
+  PaymentConfirmed
+  PaymentExpired
+}
 model CryptoTransaction {
   id String @id @default(uuid())
   customerId String
-  type String //usdt/btc/eth
-  amount Float
-  amountNgn Float //converted from crypto type to naira
-  rate Float //xchange rate
-  isPending Boolean @default(true)
+  cryptoTypeSent String //usdt/btc/eth
+  cryptoAmountSent Float
+  fiatAmountReceived Float //converted from crypto type to naira
+  fiatCurrency String //converted from crypto type to naira
+  fiatRate Float //xchange rate
+  currentUSDRate Float
+  walletAddress String
+  walletNetwork String
 
+  bankName String
+  accountNo String
+  accountName String
+
+  status CryptoTransactionStatus @default(PendingPayment)
   Transaction Transaction[]
 }
 

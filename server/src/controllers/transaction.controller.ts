@@ -5,8 +5,12 @@ import {
 	TypedRequestBody,
 	TypedResponse,
 } from "../configs/requests";
-import { bookingSchema } from "../configs/zod";
-import { FlightBookingType, TransactionType } from "../configs/types";
+import { bookingSchema, CryptoTransactionSchema } from "../configs/zod";
+import {
+	CryptoTransactionType,
+	FlightBookingType,
+	TransactionType,
+} from "../configs/types";
 import db from "../configs/db";
 import { AppError, ERROR_CODES } from "../utils/errors";
 import {
@@ -115,7 +119,125 @@ export const bookFlight = async (
 // 			"Flight request has been sent. We will get back to you on the cost",
 // 	});
 // };
-//TODO: Add Crypto Transaction
+
+export const createCryptoSellOrder = async (req: Request, res: Response) => {
+	const request = req as TypedRequestBody<CryptoTransactionType>;
+	const customer = request.user;
+	const body = request.body;
+
+	if (!customer)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"User not authenticated",
+			401
+		);
+
+	const zodResponse = CryptoTransactionSchema.safeParse(body);
+	if (zodResponse.error) throw zodResponse;
+
+	const transactionDetails: TransactionType = {
+		transId: generateRandomString(7).toUpperCase(),
+		transType: "Crypto Sell",
+		description: `Crypto Exchange - ${zodResponse.data.cryptoTypeSent} to ${zodResponse.data.fiatCurrency}`,
+	};
+
+	const ct = await db.cryptoTransaction.create({
+		data: {
+			...zodResponse.data,
+			customerId: customer.id,
+			Transaction: {
+				create: { ...transactionDetails, status: "Pending" },
+			},
+		},
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "Crypto transaction was created successfully",
+		data: {
+			...ct,
+			...transactionDetails,
+		},
+	});
+};
+
+export const confirmCryptoOrder = async (req: Request, res: Response) => {
+	const request = req as TypedRequestBody<{ transId: string }>;
+	const customer = request.user;
+	const body = request.body;
+
+	if (!customer)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"User not authenticated",
+			401
+		);
+
+	const transaction = await db.transaction.findFirst({
+		where: {
+			transId: body.transId,
+		},
+		include: {
+			cryptoTrans: true,
+		},
+	});
+
+	if (!transaction || transaction.cryptoTrans?.customerId !== customer.id)
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"Invalid transaction or transaction does not exist"
+		);
+
+	if (transaction.status === "Completed")
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"Transaction already completed"
+		);
+
+	if (transaction.cryptoTrans?.status === "PaymentExpired")
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"Transaction already expired"
+		);
+
+	//update transaction status to completed
+	await db.cryptoTransaction.update({
+		where: {
+			id: transaction.cryptoTrans?.id,
+		},
+		data: {
+			status: "PaymentDone",
+		},
+	});
+
+	//notify administrator of pending transaction...
+
+	const mailer = new NodemailerDB(db);
+	const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@admin.com";
+	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@sitename.com";
+	const APP_URL = process.env.APP_URL || "https://sitename.com";
+	const TransactionLink = `${APP_URL}/sxadmin/transactions/${transaction.transId}`;
+	mailer.sendMail({
+		to: ADMIN_EMAIL,
+		from: SITEMAIL,
+		subject: "Service Request - (Crypto Exchange)",
+		template: "notif_service_request",
+		context: {
+			service: transaction.transType,
+			description: transaction.description,
+			transId: transaction.transId,
+			amount: `${transaction.cryptoTrans.cryptoAmountSent} ${transaction.cryptoTrans.cryptoTypeSent}`,
+			amountReceived: `${transaction.cryptoTrans.fiatCurrency}${transaction.cryptoTrans.fiatAmountReceived}`,
+			transUrl: TransactionLink,
+		},
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "Crypto transaction was updated successfully",
+	});
+};
+
 //TODO: View Crypto Transactions
 //TOD0: View Single Crypto Transaction
 //TODO: Mark Crypto Transaction as Done

@@ -41,7 +41,8 @@ const AddWalletModal = ({
 	const walletForm = useForm({
 		resolver: zodResolver(walletFormSchema),
 		defaultValues: {
-			crypto: "",
+			name: "",
+			symbol: "",
 			address: "",
 			network: "",
 		},
@@ -86,7 +87,7 @@ const AddWalletModal = ({
 					<CardContent className="space-y-6">
 						<FormField
 							control={walletForm.control}
-							name="crypto"
+							name="name"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Cryptocurrency</FormLabel>
@@ -99,6 +100,10 @@ const AddWalletModal = ({
 														crypto.name == value
 												);
 											if (selectedCrypto) {
+												walletForm.setValue(
+													"symbol",
+													selectedCrypto?.symbol
+												);
 												setNetworks([
 													...selectedCrypto.networks,
 												]);

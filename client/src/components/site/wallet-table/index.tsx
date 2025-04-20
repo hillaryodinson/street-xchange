@@ -56,6 +56,7 @@ export function WalletTable({
 					<TableRow className="bg-muted/50">
 						<TableHead className="w-[100px]">ID</TableHead>
 						<TableHead>Name</TableHead>
+						<TableHead>Symbol</TableHead>
 						<TableHead>Network</TableHead>
 						<TableHead>Address</TableHead>
 						<TableHead>Status</TableHead>
@@ -65,7 +66,7 @@ export function WalletTable({
 				<TableBody>
 					{isLoading ? (
 						<TableRow>
-							<TableCell colSpan={5} className="h-24 text-center">
+							<TableCell colSpan={7} className="h-24 text-center">
 								<div className="flex justify-between items-center">
 									<Loader2 className="w-4 h-4 animate-spin" />{" "}
 									<span> Loading data </span>
@@ -74,7 +75,7 @@ export function WalletTable({
 						</TableRow>
 					) : wallets.length === 0 ? (
 						<TableRow>
-							<TableCell colSpan={5} className="h-24 text-center">
+							<TableCell colSpan={7} className="h-24 text-center">
 								No wallets found.
 							</TableCell>
 						</TableRow>
@@ -86,7 +87,8 @@ export function WalletTable({
 								<TableCell className="font-mono text-xs">
 									{index + 1}
 								</TableCell>
-								<TableCell>{wallet.crypto}</TableCell>
+								<TableCell>{wallet.name}</TableCell>
+								<TableCell>{wallet.symbol}</TableCell>
 								<TableCell>
 									<div className="flex items-center gap-2">
 										<span className="text-sm">

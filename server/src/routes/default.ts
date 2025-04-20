@@ -6,6 +6,7 @@ import bankRoutes from "./bank.route";
 import FileRoute from "./file.route";
 import kycRoute from "./kyc.route";
 import walletRoute from "./wallet.route";
+import rateRoute from "./rate.route";
 
 const initRoutes = (baseRoute: string, app: Express) => {
 	app.use(`${baseRoute}/customers`, customerRoutes);
@@ -15,6 +16,7 @@ const initRoutes = (baseRoute: string, app: Express) => {
 	app.use(`${baseRoute}/file`, FileRoute);
 	app.use(`${baseRoute}/kyc`, kycRoute);
 	app.use(`${baseRoute}/wallets`, walletRoute);
+	app.use(`${baseRoute}/rates`, rateRoute);
 };
 
 export default initRoutes;

@@ -48,11 +48,11 @@ export const fetchWallets = async (req: Request, res: Response) => {
 
 export const fetchRandomWalletAddress = async (req: Request, res: Response) => {
 	const request = req as TypedRequestQuery<{
-		crypto: string;
+		symbol: string;
 		network: string;
 	}>;
 
-	if (!request.query.crypto || !request.query.network)
+	if (!request.query.symbol || !request.query.network)
 		throw new AppError(
 			ERROR_CODES.VALIDATION_MISSING_FIELD,
 			"Please specify a crypto and network",
@@ -62,7 +62,7 @@ export const fetchRandomWalletAddress = async (req: Request, res: Response) => {
 	//get all wallets
 	const result = await db.walletAddress.findMany({
 		where: {
-			crypto: request.query.crypto,
+			symbol: request.query.symbol,
 			network: request.query.network,
 			isActive: true,
 		},
@@ -174,12 +174,13 @@ export const fetchSupportedCrypto = async (req: Request, res: Response) => {
 	const result = await db.walletAddress.findMany({
 		select: {
 			id: true,
-			crypto: true,
+			name: true,
+			symbol: true,
 		},
 		where: {
 			isActive: true,
 		},
-		distinct: ["crypto"],
+		distinct: ["symbol"],
 	});
 
 	if (result.length === 0) {
@@ -219,7 +220,7 @@ export const fetchSupportedCryptoNetworks = async (
 		},
 		where: {
 			isActive: true,
-			crypto: request.query.crypto,
+			name: request.query.crypto,
 		},
 		distinct: ["network"],
 	});

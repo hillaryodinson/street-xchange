@@ -31,7 +31,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Link } from "react-router-dom";
-import { cryptocurrencies } from "@/lib/data";
+import { useQueries } from "@tanstack/react-query";
+import api from "@/utils/api";
+import { ApiResponse, cryptoType } from "@/utils/types";
 
 const formSchema = z.object({
 	cryptoType: z.string({
@@ -52,6 +54,9 @@ const formSchema = z.object({
 
 export function ExchangeCryptoForm() {
 	const [step, setStep] = useState(1);
+	// const [exchangeRateUSD, setExchangeRateUSD] = useState<number | null>(null);
+	// const [exchangeRateNGN, setExchangeRateNGN] = useState<number | null>(null);
+
 	const [exchangeDetails, setExchangeDetails] = useState<z.infer<
 		typeof formSchema
 	> | null>(null);
@@ -62,33 +67,61 @@ export function ExchangeCryptoForm() {
 			cryptoType: "",
 			amount: undefined,
 			targetCurrency: "usd",
-			walletAddress: "1L1LdwwB6F5tbZ7GeSAQkvhnhy8dNi3Xji",
+			walletAddress: "",
 			bankName: "",
 			accountNumber: "",
 			accountName: "",
 		},
 	});
 
+	const [{ data: cryptocurrencies }, { data: sx_ngn_rate }] = useQueries({
+		queries: [
+			{
+				queryKey: ["fetch_cryptocurrencies"],
+				queryFn: async () => {
+					const response = await api.get("/wallets/supported-crypto");
+					const result = response.data as ApiResponse<cryptoType[]>;
+					if (result.success) return result.data;
+				},
+				staleTime: 1000 * 60 * 60 * 4, // 5 hours
+			},
+			{
+				queryKey: ["fetch_rate"],
+				queryFn: async () => {
+					const response = await api.get("/rates");
+					const result = response.data as ApiResponse<{
+						rate: number;
+					}>;
+					if (result.success) return result.data;
+				},
+				staleTime: 1000 * 60 * 60, // 1 hour
+			},
+		],
+	});
+
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		setExchangeDetails(values);
+		console.log(sx_ngn_rate);
 		setStep(2);
 	}
 
-	const getExchangeRate = (crypto: string, currency: "usd" | "ngn") => {
-		const selectedCrypto = cryptocurrencies.find((c) => c.value === crypto);
-		if (!selectedCrypto) return 0;
-		return selectedCrypto.rate[currency];
-	};
+	// const getExchangeRate = async (symbol: string) => {
+	// 	const selectedCrypto = await api.get(
+	// 		`https://api.blockchain.com/v3/exchange/tickers/${symbol.toUpperCase()}-USD`
+	// 	);
+	// 	return selectedCrypto.data.last_trade_price;
+	// };
 
-	const getExchangeAmount = () => {
-		if (!exchangeDetails) return 0;
+	// const getExchangeAmount = async (sx_ngn_rate: number) => {
+	// 	if (!exchangeDetails) return 0;
 
-		const rate = getExchangeRate(
-			exchangeDetails.cryptoType,
-			exchangeDetails.targetCurrency
-		);
-		return (exchangeDetails.amount * rate).toFixed(2);
-	};
+	// 	const liveCryptoRate = await getExchangeRate(
+	// 		form.getValues("cryptoType") || "btc"
+	// 	);
+	// 	return (exchangeDetails.amount * sx_ngn_rate * liveCryptoRate).toFixed(
+	// 		2
+	// 	);
+	// };
 
 	const handleConfirmExchange = () => {
 		// Here you would handle the actual exchange process
@@ -156,21 +189,20 @@ export function ExchangeCryptoForm() {
 														</SelectTrigger>
 													</FormControl>
 													<SelectContent>
-														{cryptocurrencies.map(
-															(crypto) => (
-																<SelectItem
-																	key={
-																		crypto.value
-																	}
-																	value={
-																		crypto.value
-																	}>
-																	{
-																		crypto.label
-																	}
-																</SelectItem>
-															)
-														)}
+														{cryptocurrencies &&
+															cryptocurrencies?.map(
+																(listitem) => (
+																	<SelectItem
+																		key={
+																			listitem.id
+																		}
+																		value={
+																			listitem.name
+																		}>
+																		{`${listitem.name} (${listitem.symbol})`}
+																	</SelectItem>
+																)
+															)}
 													</SelectContent>
 												</Select>
 												<FormDescription>
@@ -388,15 +420,7 @@ export function ExchangeCryptoForm() {
 									<p className="text-sm text-muted-foreground">
 										Cryptocurrency
 									</p>
-									<p className="font-medium">
-										{
-											cryptocurrencies.find(
-												(c) =>
-													c.value ===
-													exchangeDetails.cryptoType
-											)?.label
-										}
-									</p>
+									<p className="font-medium"> </p>
 								</div>
 								<div>
 									<p className="text-sm text-muted-foreground">
@@ -426,7 +450,7 @@ export function ExchangeCryptoForm() {
 										1{" "}
 										{exchangeDetails.cryptoType.toUpperCase()}{" "}
 										={" "}
-										{exchangeDetails.targetCurrency ===
+										{/* {exchangeDetails.targetCurrency ===
 										"usd"
 											? `$${getExchangeRate(
 													exchangeDetails.cryptoType,
@@ -435,7 +459,7 @@ export function ExchangeCryptoForm() {
 											: `₦${getExchangeRate(
 													exchangeDetails.cryptoType,
 													"ngn"
-											  ).toLocaleString()}`}
+											  ).toLocaleString()}`} */}
 									</p>
 								</div>
 								<div>
@@ -443,10 +467,14 @@ export function ExchangeCryptoForm() {
 										You'll Receive
 									</p>
 									<p className="font-medium text-lg text-primary">
-										{exchangeDetails.targetCurrency ===
+										{/* {exchangeDetails.targetCurrency ===
 										"usd"
-											? `$${getExchangeAmount()}`
-											: `₦${getExchangeAmount()}`}
+											? `$${getExchangeAmount(
+													sx_ngn_rate
+											  )}`
+											: `₦${getExchangeAmount(
+													sx_ngn_rate
+											  )}`} */}
 									</p>
 								</div>
 							</div>

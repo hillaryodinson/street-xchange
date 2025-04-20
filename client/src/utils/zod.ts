@@ -101,7 +101,8 @@ export const generalFormSchema = z.object({
 });
 
 export const walletFormSchema = z.object({
-	crypto: z.string().min(1, "Wallet name is required."),
+	name: z.string().min(1, "Wallet name is required."),
+	symbol: z.string().min(1, "Wallet symbol is required."),
 	address: z.string().min(1, "Wallet address is required."),
 	network: z.string().min(1, "Wallet network is required."),
 });

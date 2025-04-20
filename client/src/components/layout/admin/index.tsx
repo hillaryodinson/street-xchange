@@ -15,6 +15,8 @@ import "@/backend.css";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { AdminDashboardHeader } from "./components/admin-dashboard-header";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallback from "../error-fallback";
 
 const AdminLayout = () => {
 	const location = useLocation();
@@ -123,7 +125,9 @@ const AdminLayout = () => {
 
 				{/* Main Content */}
 				<main className="flex-1 p-6 pt-16 md:pl-[calc(20px+16rem)] md:pr-10 md:py-10 relative z-10">
-					<Outlet />
+					<ErrorBoundary fallback={<ErrorFallback />}>
+						<Outlet />
+					</ErrorBoundary>
 				</main>
 			</div>
 		</div>

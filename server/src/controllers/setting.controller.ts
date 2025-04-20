@@ -78,7 +78,7 @@ export const fetchSetting = async (req: Request, res: Response) => {
 
 //Private methods
 const updateRate = async (amount: number) => {
-	if (amount) {
+	if (!amount) {
 		throw new AppError(
 			ERROR_CODES.VALIDATION_UNSUPPORTED_VALUE,
 			"Amount is required to update the rate.",

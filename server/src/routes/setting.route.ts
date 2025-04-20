@@ -2,17 +2,25 @@ import { fetchRate } from "../controllers/rate.controller";
 import Express from "express";
 import { tryCatch } from "../middlewares/middleware";
 
-const RateRoute = Express.Router();
+const settingRoute = Express.Router();
 
 /**
  * @swagger
- * /rates:
+ * /setting:
  *   get:
- *     summary: Fetch current rates
- *     tags: [Rate]
+ *     summary: Fetch current settings
+ *     tags: [Setting]
+ *     parameters:
+ *       - in: query
+ *         name: setting
+ *         schema:
+ *           type: string
+ *           enum: [rate, size]
+ *         required: true
+ *         description: The setting to fetch (rate or size)
  *     responses:
  *       200:
- *         description: get the current rate in NGN
+ *         description: Successfully fetched the setting
  *         content:
  *           application/json:
  *             schema:
@@ -25,11 +33,14 @@ const RateRoute = Express.Router();
  *                   type: string
  *                   example: Ok
  *                 data:
- *                    type: object
- *                    properties:
- *                          rate:
- *                              type: number
- *                              description: current rate
+ *                   type: object
+ *                   properties:
+ *                     setting:
+ *                       type: string
+ *                       description: The requested setting
+ *                     value:
+ *                       type: number
+ *                       description: The value of the requested setting
  *       400:
  *         description: Invalid request parameters
  *         content:
@@ -70,6 +81,6 @@ const RateRoute = Express.Router();
  *                   type: string
  *                   example: Unauthorized
  */
-RateRoute.get("/", tryCatch(fetchRate));
+settingRoute.get("/", tryCatch(fetchRate));
 
-export default RateRoute;
+export default settingRoute;

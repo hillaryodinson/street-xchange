@@ -191,7 +191,7 @@ walletRoute.get("/", tryCatch(fetchWallets));
  *     tags: [Wallet]
  *     parameters:
  *       - in: query
- *         name: crypto
+ *         name: symbol
  *         required: true
  *         schema:
  *           type: string

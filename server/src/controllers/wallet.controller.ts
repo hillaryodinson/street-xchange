@@ -60,6 +60,7 @@ export const fetchRandomWalletAddress = async (req: Request, res: Response) => {
 		);
 
 	//get all wallets
+	console.log(request.query.network, request.query.symbol);
 	const result = await db.walletAddress.findMany({
 		where: {
 			symbol: request.query.symbol,
@@ -220,7 +221,7 @@ export const fetchSupportedCryptoNetworks = async (
 		},
 		where: {
 			isActive: true,
-			name: request.query.crypto,
+			symbol: request.query.crypto,
 		},
 		distinct: ["network"],
 	});

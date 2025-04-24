@@ -3,6 +3,7 @@ import {
 	CustomResponse,
 	TypedRequest,
 	TypedRequestBody,
+	TypedRequestQuery,
 	TypedResponse,
 } from "../configs/requests";
 import { bookingSchema, CryptoTransactionSchema } from "../configs/zod";
@@ -18,6 +19,19 @@ import {
 	generateUniqueRandomStrings,
 } from "../utils/helper";
 import { NodemailerDB } from "../services/nodemailer-db";
+import { TransactionStatus } from "@prisma/client";
+
+export const fetchTransactions = async (
+	req: Request,
+	res: TypedResponse<CustomResponse>
+) => {
+	const request = req as TypedRequestQuery<{
+		transId?: string;
+		customerId?: string;
+		type?: string;
+		status?: string;
+	}>;
+};
 
 export const bookFlight = async (
 	req: Request,
@@ -43,6 +57,7 @@ export const bookFlight = async (
 		transId: generateRandomString(7).toUpperCase(),
 		transType: "Flight",
 		description: `Flight Booking - ${zodResponse.data.from} to ${zodResponse.data.to}`,
+		customerId: customerId,
 	};
 
 	await db.flightTransaction.create({
@@ -139,6 +154,7 @@ export const createCryptoSellOrder = async (req: Request, res: Response) => {
 		transId: generateRandomString(7).toUpperCase(),
 		transType: "Crypto Sell",
 		description: `Crypto Exchange - ${zodResponse.data.cryptoTypeSent} to ${zodResponse.data.fiatCurrency}`,
+		customerId: customer.id,
 	};
 
 	const ct = await db.cryptoTransaction.create({

@@ -45,6 +45,7 @@ export type TransactionType = {
 	transType: string;
 	description: string;
 	transId: string;
+	customerId: string;
 };
 
 export type KYCType = z.infer<typeof kycSchema>;

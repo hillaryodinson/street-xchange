@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Wallet } from "lucide-react";
+import { ArrowLeft, Wallet } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -30,7 +30,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import api from "@/utils/api";
 import { ApiResponse, BankType, cryptoType, networkType } from "@/utils/types";
@@ -38,12 +38,11 @@ import { toCurrency } from "@/utils/helper";
 import { cryptoTransactionFormSchema } from "@/utils/zod";
 import { useTransition } from "react";
 import { toast } from "react-toastify";
-import TimerContainer from "@/components/site/timer-container";
 
 export function ExchangeCryptoForm() {
 	const [step, setStep] = useState(1);
 	const [targetCurrency, setTargetCurrency] = useState("usd"); //currency client is receiving
-	const [transId, setTransId] = useState<string | null>(null); //transaction id
+	const navigate = useNavigate();
 
 	const [targetCryptoCurrency, setTargetCryptoCurrency] = useState<
 		string | null
@@ -128,7 +127,6 @@ export function ExchangeCryptoForm() {
 
 	function onSubmit(values: z.infer<typeof cryptoTransactionFormSchema>) {
 		setExchangeDetails(values);
-		console.log(sx_ngn_rate);
 		setStep(2);
 	}
 
@@ -144,8 +142,9 @@ export function ExchangeCryptoForm() {
 						);
 						// Reset the form or redirect the user
 						form.reset();
-						setTransId(response.data.transId);
-						setStep(3);
+						navigate(
+							"/payments/transaction/" + response.data.transId
+						);
 					} else {
 						console.error("Exchange failed:", response.data);
 						toast.error("Exchange failed! Please try again later.");
@@ -828,128 +827,6 @@ export function ExchangeCryptoForm() {
 							className="w-full">
 							Go Back
 						</Button>
-						<TimerContainer
-							expiryTimeInSeconds={30000}
-							startTime={
-								new Date(
-									"20 Apr 2025 11:04:00 GMT+0100 (West Africa Standard Time)"
-								)
-							}>
-							<Button asChild className="w-full">
-								<Link to="/dashboard">
-									{" "}
-									I have made transfer
-								</Link>
-							</Button>
-						</TimerContainer>
-					</CardFooter>
-				</Card>
-			)}
-
-			{/* Step 3: Confirmation */}
-
-			{step === 3 && (
-				<Card>
-					<CardHeader className="text-center">
-						<div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-							<Check className="h-8 w-8 text-primary" />
-						</div>
-						<CardTitle className="text-2xl">
-							Exchange Initiated!
-						</CardTitle>
-						<CardDescription>
-							Your cryptocurrency exchange has been initiated.
-							Complete the transfer from your bitcoin app. You
-							will receive your funds shortly.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-4">
-						<div className="rounded-md bg-muted p-4 space-y-4">
-							<div className="border-b pb-2">
-								<h3 className="font-medium">Wallet Details</h3>
-							</div>
-
-							<div>
-								<p className="text-sm text-muted-foreground">
-									Wallet Address
-								</p>
-								<p className="font-medium break-all">
-									{exchangeDetails?.walletAddress}
-								</p>
-							</div>
-							<div>
-								<p className="text-sm text-muted-foreground">
-									Cryptocurrency
-								</p>
-								<p className="font-medium">
-									{" "}
-									{exchangeDetails?.cryptoTypeSent.toUpperCase()}
-								</p>
-							</div>
-							<div>
-								<p className="text-sm text-muted-foreground">
-									Wallet Network
-								</p>
-								<p className="font-medium break-all">
-									{targetNetwork}
-								</p>
-							</div>
-
-							<div>
-								<p className="text-sm text-muted-foreground">
-									Amount to Transfer
-								</p>
-								<p className="font-medium">
-									{exchangeDetails?.cryptoAmountSent}{" "}
-									{exchangeDetails?.cryptoTypeSent.toUpperCase()}
-								</p>
-							</div>
-						</div>
-
-						<div className="border-t pt-4">
-							<h3 className="font-medium mb-2">What's Next?</h3>
-							<ul className="space-y-2">
-								<li className="flex items-start gap-2">
-									<ArrowRight className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-									<span>
-										Send the cryptocurrency to our wallet
-										address provided in your email before
-										the timer expires
-									</span>
-								</li>
-								<li className="flex items-start gap-2">
-									<ArrowRight className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-									<span>
-										Once confirmed, we'll transfer the funds
-										to your bank account
-									</span>
-								</li>
-								<li className="flex items-start gap-2">
-									<ArrowRight className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-									<span>
-										Please dont transfer to wallet when
-										timer expires. You can check your
-										transaction status in the dashboard
-									</span>
-								</li>
-							</ul>
-						</div>
-					</CardContent>
-					<CardFooter>
-						<TimerContainer
-							expiryTimeInSeconds={60 * 30}
-							startTime={
-								new Date(
-									"20 Apr 2025 23:04:00 GMT+0100 (West Africa Standard Time)"
-								)
-							}>
-							<Button asChild className="w-full">
-								<Link to="/dashboard">
-									{" "}
-									I have made transfer
-								</Link>
-							</Button>
-						</TimerContainer>
 					</CardFooter>
 				</Card>
 			)}

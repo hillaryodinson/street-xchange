@@ -14,70 +14,69 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  firstname String 
-  middlename String?
-  surname String
-  email String @unique
-  dob DateTime
+  id                 String    @id @default(uuid())
+  firstname          String
+  middlename         String?
+  surname            String
+  email              String    @unique
+  dob                DateTime
   residentialAddress String
-  phoneNo String
-  password String
-  resetToken String?
-  actiToken String?
-  tokenExpiresAt DateTime?
-  isVerified Int @default(0)//0 = Pending, 1 = Verified, 2 =  Verification Failed, 3 = Blocked
-  createdAt DateTime @default(now())
+  phoneNo            String
+  password           String
+  resetToken         String?
+  actiToken          String?
+  tokenExpiresAt     DateTime?
+  isVerified         Int       @default(0) //0 = Pending, 1 = Verified, 2 =  Verification Failed, 3 = Blocked
+  createdAt          DateTime  @default(now())
 
-  kyc Kyc[]
+  kyc          Kyc[]
   customerBank CustomerBank[]
+  Transaction  Transaction[]
 }
 
 model Admin {
-  id String @id @default(uuid())
-  name String
-  email String @unique
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
   password String
 }
 
-
 model Mail {
-  id String @id @default(uuid())
-  to String
-  subject String
-  content Json
-  from String
-  isDelivered Boolean @default(false)
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  to          String
+  subject     String
+  content     Json
+  from        String
+  isDelivered Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }
 
 model Kyc {
-  id String @id @default(uuid())
+  id         String   @id @default(uuid())
   customerId String
-  customer User @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  type String
-  number String
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  type       String
+  number     String
   frontimage String
-  backimage String?
-  isApproved Boolean @default(false)
-  createdAt DateTime @default(now())
+  backimage  String?
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
 }
 
 model GiftCardTransaction {
-  id String @id @default(uuid())
+  id         String   @id @default(uuid())
   customerId String
-  cardType String //itunes,amazon, steam, ebay, razer gold, google
-  country String
-  type String //Physical, Ecode, Horizontal, white board
-  speed Int?
-  amount Int
-  isPending Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  cardType   String //itunes,amazon, steam, ebay, razer gold, google
+  country    String
+  type       String //Physical, Ecode, Horizontal, white board
+  speed      Int?
+  amount     Int
+  isPending  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   Transaction Transaction[]
 }
-
 
 enum CryptoTransactionStatus {
   PendingPayment
@@ -85,23 +84,25 @@ enum CryptoTransactionStatus {
   PaymentConfirmed
   PaymentExpired
 }
-model CryptoTransaction {
-  id String @id @default(uuid())
-  customerId String
-  cryptoTypeSent String //usdt/btc/eth
-  cryptoAmountSent Float
-  fiatAmountReceived Float //converted from crypto type to naira
-  fiatCurrency String //converted from crypto type to naira
-  fiatRate Float //xchange rate
-  currentUSDRate Float
-  walletAddress String
-  walletNetwork String
 
-  bankName String
-  accountNo String
+model CryptoTransaction {
+  id                 String @id @default(uuid())
+  customerId         String
+  cryptoTypeSent     String //usdt/btc/eth
+  cryptoAmountSent   Float
+  fiatAmountReceived Float //converted from crypto type to naira
+  fiatCurrency       String //converted from crypto type to naira
+  fiatRate           Float //xchange rate
+  currentUSDRate     Float
+  walletAddress      String
+  walletNetwork      String
+
+  bankName    String
+  accountNo   String
   accountName String
 
   status CryptoTransactionStatus @default(PendingPayment)
+
   Transaction Transaction[]
 }
 
@@ -114,22 +115,22 @@ enum BookingStatus {
 }
 
 model FlightTransaction {
-  id String @id @default(uuid())
-  customerId String
-  paymentMethod String //btc usdt eth
-  from String
-  to String
+  id                  String   @id @default(uuid())
+  customerId          String
+  paymentMethod       String //btc usdt eth
+  from                String
+  to                  String
   scheduledFlightDate DateTime
-  type String //Economy /Business /FirstClass
-  passengers Int @default(1)
-  
+  type                String //Economy /Business /FirstClass
+  passengers          Int      @default(1)
+
   walletAddress String?
   walletNetwork String?
-  flightCost String? 
+  flightCost    String?
 
-  status BookingStatus @default(PendingAvailability) 
-  note String? //for more information when flights not available
-  
+  status BookingStatus @default(PendingAvailability)
+  note   String? //for more information when flights not available
+
   transaction Transaction[]
 }
 
@@ -140,49 +141,52 @@ enum TransactionStatus {
 }
 
 model Transaction {
-  id String @id @default(uuid())
+  id          String            @id @default(uuid())
   description String
-  transId String
-  transType String
-  status TransactionStatus
+  transId     String
+  transType   String
+  status      TransactionStatus
 
   cryptoTransId String?
-  cryptoTrans CryptoTransaction? @relation(fields: [cryptoTransId], references: [id])
+  cryptoTrans   CryptoTransaction? @relation(fields: [cryptoTransId], references: [id])
 
   flightTransId String?
-  flightTrans FlightTransaction? @relation(fields: [flightTransId], references: [id])
+  flightTrans   FlightTransaction? @relation(fields: [flightTransId], references: [id])
 
   giftcardTransId String?
-  giftcardTrans GiftCardTransaction? @relation(fields: [giftcardTransId], references: [id])
-  
+  giftcardTrans   GiftCardTransaction? @relation(fields: [giftcardTransId], references: [id])
+
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
   createdDate DateTime @default(now())
 }
 
 model CustomerBank {
-  id String @id @default(uuid())
-  bankName String
-  accountNo String
+  id          String    @id @default(uuid())
+  bankName    String
+  accountNo   String
   accountName String
-  otp String?
-  createdAt DateTime @default(now())
-  deletedAt DateTime?
+  otp         String?
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
 
   customerId String
-  customer User  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }
 
 model Setting {
-  key String @unique
+  key   String @unique
   value String
 }
 
 model WalletAddress {
-  id String @id @default(uuid())
-  name String // e.g.,Bitcoin
-  symbol String // e.g., BTC, ETH, USDT
-  address String
-  network String // e.g., ERC20, BEP20, TRC20
-  isActive Boolean @default(true) // Indicates if the wallet address is active
+  id        String   @id @default(uuid())
+  name      String // e.g.,Bitcoin
+  symbol    String // e.g., BTC, ETH, USDT
+  address   String
+  network   String // e.g., ERC20, BEP20, TRC20
+  isActive  Boolean  @default(true) // Indicates if the wallet address is active
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

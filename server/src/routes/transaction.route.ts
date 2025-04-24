@@ -236,27 +236,24 @@ transRoute.post(
 /**
  * @swagger
  * /transactions/crypto/confirm-order:
- *   post:
+ *   put:
  *     summary: Confirm a crypto order
  *     description: Endpoint to confirm a crypto order. Marks a payment as done and awaits admin confirmation.
  *     tags:
  *       - Transactions
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               transId:
- *                 type: string
- *                 description: The transaction ID to confirm.
- *                 example: ase3rsefgt5
+ *     parameters:
+ *       - in: query
+ *         name: transId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The transaction ID to confirm.
+ *         example: ase3rsefgt5
  *
  *     responses:
- *       201:
+ *       200:
  *         description: Crypto order confirmed successfully.
  *         content:
  *           application/json:
@@ -319,7 +316,7 @@ transRoute.post(
  *                   example: "An error occurred, please contact admin"
  */
 
-transRoute.post(
+transRoute.put(
 	"/crypto/confirm-order",
 	authorize,
 	tryCatch(confirmCryptoOrder)

@@ -233,6 +233,8 @@ export const confirmCryptoOrder = async (req: Request, res: Response) => {
 	const customer = request.user;
 	const body = request.body;
 
+	console.error(req.params, req.query, req.body);
+
 	if (!customer)
 		throw new AppError(
 			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
@@ -240,9 +242,16 @@ export const confirmCryptoOrder = async (req: Request, res: Response) => {
 			401
 		);
 
+	if (!request.query.transId)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_INVALID_TOKEN,
+			"Transaction ID not provided",
+			400
+		);
+
 	const transaction = await db.transaction.findFirst({
 		where: {
-			transId: body.transId,
+			transId: request.query.transId as string,
 		},
 		include: {
 			cryptoTrans: true,
@@ -301,7 +310,7 @@ export const confirmCryptoOrder = async (req: Request, res: Response) => {
 
 	res.status(200).json({
 		success: true,
-		message: "Crypto transaction was updated successfully",
+		message: "Payment done and undergoing review.",
 	});
 };
 

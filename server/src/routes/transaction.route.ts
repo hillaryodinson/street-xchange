@@ -3,6 +3,7 @@ import {
 	bookFlight,
 	confirmCryptoOrder,
 	createCryptoSellOrder,
+	getTransactionByTransId,
 } from "../controllers/transaction.controller";
 import { authorize, tryCatch } from "../middlewares/middleware";
 
@@ -315,11 +316,94 @@ transRoute.post(
  *                   description: A message indicating the status of the confirmation.
  *                   example: "An error occurred, please contact admin"
  */
-
 transRoute.put(
 	"/crypto/confirm-order",
 	authorize,
 	tryCatch(confirmCryptoOrder)
 );
+
+/**
+ * @swagger
+ * /transactions/{transId}:
+ *   get:
+ *     summary: Get transaction by transaction ID
+ *     description: Endpoint to retrieve a transaction by its ID.
+ *     tags:
+ *       - Transactions
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: parameter
+ *         name: transId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The transaction ID to confirm.
+ *         example: ase3rsefgt5
+ *
+ *     responses:
+ *       200:
+ *         description: Gift card order confirmed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *       400:
+ *         description: Bad request. Invalid input data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *                   example: "Bad request"
+ *       401:
+ *         description: Unauthorized. User is not authorized to confirm the order.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *                   example: "Unauthorized"
+ *                 code:
+ *                   type: string
+ *                   example: E1104
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *                   example: "An error occurred, please contact admin"
+ */
+transRoute.get("/:transId", authorize, tryCatch(getTransactionByTransId));
 
 export default transRoute;

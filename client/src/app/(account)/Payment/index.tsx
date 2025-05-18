@@ -7,10 +7,9 @@ import {
 	CardContent,
 	CardFooter,
 } from "@/components/ui/card";
-import { Check, ArrowRight } from "lucide-react";
-import React from "react";
+import { Check, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
@@ -22,8 +21,9 @@ const Payment = () => {
 	const { data: exchangeDetails, isPending } = useQuery({
 		queryKey: ["fetch_transaction", transId],
 		queryFn: async () => {
-			const res = await api.get("/transaction/" + transId);
-			return res.data;
+			const res = await api.get("/transactions/" + transId);
+			console.log(res);
+			return res.data.data;
 		},
 	});
 
@@ -53,45 +53,57 @@ const Payment = () => {
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">
-				<div className="rounded-md bg-muted p-4 space-y-4">
-					<div className="border-b pb-2">
-						<h3 className="font-medium">Wallet Details</h3>
-					</div>
+				{isPending ? (
+					<Loader2 className="animate-spin" />
+				) : (
+					<div className="rounded-md bg-muted p-4 space-y-4">
+						<div className="border-b pb-2">
+							<h3 className="font-medium">Wallet Details</h3>
+						</div>
 
-					<div>
-						<p className="text-sm text-muted-foreground">
-							Wallet Address
-						</p>
-						<p className="font-medium break-all">
-							{exchangeDetails?.walletAddress}
-						</p>
-					</div>
-					<div>
-						<p className="text-sm text-muted-foreground">
-							Cryptocurrency
-						</p>
-						<p className="font-medium">
-							{" "}
-							{exchangeDetails?.cryptoTypeSent.toUpperCase()}
-						</p>
-					</div>
-					<div>
-						<p className="text-sm text-muted-foreground">
-							Wallet Network
-						</p>
-						<p className="font-medium break-all">{targetNetwork}</p>
-					</div>
+						<div>
+							<p className="text-sm text-muted-foreground">
+								Wallet Address
+							</p>
+							<p className="font-medium break-all">
+								{exchangeDetails &&
+									exchangeDetails?.cryptoTrans?.walletAddress}
+							</p>
+						</div>
+						<div>
+							<p className="text-sm text-muted-foreground">
+								Cryptocurrency
+							</p>
+							<p className="font-medium">
+								{" "}
+								{exchangeDetails &&
+									exchangeDetails?.cryptoTrans
+										?.cryptoTypeSent}
+							</p>
+						</div>
+						<div>
+							<p className="text-sm text-muted-foreground">
+								Wallet Network
+							</p>
+							<p className="font-medium break-all">
+								{exchangeDetails &&
+									exchangeDetails?.cryptoTrans?.walletNetwork}
+							</p>
+						</div>
 
-					<div>
-						<p className="text-sm text-muted-foreground">
-							Amount to Transfer
-						</p>
-						<p className="font-medium">
-							{exchangeDetails?.cryptoAmountSent}{" "}
-							{exchangeDetails?.cryptoTypeSent.toUpperCase()}
-						</p>
+						<div>
+							<p className="text-sm text-muted-foreground">
+								Amount to Transfer
+							</p>
+							<p className="font-medium">
+								{exchangeDetails?.cryptoTrans?.cryptoAmountSent}{" "}
+								{exchangeDetails &&
+									exchangeDetails?.cryptoTrans
+										?.cryptoTypeSent}
+							</p>
+						</div>
 					</div>
-				</div>
+				)}
 
 				<div className="border-t pt-4">
 					<h3 className="font-medium mb-2">What's Next?</h3>
@@ -123,14 +135,10 @@ const Payment = () => {
 			</CardContent>
 			<CardFooter>
 				<TimerContainer
-					expiryTimeInSeconds={30000}
-					startTime={
-						new Date(
-							"20 Apr 2025 11:04:00 GMT+0100 (West Africa Standard Time)"
-						)
-					}>
-					<Button asChild className="w-full">
-						<Link to="/dashboard"> I have made transfer</Link>
+					expiryTimeInSeconds={3000}
+					startTime={new Date(exchangeDetails?.createdDate)}>
+					<Button className="w-full" onClick={doConfirmPayment}>
+						I have made transfer
 					</Button>
 				</TimerContainer>
 			</CardFooter>

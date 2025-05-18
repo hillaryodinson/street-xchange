@@ -142,9 +142,8 @@ export function ExchangeCryptoForm() {
 						);
 						// Reset the form or redirect the user
 						form.reset();
-						navigate(
-							"/payments/transaction/" + response.data.transId
-						);
+						const { transId } = response.data.data;
+						navigate("/payments/transaction/" + transId);
 					} else {
 						console.error("Exchange failed:", response.data);
 						toast.error("Exchange failed! Please try again later.");

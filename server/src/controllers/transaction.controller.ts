@@ -21,16 +21,67 @@ import {
 import { NodemailerDB } from "../services/nodemailer-db";
 import { TransactionStatus } from "@prisma/client";
 
-export const fetchTransactions = async (
+export const getTransactionByTransId = async (
 	req: Request,
 	res: TypedResponse<CustomResponse>
 ) => {
-	const request = req as TypedRequestQuery<{
-		transId?: string;
-		customerId?: string;
-		type?: string;
-		status?: string;
-	}>;
+	const request = req as TypedRequestQuery<{ transId: string }>;
+	const user = request.user;
+	const transId = req.params.transId;
+
+	//if the current user is not an administrator or the transaction does not belong to the user throw an error
+	if (!user) {
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"User not authenticated",
+			401
+		);
+	}
+
+	const transaction = await db.transaction.findFirst({
+		where: {
+			transId: transId,
+		},
+		include: {
+			flightTrans: true,
+			cryptoTrans: true,
+			giftcardTrans: true,
+		},
+	});
+
+	if (user.id != transaction?.customerId && user.role !== "Admin") {
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"User not authorized to view this transaction",
+			401
+		);
+	}
+
+	if (!transaction)
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"Invalid transaction or transaction does not exist"
+		);
+
+	if (transaction.status === "Completed")
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"Transaction already completed"
+		);
+
+	if (transaction.status === "Failed")
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"Transaction already expired"
+		);
+
+	res.status(200).json({
+		success: true,
+		message: "Transaction was retrieved successfully",
+		data: {
+			...transaction,
+		},
+	});
 };
 
 export const bookFlight = async (

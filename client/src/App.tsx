@@ -25,6 +25,7 @@ import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AdminProtectedRoute from "./middleware/AdminProtectedRoute";
 import SettingsPage from "./app/(admin)/Setting";
+import Payment from "./app/(account)/Payment";
 
 function ErrorFallback({ error }: { error: Error }) {
 	const { resetBoundary } = useErrorBoundary();
@@ -112,6 +113,10 @@ function App() {
 				{
 					path: "/transaction-history",
 					element: <TransactionsHistory />,
+				},
+				{
+					path: "/payments/transaction/:transId",
+					element: <Payment />,
 				},
 				{
 					path: "/my-profile",

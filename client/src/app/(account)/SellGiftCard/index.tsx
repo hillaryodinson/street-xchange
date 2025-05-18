@@ -35,6 +35,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cardTypes, countries, giftCardTypes } from "@/lib/data";
+import api from "@/utils/api";
+import { ApiResponse, BankType } from "@/utils/types";
+import { useQueries } from "@tanstack/react-query";
 
 const formSchema = z.object({
 	cardType: z.string({
@@ -108,6 +111,45 @@ export function SellGiftCardForm() {
 	// 		setUploadedImages([...uploadedImages, ...newImages]);
 	// 	}
 	// };
+
+	const [
+		// { data: cryptocurrencies },
+		// { data: sx_ngn_rate },
+		{ data: accounts },
+	] = useQueries({
+		queries: [
+			// {
+			// 	queryKey: ["fetch_cryptocurrencies"],
+			// 	queryFn: async () => {
+			// 		const response = await api.get("/wallets/supported-crypto");
+			// 		const result = response.data as ApiResponse<cryptoType[]>;
+			// 		if (result.success) return result.data;
+			// 	},
+			// 	staleTime: 1000 * 60 * 60 * 4, // 5 hours
+			// },
+			// {
+			// 	queryKey: ["fetch_rate"],
+			// 	queryFn: async () => {
+			// 		const response = await api.get(
+			// 			"/settings?setting=ngn_rate"
+			// 		);
+			// 		const result = response.data as ApiResponse<string>;
+			// 		if (result.success)
+			// 			return result.data ? parseFloat(result.data) : 0;
+			// 	},
+			// 	staleTime: 1000 * 60 * 60, // 1 hour
+			// },
+			{
+				queryKey: ["fetch_my_banks"],
+				queryFn: async () => {
+					const response = await api.get("/banks");
+					const result = response.data as ApiResponse<BankType[]>;
+					if (result.success) return result.data;
+				},
+				staleTime: 1000 * 60 * 60 * 30, // 30 hours
+			},
+		],
+	});
 
 	const handleConfirmSale = () => {
 		// Here you would handle the actual sale process
@@ -486,22 +528,72 @@ export function SellGiftCardForm() {
 										you want to receive the funds
 									</p>
 
-									<FormField
-										control={form.control}
-										name="bankName"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Bank Name</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="Enter your bank name"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+									<FormItem>
+										<FormLabel>Bank Name</FormLabel>
+										<Select
+											onValueChange={(value) => {
+												const account = accounts?.find(
+													(x) => x.accountNo == value
+												);
+												console.log(account);
+												if (account) {
+													form.setValue(
+														"accountNumber",
+														account?.accountNo
+													);
+													form.setValue(
+														"bankName",
+														account?.bankName
+													);
+													form.setValue(
+														"accountName",
+														account?.accountName
+													);
+												}
+											}}>
+											<FormControl className="!w-full">
+												<SelectTrigger>
+													<SelectValue placeholder="Select Account" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{accounts &&
+													accounts?.map((account) => (
+														<SelectItem
+															key={
+																account.accountNo
+															}
+															value={
+																account.accountNo
+															}>
+															{`${account.bankName} (${account.accountNo})`}
+														</SelectItem>
+													))}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+
+									<div className="grid gap-6 md:grid-cols-2">
+										<FormField
+											control={form.control}
+											name="bankName"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														Bank Name
+													</FormLabel>
+													<FormControl>
+														<Input
+															placeholder="Enter your bank name"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
 
 									<div className="grid gap-6 md:grid-cols-2">
 										<FormField
@@ -516,6 +608,7 @@ export function SellGiftCardForm() {
 														<Input
 															placeholder="Enter your account number"
 															{...field}
+															readOnly
 														/>
 													</FormControl>
 													<FormMessage />
@@ -535,6 +628,7 @@ export function SellGiftCardForm() {
 														<Input
 															placeholder="Enter your account name"
 															{...field}
+															readOnly
 														/>
 													</FormControl>
 													<FormMessage />

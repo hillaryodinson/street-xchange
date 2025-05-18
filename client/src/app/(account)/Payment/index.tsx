@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Check, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
@@ -17,6 +17,7 @@ import { ApiResponse } from "@/utils/types";
 
 const Payment = () => {
 	const { transId } = useParams();
+	const navigate = useNavigate();
 	//fetch the transaction using the transaction ID
 	const { data: exchangeDetails, isPending } = useQuery({
 		queryKey: ["fetch_transaction", transId],
@@ -33,9 +34,10 @@ const Payment = () => {
 		);
 		const result = response.data as ApiResponse<undefined>;
 		if (result.success) {
-			toast.success("Payment confirmed successfully.");
+			toast.success(response.data.message);
+			navigate("/dashboard");
 		} else {
-			toast.error("Failed to confirm payment.");
+			toast.error(response.data.message);
 		}
 	};
 

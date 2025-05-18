@@ -64,16 +64,20 @@ model Kyc {
 }
 
 model GiftCardTransaction {
-  id         String   @id @default(uuid())
+  id         String @id @default(uuid())
   customerId String
   cardType   String //itunes,amazon, steam, ebay, razer gold, google
   country    String
   type       String //Physical, Ecode, Horizontal, white board
   speed      Int?
   amount     Int
-  isPending  Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+
+  accountId String
+  Account   CustomerBank @relation(fields: [accountId], references: [id])
+
+  isPending Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   Transaction Transaction[]
 }
@@ -171,8 +175,9 @@ model CustomerBank {
   createdAt   DateTime  @default(now())
   deletedAt   DateTime?
 
-  customerId String
-  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId          String
+  customer            User                  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  GiftCardTransaction GiftCardTransaction[]
 }
 
 model Setting {

@@ -97,17 +97,6 @@ export const WalletSchema = z.object({
 	address: z.string(),
 });
 
-/*
-  cryptoTypeSent String //usdt/btc/eth
-  cryptoAmountSent Float
-  fiatAmountReceived Float //converted from crypto type to naira
-  fiatCurrency Float //converted from crypto type to naira
-  fiatRate Float //xchange rate
-  currentUSDRate Float
-  walletAddress String
-  walletNetwork String
-
-*/
 export const CryptoTransactionSchema = z.object({
 	cryptoTypeSent: z.string(),
 	cryptoAmountSent: z.coerce.number(),
@@ -118,4 +107,21 @@ export const CryptoTransactionSchema = z.object({
 	walletAddress: z.string(),
 	walletNetwork: z.string(),
 	...bankSchema.shape,
+});
+
+/*
+cardType   String //itunes,amazon, steam, ebay, razer gold, google
+  country    String
+  type       String //Physical, Ecode, Horizontal, white board
+  speed      Int?
+  amount     Int
+  isPending  Boolean  @default(true)
+*/
+export const GiftCardTransactionSchema = z.object({
+	cardType: z.string(),
+	country: z.string(),
+	type: z.string(),
+	speed: z.coerce.number().optional(),
+	amount: z.coerce.number(),
+	accountId: z.string(),
 });

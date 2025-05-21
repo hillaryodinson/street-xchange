@@ -6,10 +6,15 @@ import {
 	TypedRequestQuery,
 	TypedResponse,
 } from "../configs/requests";
-import { bookingSchema, CryptoTransactionSchema } from "../configs/zod";
+import {
+	bookingSchema,
+	CryptoTransactionSchema,
+	GiftCardTransactionSchema,
+} from "../configs/zod";
 import {
 	CryptoTransactionType,
 	FlightBookingType,
+	GiftCardTransactionType,
 	TransactionType,
 } from "../configs/types";
 import db from "../configs/db";
@@ -19,7 +24,7 @@ import {
 	generateUniqueRandomStrings,
 } from "../utils/helper";
 import { NodemailerDB } from "../services/nodemailer-db";
-import { TransactionStatus } from "@prisma/client";
+import { GiftCardTransaction, TransactionStatus } from "@prisma/client";
 
 export const getTransactionByTransId = async (
 	req: Request,
@@ -314,6 +319,71 @@ export const confirmCryptoOrder = async (req: Request, res: Response) => {
 	});
 };
 
+//TODO: Add GiftCard Transaction
+export const createGiftCardTransaction = async (
+	req: Request,
+	res: TypedResponse<CustomResponse>
+) => {
+	const request = req as TypedRequestBody<GiftCardTransactionType>;
+	const customer = request.user;
+	const body = request.body;
+	if (!customer)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"User not authenticated",
+			401
+		);
+
+	const zodResponse = GiftCardTransactionSchema.safeParse(body);
+	if (zodResponse.error) throw zodResponse;
+	const transactionDetails: TransactionType = {
+		transId: generateRandomString(7).toUpperCase(),
+		transType: "GiftCard",
+		description: `GiftCard - ${zodResponse.data.cardType} (${zodResponse.data.country})`,
+		customerId: customer.id,
+	};
+	const ct = await db.giftCardTransaction.create({
+		data: {
+			...zodResponse.data,
+			customerId: customer.id,
+			Transaction: {
+				create: { ...transactionDetails, status: "Pending" },
+			},
+		},
+	});
+
+	//notify administrator of pending transaction...
+	const mailer = new NodemailerDB(db);
+	const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@localhost.com";
+	const SITEMAIL = process.env.APP_NO_REPLY || "noreply@sitename.com";
+	const APP_URL = process.env.APP_URL || "https://localhost:3000";
+	const TransactionLink = `${APP_URL}/sxadmin/transactions/${transactionDetails.transId}`;
+	mailer.sendMail({
+		to: ADMIN_EMAIL,
+		from: SITEMAIL,
+		subject: "Service Request - (GiftCard Exchange)",
+		template: "notif_service_request",
+		context: {
+			service: transactionDetails.transType,
+			description: transactionDetails.description,
+			transId: transactionDetails.transId,
+			amount: `${zodResponse.data.amount} ${zodResponse.data.cardType}`,
+			amountReceived: `${zodResponse.data.country}${zodResponse.data.amount}`,
+			transUrl: TransactionLink,
+		},
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "GiftCard transaction was created successfully",
+		data: {
+			...ct,
+			...transactionDetails,
+		},
+	});
+};
+//TODO: View GiftCard Transactions
+
 //TODO: View Crypto Transactions
 //TOD0: View Single Crypto Transaction
 //TODO: Mark Crypto Transaction as Done
@@ -322,8 +392,7 @@ export const confirmCryptoOrder = async (req: Request, res: Response) => {
 //TODO: View Single Flight Transaction
 //TODO: Delete Flights Transaction
 //TODO: Mark Flight Transaction as Done
-//TODO: Add GiftCard Transaction
-//TODO: View GiftCard Transactions
+
 //TODO: View Single GiftCard Transaction
 //TODO: Delete GiftCard Transaction
 //TODO: Mark GiftCard Transaction as Done

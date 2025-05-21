@@ -75,18 +75,21 @@ model GiftCardTransaction {
   accountId String
   Account   CustomerBank @relation(fields: [accountId], references: [id])
 
-  isPending Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  status      PaymentTransactionStatus @default(PendingDisbursement)
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  disbursedAt DateTime?
   Transaction Transaction[]
 }
 
-enum CryptoTransactionStatus {
+enum PaymentTransactionStatus {
   PendingPayment
   PaymentDone
   PaymentConfirmed
   PaymentExpired
+
+  PendingDisbursement
+  DisbursementDone
 }
 
 model CryptoTransaction {
@@ -105,7 +108,7 @@ model CryptoTransaction {
   accountNo   String
   accountName String
 
-  status CryptoTransactionStatus @default(PendingPayment)
+  status PaymentTransactionStatus @default(PendingPayment)
 
   Transaction Transaction[]
 }

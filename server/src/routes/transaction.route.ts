@@ -406,4 +406,114 @@ transRoute.put(
  */
 transRoute.get("/:transId", authorize, tryCatch(getTransactionByTransId));
 
+/**
+ * @swagger
+ * /transactions/giftcard/sell-order:
+ *   post:
+ *     summary: Create a giftcard sell order
+ *     description: Endpoint to create a giftcard sell order.
+ *     tags:
+ *       - Transactions
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 description: The type of gift card being sold.
+ *                 example: Amazon
+ *               amount:
+ *                 type: number
+ *                 description: The amount of the gift card.
+ *                 example: 100
+ *               cardType:
+ *                 type: string
+ *                 description: The type of the card (e.g., physical or e-code).
+ *                 example: e-code
+ *               country:
+ *                 type: string
+ *                 description: The country where the gift card is valid.
+ *                 example: US
+ *               accountId:
+ *                 type: string
+ *                 description: The account ID of the user selling the gift card.
+ *                 example: "12345"
+ *               speed:
+ *                 type: number
+ *                 description: The speed of the transaction (optional).
+ *                 example: 1
+ *
+ *     responses:
+ *       201:
+ *         description: Gift card sell order created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *       400:
+ *         description: Bad request. Invalid input data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *                   example: "Bad request"
+ *       401:
+ *         description: Unauthorized. User is not authorized to create a sell order.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *                   example: "Unauthorized"
+ *                 code:
+ *                   type: string
+ *                   example: E1104
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *                   example: "An error occurred, please contact admin"
+ */
+transRoute.post(
+	"/giftcard/sell-order",
+	authorize,
+	tryCatch(createCryptoSellOrder)
+);
 export default transRoute;

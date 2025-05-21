@@ -3,6 +3,7 @@ import {
 	bookFlight,
 	confirmCryptoOrder,
 	createCryptoSellOrder,
+	createGiftCardTransaction,
 	getTransactionByTransId,
 } from "../controllers/transaction.controller";
 import { authorize, tryCatch } from "../middlewares/middleware";
@@ -447,6 +448,22 @@ transRoute.get("/:transId", authorize, tryCatch(getTransactionByTransId));
  *                 type: number
  *                 description: The speed of the transaction (optional).
  *                 example: 1
+ *               pin:
+ *                 type: string
+ *                 description: The pin of the gift card.
+ *                 example: "1234-5678-9012"
+ *               additionalInfo:
+ *                 type: string
+ *                 description: Additional information about the gift card.
+ *                 example: "Valid for online purchases only"
+ *               cardCode:
+ *                 type: string
+ *                 description: The code of the gift card.
+ *                 example: "AMZ123456789"
+ *               cardImage:
+ *                 type: string
+ *                 description: A URL or base64 string of the gift card image.
+ *                 example: "https://example.com/card-image.jpg"
  *
  *     responses:
  *       201:
@@ -514,6 +531,6 @@ transRoute.get("/:transId", authorize, tryCatch(getTransactionByTransId));
 transRoute.post(
 	"/giftcard/sell-order",
 	authorize,
-	tryCatch(createCryptoSellOrder)
+	tryCatch(createGiftCardTransaction)
 );
 export default transRoute;

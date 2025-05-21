@@ -124,4 +124,9 @@ export const GiftCardTransactionSchema = z.object({
 	speed: z.coerce.number().optional(),
 	amount: z.coerce.number(),
 	accountId: z.string(),
+
+	pin: z.string().optional(),
+	additionalInfo: z.string().optional(),
+	cardCode: z.string().optional(),
+	cardImage: z.string().optional(),
 });

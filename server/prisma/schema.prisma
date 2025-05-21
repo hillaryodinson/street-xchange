@@ -72,6 +72,11 @@ model GiftCardTransaction {
   speed      Int?
   amount     Int
 
+  pin            String?
+  additionalInfo String?
+  cardCode       String?
+  cardImage      String?
+
   accountId String
   Account   CustomerBank @relation(fields: [accountId], references: [id])
 

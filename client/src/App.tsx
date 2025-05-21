@@ -21,23 +21,12 @@ import PasswordResetRequestPage from "./app/(auth)/Reset/Request";
 import PasswordResetConfirmationPage from "./app/(auth)/Reset/Confirm";
 import MyProfilePage from "./app/(account)/Profile";
 import NotFoundPage from "./app/(public)/Home/errors/notFound";
-import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary } from "react-error-boundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AdminProtectedRoute from "./middleware/AdminProtectedRoute";
 import SettingsPage from "./app/(admin)/Setting";
 import Payment from "./app/(account)/Payment";
-
-function ErrorFallback({ error }: { error: Error }) {
-	const { resetBoundary } = useErrorBoundary();
-
-	return (
-		<div role="alert">
-			<p>Something went wrong:</p>
-			<pre style={{ color: "red" }}>{error.message}</pre>
-			<button onClick={resetBoundary}>Try again</button>
-		</div>
-	);
-}
+import BackendErrorFallback from "./components/layout/backend-fallback";
 
 function App() {
 	const queryClient = new QueryClient();
@@ -86,7 +75,7 @@ function App() {
 			element: (
 				<ErrorBoundary
 					fallbackRender={({ error }) => (
-						<ErrorFallback error={error} />
+						<BackendErrorFallback error={error} />
 					)}>
 					<ProtectedRoute>
 						<BackendLayout />

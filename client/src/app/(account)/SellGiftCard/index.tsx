@@ -1,10 +1,6 @@
-"use client";
-
-import type React from "react";
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, Gift, Upload } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Gift } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -17,27 +13,9 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { cardTypes, countries, giftCardTypes } from "@/lib/data";
-import api from "@/utils/api";
-import { ApiResponse, BankType } from "@/utils/types";
-import { useQueries } from "@tanstack/react-query";
+import { BankType } from "@/utils/types";
+import GiftCardSalesForm from "./components/GiftCardSalesForm";
 
 const formSchema = z.object({
 	cardType: z.string({
@@ -56,9 +34,7 @@ const formSchema = z.object({
 	cardNumber: z.string().min(1, "Please enter the card number"),
 	pin: z.string().optional(),
 	additionalInfo: z.string().optional(),
-	bankName: z.string().min(1, "Please enter your bank name"),
-	accountNumber: z.string().min(1, "Please enter your account number"),
-	accountName: z.string().min(1, "Please enter your account name"),
+	accountId: z.string().min(1, "Please select your bank"),
 	uploadedImages: z.array(z.string()).optional(),
 });
 
@@ -67,6 +43,9 @@ export function SellGiftCardForm() {
 	const [saleDetails, setSaleDetails] = useState<z.infer<
 		typeof formSchema
 	> | null>(null);
+	const [selectedAccount, setSelectedAccount] = useState<BankType | null>(
+		null
+	);
 	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -79,9 +58,7 @@ export function SellGiftCardForm() {
 			cardNumber: "",
 			pin: "",
 			additionalInfo: "",
-			bankName: "",
-			accountNumber: "",
-			accountName: "",
+			accountId: "",
 			uploadedImages: [],
 		},
 	});
@@ -91,18 +68,6 @@ export function SellGiftCardForm() {
 		setStep(2);
 	}
 
-	const getExchangeRate = (cardType: string) => {
-		const selectedCard = giftCardTypes.find((c) => c.value === cardType);
-		return selectedCard?.rate || 0;
-	};
-
-	const getReceiveAmount = () => {
-		if (!saleDetails) return 0;
-
-		const rate = getExchangeRate(saleDetails.cardType);
-		return (saleDetails.amount * rate).toFixed(2);
-	};
-
 	// const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 	// 	if (e.target.files && e.target.files.length > 0) {
 	// 		const newImages = Array.from(e.target.files).map((file) =>
@@ -111,45 +76,6 @@ export function SellGiftCardForm() {
 	// 		setUploadedImages([...uploadedImages, ...newImages]);
 	// 	}
 	// };
-
-	const [
-		// { data: cryptocurrencies },
-		// { data: sx_ngn_rate },
-		{ data: accounts },
-	] = useQueries({
-		queries: [
-			// {
-			// 	queryKey: ["fetch_cryptocurrencies"],
-			// 	queryFn: async () => {
-			// 		const response = await api.get("/wallets/supported-crypto");
-			// 		const result = response.data as ApiResponse<cryptoType[]>;
-			// 		if (result.success) return result.data;
-			// 	},
-			// 	staleTime: 1000 * 60 * 60 * 4, // 5 hours
-			// },
-			// {
-			// 	queryKey: ["fetch_rate"],
-			// 	queryFn: async () => {
-			// 		const response = await api.get(
-			// 			"/settings?setting=ngn_rate"
-			// 		);
-			// 		const result = response.data as ApiResponse<string>;
-			// 		if (result.success)
-			// 			return result.data ? parseFloat(result.data) : 0;
-			// 	},
-			// 	staleTime: 1000 * 60 * 60, // 1 hour
-			// },
-			{
-				queryKey: ["fetch_my_banks"],
-				queryFn: async () => {
-					const response = await api.get("/banks");
-					const result = response.data as ApiResponse<BankType[]>;
-					if (result.success) return result.data;
-				},
-				staleTime: 1000 * 60 * 60 * 30, // 30 hours
-			},
-		],
-	});
 
 	const handleConfirmSale = () => {
 		// Here you would handle the actual sale process
@@ -182,469 +108,12 @@ export function SellGiftCardForm() {
 
 			{/* Step 1: Gift Card Details Form */}
 			{step === 1 && (
-				<Card>
-					<CardHeader>
-						<CardTitle>Gift Card Details</CardTitle>
-						<CardDescription>
-							Enter your gift card information
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit(onSubmit)}
-								className="space-y-6">
-								<div className="grid gap-6 md:grid-cols-2">
-									<FormField
-										control={form.control}
-										name="cardType"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Gift Card Type
-												</FormLabel>
-												<Select
-													onValueChange={
-														field.onChange
-													}
-													value={field.value || ""}
-													defaultValue={field.value}>
-													<FormControl className="!w-full">
-														<SelectTrigger>
-															<SelectValue placeholder="Select gift card type" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{giftCardTypes.map(
-															(card) => (
-																<SelectItem
-																	key={
-																		card.value
-																	}
-																	value={
-																		card.value
-																	}>
-																	{card.label}
-																</SelectItem>
-															)
-														)}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="country"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Country</FormLabel>
-												<Select
-													onValueChange={
-														field.onChange
-													}
-													value={field.value || ""}
-													defaultValue={field.value}>
-													<FormControl className="!w-full">
-														<SelectTrigger>
-															<SelectValue placeholder="Select country" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{countries.map(
-															(country) => (
-																<SelectItem
-																	key={
-																		country.value
-																	}
-																	value={
-																		country.value
-																	}>
-																	{
-																		country.label
-																	}
-																</SelectItem>
-															)
-														)}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								<div className="grid gap-6 md:grid-cols-2">
-									<FormField
-										control={form.control}
-										name="type"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Card Type</FormLabel>
-												<Select
-													onValueChange={
-														field.onChange
-													}
-													value={field.value || ""}
-													defaultValue={field.value}>
-													<FormControl className="!w-full">
-														<SelectTrigger>
-															<SelectValue placeholder="Select card type" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{cardTypes.map(
-															(type) => (
-																<SelectItem
-																	key={
-																		type.value
-																	}
-																	value={
-																		type.value
-																	}>
-																	{type.label}
-																</SelectItem>
-															)
-														)}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="amount"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Card Amount ($)
-												</FormLabel>
-												<FormControl>
-													<Input
-														type="number"
-														placeholder="0.00"
-														{...field}
-														onChange={(e) => {
-															const value =
-																e.target
-																	.value ===
-																""
-																	? undefined
-																	: Number.parseFloat(
-																			e
-																				.target
-																				.value
-																	  );
-															field.onChange(
-																value
-															);
-														}}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								<div className="space-y-4 border-t pt-4">
-									<h3 className="text-lg font-medium">
-										Card Information
-									</h3>
-
-									<FormField
-										control={form.control}
-										name="cardNumber"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Card Number / Code
-												</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="Enter card number or code"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="pin"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													PIN (if applicable)
-												</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="Enter card PIN"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="uploadedImages"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Upload Card Images
-												</FormLabel>
-												<FormControl>
-													<div className="border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center">
-														<Upload className="h-8 w-8 text-muted-foreground mb-2" />
-														<p className="text-sm text-muted-foreground mb-2">
-															Drag and drop card
-															images here, or
-															click to select
-															files
-														</p>
-														<Input
-															type="file"
-															className="hidden"
-															id="card-images"
-															accept="image/*"
-															multiple
-															onChange={(e) => {
-																if (
-																	e.target
-																		.files &&
-																	e.target
-																		.files
-																		.length >
-																		0
-																) {
-																	const newImages =
-																		Array.from(
-																			e
-																				.target
-																				.files
-																		).map(
-																			(
-																				file
-																			) =>
-																				URL.createObjectURL(
-																					file
-																				)
-																		);
-																	setUploadedImages(
-																		[
-																			...uploadedImages,
-																			...newImages,
-																		]
-																	);
-																	field.onChange(
-																		[
-																			...uploadedImages,
-																			...newImages,
-																		]
-																	);
-																}
-															}}
-														/>
-														<Button
-															type="button"
-															variant="outline"
-															onClick={() =>
-																document
-																	.getElementById(
-																		"card-images"
-																	)
-																	?.click()
-															}>
-															Select Files
-														</Button>
-													</div>
-												</FormControl>
-												<FormMessage />
-
-												{uploadedImages.length > 0 && (
-													<div className="grid grid-cols-3 gap-2 mt-4">
-														{uploadedImages.map(
-															(image, index) => (
-																<div
-																	key={index}
-																	className="relative aspect-square rounded-md overflow-hidden border">
-																	<img
-																		src={
-																			image ||
-																			"/placeholder.svg"
-																		}
-																		alt={`Card image ${
-																			index +
-																			1
-																		}`}
-																		className="w-full h-full object-cover"
-																	/>
-																</div>
-															)
-														)}
-													</div>
-												)}
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="additionalInfo"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Additional Information
-													(Optional)
-												</FormLabel>
-												<FormControl>
-													<Textarea
-														placeholder="Enter any additional information about the card"
-														className="min-h-[100px]"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								<div className="space-y-4 border-t pt-4">
-									<h3 className="text-lg font-medium">
-										Bank Account Details
-									</h3>
-									<p className="text-sm text-muted-foreground">
-										Enter your bank account details where
-										you want to receive the funds
-									</p>
-
-									<FormItem>
-										<FormLabel>Bank Name</FormLabel>
-										<Select
-											onValueChange={(value) => {
-												const account = accounts?.find(
-													(x) => x.accountNo == value
-												);
-												console.log(account);
-												if (account) {
-													form.setValue(
-														"accountNumber",
-														account?.accountNo
-													);
-													form.setValue(
-														"bankName",
-														account?.bankName
-													);
-													form.setValue(
-														"accountName",
-														account?.accountName
-													);
-												}
-											}}>
-											<FormControl className="!w-full">
-												<SelectTrigger>
-													<SelectValue placeholder="Select Account" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{accounts &&
-													accounts?.map((account) => (
-														<SelectItem
-															key={
-																account.accountNo
-															}
-															value={
-																account.accountNo
-															}>
-															{`${account.bankName} (${account.accountNo})`}
-														</SelectItem>
-													))}
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-
-									<div className="grid gap-6 md:grid-cols-2">
-										<FormField
-											control={form.control}
-											name="bankName"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>
-														Bank Name
-													</FormLabel>
-													<FormControl>
-														<Input
-															placeholder="Enter your bank name"
-															{...field}
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-									</div>
-
-									<div className="grid gap-6 md:grid-cols-2">
-										<FormField
-											control={form.control}
-											name="accountNumber"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>
-														Account Number
-													</FormLabel>
-													<FormControl>
-														<Input
-															placeholder="Enter your account number"
-															{...field}
-															readOnly
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-
-										<FormField
-											control={form.control}
-											name="accountName"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>
-														Account Name
-													</FormLabel>
-													<FormControl>
-														<Input
-															placeholder="Enter your account name"
-															{...field}
-															readOnly
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-									</div>
-								</div>
-
-								<Button type="submit" className="w-full">
-									Continue to Review
-								</Button>
-							</form>
-						</Form>
-					</CardContent>
-				</Card>
+				<GiftCardSalesForm
+					form={form}
+					onSubmit={onSubmit}
+					onAccountSelect={setSelectedAccount}
+					onImageUpload={setUploadedImages}
+				/>
 			)}
 
 			{/* Step 2: Review and Confirm */}
@@ -725,22 +194,13 @@ export function SellGiftCardForm() {
 									<p className="text-sm text-muted-foreground">
 										Exchange Rate
 									</p>
-									<p className="font-medium">
-										{(
-											getExchangeRate(
-												saleDetails.cardType
-											) * 100
-										).toFixed(0)}
-										%
-									</p>
+									<p className="font-medium"></p>
 								</div>
 								<div>
 									<p className="text-sm text-muted-foreground">
 										You'll Receive
 									</p>
-									<p className="font-medium text-lg text-primary">
-										${getReceiveAmount()}
-									</p>
+									<p className="font-medium text-lg text-primary"></p>
 								</div>
 							</div>
 						</div>
@@ -828,7 +288,7 @@ export function SellGiftCardForm() {
 											Bank Name
 										</p>
 										<p className="font-medium">
-											{saleDetails.bankName}
+											{selectedAccount?.bankName || "N/A"}
 										</p>
 									</div>
 									<div>
@@ -836,7 +296,8 @@ export function SellGiftCardForm() {
 											Account Number
 										</p>
 										<p className="font-medium">
-											{saleDetails.accountNumber}
+											{selectedAccount?.accountNo ||
+												"N/A"}
 										</p>
 									</div>
 									<div>
@@ -844,7 +305,8 @@ export function SellGiftCardForm() {
 											Account Name
 										</p>
 										<p className="font-medium">
-											{saleDetails.accountName}
+											{selectedAccount?.accountName ||
+												"N/A"}
 										</p>
 									</div>
 								</div>

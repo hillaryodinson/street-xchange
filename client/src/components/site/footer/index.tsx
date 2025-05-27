@@ -8,7 +8,6 @@ import {
 	ShoppingCart,
 	Twitter,
 } from "lucide-react";
-import React from "react";
 
 const Footer = () => {
 	return (

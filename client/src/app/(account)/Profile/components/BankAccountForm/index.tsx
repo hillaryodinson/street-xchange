@@ -6,7 +6,7 @@ import {
 	FormLabel,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { banks } from "@/lib/data";
 import { Input } from "@/components/ui/input";

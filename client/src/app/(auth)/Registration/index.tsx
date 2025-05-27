@@ -18,12 +18,12 @@ import { registerFormSchema } from "@/utils/zod";
 import api from "@/utils/api";
 import { ApiResponse } from "@/utils/types";
 import { toast } from "react-toastify";
-import LocationSelector from "@/components/site/location-picker";
 import { Country } from "react-phone-number-input";
 import { Logo } from "@/components/site/logo";
 import { Helmet } from "react-helmet";
 import { Home } from "lucide-react";
 import Notification from "@/components/site/notification";
+import LocationSelector from "@/components/site/location-picker";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();

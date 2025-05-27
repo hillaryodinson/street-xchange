@@ -3,6 +3,7 @@ import {
 	BankSchema,
 	ChangePasswordSchema,
 	generalFormSchema,
+	giftCardTransactionFormSchema,
 	ImageSchema,
 	KYCSchema,
 	walletFormSchema,
@@ -59,7 +60,7 @@ export interface Transaction {
 	status: "pending" | "completed" | "failed";
 }
 
-export type BankType = z.infer<typeof BankSchema>;
+export type BankType = z.infer<typeof BankSchema> & { id?: string };
 export type KYCType = z.infer<typeof KYCSchema>;
 export type ChangePasswordType = z.infer<typeof ChangePasswordSchema>;
 
@@ -84,4 +85,8 @@ export type cryptoType = {
 export type networkType = {
 	id: string;
 	network: string;
+};
+
+export type giftCardFormType = z.infer<typeof giftCardTransactionFormSchema> & {
+	id?: string;
 };

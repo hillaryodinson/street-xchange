@@ -132,3 +132,24 @@ export const cryptoTransactionFormSchema = z.object({
 
 	...BankSchema.shape,
 });
+
+export const giftCardTransactionFormSchema = z.object({
+	cardType: z.string({
+		required_error: "Please select a gift card type.",
+	}),
+	country: z.string({
+		required_error: "Please select a country.",
+	}),
+	type: z.string({
+		required_error: "Please select a card type.",
+	}),
+	amount: z.coerce
+		.number()
+		.positive("Amount must be positive")
+		.min(5, "Minimum amount is $5"),
+	cardNumber: z.string().min(1, "Please enter the card number"),
+	pin: z.string().optional(),
+	additionalInfo: z.string().optional(),
+	accountId: z.string().min(1, "Please select your bank"),
+	uploadedImages: z.array(z.string()).optional(),
+});

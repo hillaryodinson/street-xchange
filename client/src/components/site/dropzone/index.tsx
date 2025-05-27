@@ -1,4 +1,4 @@
-import { Image, Loader2, MousePointerSquareDashed, X } from "lucide-react";
+import { Loader2, MousePointerSquareDashed, Upload, X } from "lucide-react";
 // import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import React, { useState, useTransition } from "react";
@@ -10,7 +10,6 @@ import { ApiResponse } from "@/utils/types";
 
 type uploadedFileType = {
 	image: string;
-	thumb: string;
 };
 
 interface DropzoneInputProps {
@@ -41,19 +40,6 @@ const DropzoneInput = ({
 		defaultFiles ?? []
 	);
 	const [isPending, startTransition] = useTransition();
-	// const [uploadProgress, setUploadProgress] = useState<number>(0);
-
-	// const { startUpload, isUploading } = useUploadThing("imageUploader", {
-	// 	onClientUploadComplete: ([data]) => {
-	// 		const configId = data.serverData.configId;
-	// 		startTransition(() => {
-	// 			router.push(`/configure/design?id=${configId}`);
-	// 		});
-	// 	},
-	// 	onUploadProgress(p) {
-	// 		setUploadProgress(p);
-	// 	},
-	// });
 
 	// Initialize files from value prop
 	React.useEffect(() => {
@@ -98,17 +84,28 @@ const DropzoneInput = ({
 					const result = (await response.data) as ApiResponse<
 						{ main: string; thumb: string }[]
 					>;
-					console.log("FILE UPLOADED =>", result);
 
 					if (result.success) {
 						if (result.data) {
 							const uploaded = result.data.map((file) => {
 								return {
 									image: file.main,
-									thumb: file.thumb,
 								};
 							});
-							setUploadedFiles(uploaded);
+							setUploadedFiles((prevFiles) => {
+								const updatedFiles = [...prevFiles];
+								uploaded.forEach((newFile) => {
+									const index = updatedFiles.findIndex(
+										(f) => f.image === newFile.image
+									);
+									if (index !== -1) {
+										updatedFiles[index] = newFile;
+									} else {
+										updatedFiles.push(newFile);
+									}
+								});
+								return updatedFiles;
+							});
 							onChange?.(uploaded);
 						}
 					}
@@ -158,7 +155,7 @@ const DropzoneInput = ({
 		<>
 			<div
 				className={cn(
-					"relative h-full flex-1 w-full bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 flex justify-center flex-col items-center",
+					"border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center",
 					{
 						"ring-blue-900/25 bg-blue-900/10": isDraggedOver,
 					}
@@ -184,7 +181,7 @@ const DropzoneInput = ({
 								) : isUploading || isPending ? (
 									<Loader2 className="animate-spin h-6 w-6 mb-2 text-zinc-500" />
 								) : (
-									<Image className="h-6 w-6 text-zinc-500 mb-2" />
+									<Upload className="h-6 w-6 text-zinc-500 mb-2" />
 								)}
 
 								<div className="flex flex-col justify-center mb-2 text-sm text-zinc-700">
@@ -208,12 +205,13 @@ const DropzoneInput = ({
 											to upload
 										</p>
 									) : (
-										<p>
-											<span className="font-semibold">
-												Click to upload
-											</span>
-											or drag and drop
-										</p>
+										<>
+											{/* <Upload className="h-8 w-8 text-muted-foreground mb-2" /> */}
+											<p className="text-sm text-muted-foreground mb-2">
+												Drag and drop card images here,
+												or click to select files
+											</p>
+										</>
 									)}
 								</div>
 

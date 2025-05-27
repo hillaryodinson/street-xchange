@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	Card,
 	CardHeader,
@@ -12,6 +11,7 @@ import {
 	FormLabel,
 	FormControl,
 	FormMessage,
+	Form,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,42 +22,76 @@ import {
 	SelectValue,
 	SelectContent,
 	SelectItem,
-} from "@radix-ui/react-select";
-import { Upload } from "lucide-react";
-import React, { useState } from "react";
+} from "@/components/ui/select"; // Use your UI library's Select
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { UseFormReturn } from "react-hook-form";
-import { Form } from "react-router-dom";
-import { useQueries } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 import api from "@/utils/api";
-import { ApiResponse, BankType } from "@/utils/types";
+import { ApiResponse, BankType, giftCardFormType } from "@/utils/types";
+import { z } from "zod";
+import { giftCardTransactionFormSchema } from "@/utils/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+import DropzoneInput from "@/components/site/dropzone";
 
 const GiftCardSalesForm = ({
-	form,
 	onSubmit,
 	onAccountSelect,
 	onImageUpload,
+	defaultValues,
+	uploadedImages = [],
+	defaultAccount = null,
 }: {
-	form: UseFormReturn<any>;
-	onSubmit: (data: any) => void;
+	onSubmit: (data: z.infer<typeof giftCardTransactionFormSchema>) => void;
 	onAccountSelect: (account: BankType) => void;
 	onImageUpload: (images: string[]) => void;
+	defaultValues?: giftCardFormType | null;
+	uploadedImages?: string[];
+	defaultAccount?: BankType | null;
 }) => {
-	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+	const [selectedAccount, setSelectedAccount] = useState<BankType | null>(
+		defaultAccount || null
+	);
 
-	const [{ data: accounts }] = useQueries({
-		queries: [
-			{
-				queryKey: ["fetch_my_banks"],
-				queryFn: async () => {
-					const response = await api.get("/banks");
-					const result = response.data as ApiResponse<BankType[]>;
-					if (result.success) return result.data;
-				},
-				staleTime: 1000 * 60 * 60 * 30, // 30 hours
-			},
-		],
+	const onError = (errors: Record<string, { message?: string }>) => {
+		const firstErrorMessage = Object.values(errors)[0]?.message;
+		console.log("First error:", errors);
+		// You can also show a toast or alert here
+		toast.error(
+			firstErrorMessage || "An error occurred. Please check your input."
+		);
+	};
+
+	const { data: accounts } = useQuery({
+		queryKey: ["fetch_my_banks"],
+		queryFn: async () => {
+			const response = await api.get("/banks");
+			const result = response.data as ApiResponse<
+				(BankType & { id: string })[]
+			>;
+			if (result.success) return result.data;
+			return [];
+		},
+		staleTime: 1000 * 60 * 60 * 30, // 30 hours
 	});
+
+	const form = useForm<giftCardFormType>({
+		resolver: zodResolver(giftCardTransactionFormSchema),
+		defaultValues: {
+			cardType: "",
+			country: "",
+			type: "",
+			amount: undefined,
+			cardNumber: "",
+			pin: "",
+			additionalInfo: "",
+			uploadedImages: uploadedImages || [],
+			accountId: "",
+			...defaultValues,
+		},
+	});
+
 	return (
 		<Card>
 			<CardHeader>
@@ -69,7 +103,7 @@ const GiftCardSalesForm = ({
 			<CardContent>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(onSubmit)}
+						onSubmit={form.handleSubmit(onSubmit, onError)}
 						className="space-y-6">
 						<div className="grid gap-6 md:grid-cols-2">
 							<FormField
@@ -245,90 +279,32 @@ const GiftCardSalesForm = ({
 											Upload Card Images
 										</FormLabel>
 										<FormControl>
-											<div className="border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center">
-												<Upload className="h-8 w-8 text-muted-foreground mb-2" />
-												<p className="text-sm text-muted-foreground mb-2">
-													Drag and drop card images
-													here, or click to select
-													files
-												</p>
-												<Input
-													type="file"
-													className="hidden"
-													id="card-images"
-													accept="image/*"
-													multiple
-													onChange={(e) => {
-														if (
-															e.target.files &&
-															e.target.files
-																.length > 0
-														) {
-															const newImages =
-																Array.from(
-																	e.target
-																		.files
-																).map((file) =>
-																	URL.createObjectURL(
-																		file
-																	)
-																);
-															setUploadedImages([
-																...uploadedImages,
-																...newImages,
-															]);
-															field.onChange([
-																...uploadedImages,
-																...newImages,
-															]);
+											<DropzoneInput
+												onChange={(value) => {
+													form.setValue(
+														field.name,
+														value.map(
+															(file) =>
+																file.image as string
+														)
+													);
 
-															onImageUpload(
-																uploadedImages
-															);
-														}
-													}}
-												/>
-												<Button
-													type="button"
-													variant="outline"
-													onClick={() =>
-														document
-															.getElementById(
-																"card-images"
-															)
-															?.click()
-													}>
-													Select Files
-												</Button>
-											</div>
+													onImageUpload(
+														value.map(
+															(file) =>
+																file.image as string
+														)
+													);
+												}}
+												defaultFiles={field.value?.map(
+													(image) => ({
+														image,
+														thumb: image,
+													})
+												)}
+											/>
 										</FormControl>
 										<FormMessage />
-
-										{uploadedImages.length > 0 && (
-											<div className="grid grid-cols-3 gap-2 mt-4">
-												{uploadedImages.map(
-													(
-														image: string,
-														index: number
-													) => (
-														<div
-															key={index}
-															className="relative aspect-square rounded-md overflow-hidden border">
-															<img
-																src={
-																	image ||
-																	"/placeholder.svg"
-																}
-																alt={`Card image ${
-																	index + 1
-																}`}
-																className="w-full h-full object-cover"
-															/>
-														</div>
-													)
-												)}
-											</div>
-										)}
 									</FormItem>
 								)}
 							/>
@@ -366,25 +342,23 @@ const GiftCardSalesForm = ({
 							<FormItem>
 								<FormLabel>Bank Name</FormLabel>
 								<Select
+									defaultValue={
+										form.getValues("accountId") ||
+										selectedAccount?.id ||
+										""
+									}
 									onValueChange={(value) => {
 										const account = accounts?.find(
-											(x) => x.accountNo == value
+											(x) => x.accountNo === value
 										);
-										console.log(account);
 										if (account) {
+											setSelectedAccount(account);
+											console.log(account);
+											// Set the accountId in the form
 											form.setValue(
-												"accountNumber",
-												account?.accountNo
+												"accountId",
+												account.id
 											);
-											form.setValue(
-												"bankName",
-												account?.bankName
-											);
-											form.setValue(
-												"accountName",
-												account?.accountName
-											);
-
 											onAccountSelect(account);
 										}
 									}}>
@@ -395,7 +369,7 @@ const GiftCardSalesForm = ({
 									</FormControl>
 									<SelectContent>
 										{accounts &&
-											accounts?.map((account) => (
+											accounts.map((account) => (
 												<SelectItem
 													key={account.accountNo}
 													value={account.accountNo}>
@@ -408,62 +382,50 @@ const GiftCardSalesForm = ({
 							</FormItem>
 
 							<div className="grid gap-6 md:grid-cols-2">
-								<FormField
-									control={form.control}
-									name="bankName"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Bank Name</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Enter your bank name"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+								<FormItem>
+									<FormLabel>Bank Name</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Enter your bank name"
+											value={
+												selectedAccount?.bankName || ""
+											}
+											readOnly
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
 							</div>
 
 							<div className="grid gap-6 md:grid-cols-2">
-								<FormField
-									control={form.control}
-									name="accountNumber"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Account Number
-											</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Enter your account number"
-													{...field}
-													readOnly
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+								<FormItem>
+									<FormLabel>Account Number</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Enter your account number"
+											value={
+												selectedAccount?.accountNo || ""
+											}
+											readOnly
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
 
-								<FormField
-									control={form.control}
-									name="accountName"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Account Name</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Enter your account name"
-													{...field}
-													readOnly
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+								<FormItem>
+									<FormLabel>Account Name</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Enter your account name"
+											readOnly
+											value={
+												selectedAccount?.accountName ||
+												""
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
 							</div>
 						</div>
 

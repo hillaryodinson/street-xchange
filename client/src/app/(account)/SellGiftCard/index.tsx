@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check, Gift } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -13,74 +10,61 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { cardTypes, countries, giftCardTypes } from "@/lib/data";
-import { BankType } from "@/utils/types";
+import { BankType, giftCardFormType } from "@/utils/types";
 import GiftCardSalesForm from "./components/GiftCardSalesForm";
-
-const formSchema = z.object({
-	cardType: z.string({
-		required_error: "Please select a gift card type.",
-	}),
-	country: z.string({
-		required_error: "Please select a country.",
-	}),
-	type: z.string({
-		required_error: "Please select a card type.",
-	}),
-	amount: z.coerce
-		.number()
-		.positive("Amount must be positive")
-		.min(5, "Minimum amount is $5"),
-	cardNumber: z.string().min(1, "Please enter the card number"),
-	pin: z.string().optional(),
-	additionalInfo: z.string().optional(),
-	accountId: z.string().min(1, "Please select your bank"),
-	uploadedImages: z.array(z.string()).optional(),
-});
+import ConfirmGiftCardSale from "./components/ConfirmGiftCardSale";
 
 export function SellGiftCardForm() {
 	const [step, setStep] = useState(1);
-	const [saleDetails, setSaleDetails] = useState<z.infer<
-		typeof formSchema
-	> | null>(null);
+	const [saleDetails, setSaleDetails] = useState<giftCardFormType | null>(
+		null
+	);
 	const [selectedAccount, setSelectedAccount] = useState<BankType | null>(
 		null
 	);
 	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			cardType: "",
-			country: "",
-			type: "",
-			amount: undefined,
-			cardNumber: "",
-			pin: "",
-			additionalInfo: "",
-			accountId: "",
-			uploadedImages: [],
-		},
-	});
-
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	function onSubmit(values: giftCardFormType) {
 		setSaleDetails(values);
 		setStep(2);
 	}
 
-	// const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	if (e.target.files && e.target.files.length > 0) {
-	// 		const newImages = Array.from(e.target.files).map((file) =>
-	// 			URL.createObjectURL(file)
-	// 		);
-	// 		setUploadedImages([...uploadedImages, ...newImages]);
-	// 	}
-	// };
-
 	const handleConfirmSale = () => {
 		// Here you would handle the actual sale process
+		const values = saleDetails as giftCardFormType;
+
+		if (!values) return;
+
+		if (!selectedAccount) {
+			alert("Please select a bank account to receive payment.");
+			return;
+		}
+		alert(
+			`Gift Card Sale Details:\nCard Type: ${values.cardType}\nCountry: ${
+				values.country
+			}\nType: ${values.type}\nAmount: $${values.amount}\nCard Number: ${
+				values.cardNumber
+			}\nPIN: ${values.pin || "N/A"}\nAdditional Info: ${
+				values.additionalInfo || "N/A"
+			}`
+		);
 		// For now, we'll just show a success message
 		setStep(3);
+	};
+
+	const handleImageUpload = (newImages: string[]) => {
+		setUploadedImages((prevImages) => {
+			const updatedImages = [...prevImages];
+			newImages.forEach((img) => {
+				const idx = updatedImages.findIndex((i) => i === img);
+				if (idx === -1) {
+					updatedImages.push(img);
+				} else {
+					updatedImages[idx] = img;
+				}
+			});
+			return updatedImages;
+		});
 	};
 
 	return (
@@ -93,7 +77,6 @@ export function SellGiftCardForm() {
 					Back to Dashboard
 				</Link>
 			</div>
-
 			<div className="flex items-center gap-4 mb-8">
 				<div className="rounded-full bg-primary/10 p-3">
 					<Gift className="h-6 w-6 text-primary" />
@@ -105,228 +88,27 @@ export function SellGiftCardForm() {
 					</p>
 				</div>
 			</div>
-
 			{/* Step 1: Gift Card Details Form */}
 			{step === 1 && (
 				<GiftCardSalesForm
-					form={form}
 					onSubmit={onSubmit}
 					onAccountSelect={setSelectedAccount}
-					onImageUpload={setUploadedImages}
+					onImageUpload={handleImageUpload}
+					defaultValues={saleDetails}
+					uploadedImages={uploadedImages}
+					defaultAccount={selectedAccount}
 				/>
 			)}
-
 			{/* Step 2: Review and Confirm */}
 			{step === 2 && saleDetails && (
-				<Card>
-					<CardHeader>
-						<CardTitle>Review Your Gift Card Sale</CardTitle>
-						<CardDescription>
-							Please review your gift card details before
-							confirming
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-6">
-						<div className="rounded-md bg-muted p-4 space-y-4">
-							<div className="flex justify-between items-center border-b pb-2">
-								<h3 className="font-medium">
-									Gift Card Details
-								</h3>
-								<Button
-									variant="outline"
-									size="sm"
-									onClick={() => setStep(1)}>
-									Edit
-								</Button>
-							</div>
-
-							<div className="grid grid-cols-2 gap-4">
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Gift Card
-									</p>
-									<p className="font-medium">
-										{
-											giftCardTypes.find(
-												(c) =>
-													c.value ===
-													saleDetails.cardType
-											)?.label
-										}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Country
-									</p>
-									<p className="font-medium">
-										{
-											countries.find(
-												(c) =>
-													c.value ===
-													saleDetails.country
-											)?.label
-										}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Card Type
-									</p>
-									<p className="font-medium">
-										{
-											cardTypes.find(
-												(t) =>
-													t.value === saleDetails.type
-											)?.label
-										}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Amount
-									</p>
-									<p className="font-medium">
-										${saleDetails.amount}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Exchange Rate
-									</p>
-									<p className="font-medium"></p>
-								</div>
-								<div>
-									<p className="text-sm text-muted-foreground">
-										You'll Receive
-									</p>
-									<p className="font-medium text-lg text-primary"></p>
-								</div>
-							</div>
-						</div>
-
-						<div className="rounded-md bg-muted p-4 space-y-4">
-							<div className="border-b pb-2">
-								<h3 className="font-medium">
-									Card Information
-								</h3>
-							</div>
-
-							<div className="space-y-2">
-								<div>
-									<p className="text-sm text-muted-foreground">
-										Card Number / Code
-									</p>
-									<p className="font-medium">
-										{saleDetails.cardNumber}
-									</p>
-								</div>
-
-								{saleDetails.pin && (
-									<div>
-										<p className="text-sm text-muted-foreground">
-											PIN
-										</p>
-										<p className="font-medium">
-											{saleDetails.pin}
-										</p>
-									</div>
-								)}
-
-								{saleDetails.additionalInfo && (
-									<div>
-										<p className="text-sm text-muted-foreground">
-											Additional Information
-										</p>
-										<p className="font-medium">
-											{saleDetails.additionalInfo}
-										</p>
-									</div>
-								)}
-
-								{uploadedImages.length > 0 && (
-									<div>
-										<p className="text-sm text-muted-foreground mb-2">
-											Card Images
-										</p>
-										<div className="grid grid-cols-4 gap-2">
-											{uploadedImages.map(
-												(image, index) => (
-													<div
-														key={index}
-														className="relative aspect-square rounded-md overflow-hidden border">
-														<img
-															src={
-																image ||
-																"/placeholder.svg"
-															}
-															alt={`Card image ${
-																index + 1
-															}`}
-															className="w-full h-full object-cover"
-														/>
-													</div>
-												)
-											)}
-										</div>
-									</div>
-								)}
-							</div>
-						</div>
-
-						<div className="rounded-md bg-muted p-4 space-y-4">
-							<div className="border-b pb-2">
-								<h3 className="font-medium">
-									Bank Account Details
-								</h3>
-							</div>
-
-							<div className="space-y-2">
-								<div className="grid grid-cols-2 gap-4">
-									<div>
-										<p className="text-sm text-muted-foreground">
-											Bank Name
-										</p>
-										<p className="font-medium">
-											{selectedAccount?.bankName || "N/A"}
-										</p>
-									</div>
-									<div>
-										<p className="text-sm text-muted-foreground">
-											Account Number
-										</p>
-										<p className="font-medium">
-											{selectedAccount?.accountNo ||
-												"N/A"}
-										</p>
-									</div>
-									<div>
-										<p className="text-sm text-muted-foreground">
-											Account Name
-										</p>
-										<p className="font-medium">
-											{selectedAccount?.accountName ||
-												"N/A"}
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</CardContent>
-					<CardFooter className="flex flex-col gap-4">
-						<Button onClick={handleConfirmSale} className="w-full">
-							Confirm Sale
-						</Button>
-						<Button
-							variant="outline"
-							onClick={() => setStep(1)}
-							className="w-full">
-							Go Back
-						</Button>
-					</CardFooter>
-				</Card>
+				<ConfirmGiftCardSale
+					onConfirmSale={handleConfirmSale}
+					saleDetails={saleDetails}
+					selectedAccount={selectedAccount}
+					uploadedImages={uploadedImages}
+					onPreviousStep={() => setStep(1)}
+				/>
 			)}
-
 			{/* Step 3: Confirmation */}
 			{step === 3 && (
 				<Card>

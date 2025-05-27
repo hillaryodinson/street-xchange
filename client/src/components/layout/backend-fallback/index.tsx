@@ -36,6 +36,7 @@ export default function BackendErrorFallback({ error }: { error: Error }) {
 									}}>
 									{error.message}
 								</pre>
+								<pre>{error.stack}</pre>
 							</small>
 							<Button
 								onClick={resetBoundary}

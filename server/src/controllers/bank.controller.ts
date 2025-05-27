@@ -164,6 +164,7 @@ export const getCustomerBankAccounts = async (req: Request, res: Response) => {
 
 	const customerBankList = await db.customerBank.findMany({
 		select: {
+			id: true,
 			bankName: true,
 			accountName: true,
 			accountNo: true,

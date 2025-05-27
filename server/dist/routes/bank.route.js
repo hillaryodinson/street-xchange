@@ -1,12 +1,12 @@
-import Express from "express";
-import { authorize, tryCatch } from "../middlewares/middleware";
-import {
-	addBankAccount,
-	confirmAddBankAccount,
-	getCustomerBankAccounts,
-} from "../controllers/bank.controller";
-
-const bankRoutes = Express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const middleware_1 = require("../middlewares/middleware");
+const bank_controller_1 = require("../controllers/bank.controller");
+const bankRoutes = express_1.default.Router();
 /**
  * @swagger
  * /banks:
@@ -99,8 +99,7 @@ const bankRoutes = Express.Router();
  *                   type: string
  *                   example: "EE120"
  */
-bankRoutes.post("/", authorize, tryCatch(addBankAccount));
-
+bankRoutes.post("/", middleware_1.authorize, (0, middleware_1.tryCatch)(bank_controller_1.addBankAccount));
 /**
  * @swagger
  * /banks/confirm:
@@ -185,8 +184,7 @@ bankRoutes.post("/", authorize, tryCatch(addBankAccount));
  *                   type: string
  *                   example: "EE122"
  */
-bankRoutes.post("/confirm", authorize, tryCatch(confirmAddBankAccount));
-
+bankRoutes.post("/confirm", middleware_1.authorize, (0, middleware_1.tryCatch)(bank_controller_1.confirmAddBankAccount));
 /**
  * @swagger
  * /banks/{id}:
@@ -284,8 +282,7 @@ bankRoutes.post("/confirm", authorize, tryCatch(confirmAddBankAccount));
  *                   type: string
  *                   example: "EE122"
  */
-bankRoutes.delete("/:id", authorize, tryCatch(confirmAddBankAccount));
-
+bankRoutes.delete("/:id", middleware_1.authorize, (0, middleware_1.tryCatch)(bank_controller_1.confirmAddBankAccount));
 /**
  * @swagger
  * /banks:
@@ -376,5 +373,5 @@ bankRoutes.delete("/:id", authorize, tryCatch(confirmAddBankAccount));
  *                   type: string
  *                   example: "EE122"
  */
-bankRoutes.get("/", authorize, tryCatch(getCustomerBankAccounts));
-export default bankRoutes;
+bankRoutes.get("/", middleware_1.authorize, (0, middleware_1.tryCatch)(bank_controller_1.getCustomerBankAccounts));
+exports.default = bankRoutes;

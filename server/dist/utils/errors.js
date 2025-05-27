@@ -1,0 +1,68 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ERROR_CODES = exports.HTTP_STATUS_CODES = exports.AppError = void 0;
+class AppError extends Error {
+    constructor(errorCode, message, statusCode) {
+        super(message);
+        this.name = "AppError";
+        this.errorCode = errorCode;
+        this.statusCode = statusCode !== null && statusCode !== void 0 ? statusCode : 400;
+    }
+}
+exports.AppError = AppError;
+exports.HTTP_STATUS_CODES = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+    SERVER_ERROR: 500,
+};
+exports.ERROR_CODES = {
+    // Application-Level Errors
+    APP_GENERIC_ERROR: 1000,
+    APP_INITIALIZATION_FAILURE: 1001,
+    APP_MISSING_CONFIG: 1002,
+    // Validation Errors
+    VALIDATION_MISSING_FIELD: 1100,
+    VALIDATION_INVALID_TYPE: 1101,
+    VALIDATION_OUT_OF_RANGE: 1102,
+    VALIDATION_UNSUPPORTED_VALUE: 1103,
+    VALIDATION_INVALID_TOKEN: 1104,
+    VALIDATION_UNAUTHORIZED: 1105,
+    VALIDATION_UNAUTHENTICATED: 1106,
+    // Database Errors
+    DB_CONNECTION_FAILED: 2100,
+    DB_QUERY_FAILED: 2101,
+    DB_RECORD_NOT_FOUND: 2102,
+    DB_DUPLICATE_RECORD: 2103,
+    DB_TIMEOUT: 2104,
+    // File Errors
+    FILE_NOT_FOUND: 3100,
+    FILE_UPLOAD_FAILED: 3101,
+    FILE_READ_ERROR: 3102,
+    FILE_WRITE_ERROR: 3103,
+    FILE_FORMAT_UNSUPPORTED: 3104,
+    FILE_TOO_LARGE: 3105,
+    // Payment Errors
+    PAYMENT_PROCESSING_FAILED: 4100,
+    PAYMENT_INSUFFICIENT_FUNDS: 4101,
+    PAYMENT_INVALID_METHOD: 4102,
+    PAYMENT_TIMEOUT: 4103,
+    PAYMENT_DUPLICATE_TRANSACTION: 4104,
+    // User Errors
+    USER_NOT_AUTHORIZED: 5100,
+    USER_NOT_FOUND: 5101,
+    USER_SESSION_EXPIRED: 5102,
+    USER_PASSWORD_INCORRECT: 5103,
+    USER_INVALID_CREDENTIALS: 5104,
+    USER_ACCOUNT_NOT_ACTIVE: 5105,
+    // Property Errors
+    PROPERTY_NOT_FOUND: 5200,
+    // Service Errors
+    SERVICE_UNAVAILABLE: 6100,
+    SERVICE_TIMEOUT: 6101,
+    SERVICE_DEPENDENCY_FAILED: 6102,
+    SERVICE_CONFIGURATION_ERROR: 6103,
+};

@@ -20,9 +20,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import { TransactionsTable } from "@/components/site/transaction-table";
 import { allTransactions } from "@/lib/data";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/utils/api";
+import { ApiResponse } from "@/utils/types";
 
 export function TransactionsHistory() {
 	const [activeTab, setActiveTab] = useState("all");
+
+	const data = useQuery({
+		queryKey: ["fetch_transactions"],
+		queryFn: () => {
+			api.get("/my-transactions").then((response) => {
+				//const result.data as ApiResponse<>;
+			});
+		},
+	});
 
 	// Filter transactions based on active tab
 	const getFilteredTransactions = () => {

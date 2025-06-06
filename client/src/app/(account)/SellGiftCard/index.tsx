@@ -10,9 +10,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { BankType, giftCardFormType } from "@/utils/types";
+import { ApiResponse, BankType, giftCardFormType } from "@/utils/types";
 import GiftCardSalesForm from "./components/GiftCardSalesForm";
 import ConfirmGiftCardSale from "./components/ConfirmGiftCardSale";
+import api from "@/utils/api";
+import { toast } from "react-toastify";
 
 export function SellGiftCardForm() {
 	const [step, setStep] = useState(1);
@@ -29,7 +31,7 @@ export function SellGiftCardForm() {
 		setStep(2);
 	}
 
-	const handleConfirmSale = () => {
+	const handleConfirmSale = async () => {
 		// Here you would handle the actual sale process
 		const values = saleDetails as giftCardFormType;
 
@@ -39,17 +41,25 @@ export function SellGiftCardForm() {
 			alert("Please select a bank account to receive payment.");
 			return;
 		}
-		alert(
-			`Gift Card Sale Details:\nCard Type: ${values.cardType}\nCountry: ${
-				values.country
-			}\nType: ${values.type}\nAmount: $${values.amount}\nCard Number: ${
-				values.cardNumber
-			}\nPIN: ${values.pin || "N/A"}\nAdditional Info: ${
-				values.additionalInfo || "N/A"
-			}`
+		const response = await api.post(
+			"/transactions/giftcard/sell-order",
+			values
 		);
-		// For now, we'll just show a success message
-		setStep(3);
+		try {
+			const result = response.data as ApiResponse<unknown>;
+			if (result.success) {
+				setStep(3);
+			} else {
+				console.log(result.errors);
+				throw new Error(result.message);
+			}
+		} catch (error) {
+			const errorMessage =
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(error as any)?.message ||
+				"An error occured. Please contact admin";
+			toast.error(errorMessage);
+		}
 	};
 
 	const handleImageUpload = (newImages: string[]) => {

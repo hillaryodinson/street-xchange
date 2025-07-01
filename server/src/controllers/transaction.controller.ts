@@ -382,6 +382,38 @@ export const createGiftCardTransaction = async (
 		},
 	});
 };
+
+export const getCustomerTransactions = async (
+	req: Request,
+	res: TypedResponse<CustomResponse>
+) => {
+	//get the user from token.
+	const request = req as TypedRequest<{}, {}>;
+	const customer = request.user;
+
+	console.log(customer);
+	console.log(request);
+
+	if (!customer)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"User not authenticated",
+			401
+		);
+
+	const transactions = await db.transaction.findMany({
+		where: {
+			customerId: customer.id,
+		},
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "GiftCard transaction was created successfully",
+		data: transactions,
+	});
+};
+
 //TODO: View GiftCard Transactions
 
 //TODO: View Crypto Transactions

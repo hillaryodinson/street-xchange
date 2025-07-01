@@ -63,14 +63,74 @@ model Kyc {
   createdAt  DateTime @default(now())
 }
 
+enum PaymentTransactionStatus {
+  PendingPayment
+  PaymentDone
+  PaymentConfirmed
+  PaymentExpired
+  PendingDisbursement
+  DisbursementDone
+}
+
+enum BookingStatus {
+  PendingAvailability
+  FlightUnavailable
+  PendingPayment
+  Booked
+  Cancelled
+}
+
+enum TransactionType {
+  GIFT_CARD
+  CRYPTO
+  FLIGHT
+}
+
+enum TransactionStatus {
+  Pending
+  Completed
+  Failed
+}
+
+model Transaction {
+  id              String            @id @default(uuid())
+  reference       String // external or internal transaction reference
+  description     String
+  transactionType TransactionType
+  status          TransactionStatus
+
+  // Normalized summary fields
+  amount   Float? // in NGN or standard base currency
+  currency String? // NGN, USD, BTC, etc.
+
+  // Relations to specific transaction types
+  giftcardTransId String?
+  giftcardTrans   GiftCardTransaction? @relation(fields: [giftcardTransId], references: [id])
+
+  cryptoTransId String?
+  cryptoTrans   CryptoTransaction? @relation(fields: [cryptoTransId], references: [id])
+
+  flightTransId String?
+  flightTrans   FlightTransaction? @relation(fields: [flightTransId], references: [id])
+
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdDate DateTime @default(now())
+
+  @@index([customerId])
+  @@index([createdDate])
+  @@index([status])
+}
+
 model GiftCardTransaction {
   id         String @id @default(uuid())
   customerId String
-  cardType   String //itunes,amazon, steam, ebay, razer gold, google
+  cardType   String // itunes, amazon, steam, etc.
   country    String
-  type       String //Physical, Ecode, Horizontal, white board
+  type       String // Physical, Ecode, etc.
   speed      Int?
-  amount     Int
+  amount     Int // Value in NGN
 
   pin            String?
   additionalInfo String?
@@ -87,91 +147,42 @@ model GiftCardTransaction {
   Transaction Transaction[]
 }
 
-enum PaymentTransactionStatus {
-  PendingPayment
-  PaymentDone
-  PaymentConfirmed
-  PaymentExpired
-
-  PendingDisbursement
-  DisbursementDone
-}
-
 model CryptoTransaction {
   id                 String @id @default(uuid())
   customerId         String
-  cryptoTypeSent     String //usdt/btc/eth
+  cryptoTypeSent     String // USDT, BTC, ETH
   cryptoAmountSent   Float
-  fiatAmountReceived Float //converted from crypto type to naira
-  fiatCurrency       String //converted from crypto type to naira
-  fiatRate           Float //xchange rate
+  fiatAmountReceived Float // in NGN
+  fiatCurrency       String
+  fiatRate           Float
   currentUSDRate     Float
   walletAddress      String
   walletNetwork      String
 
-  bankName    String
-  accountNo   String
-  accountName String
+  accountId String
+  Account   CustomerBank @relation(fields: [accountId], references: [id])
 
-  status PaymentTransactionStatus @default(PendingPayment)
-
+  status      PaymentTransactionStatus @default(PendingPayment)
   Transaction Transaction[]
-}
-
-enum BookingStatus {
-  PendingAvailability
-  FlightUnavailable
-  PendingPayment
-  Booked
-  Cancelled
 }
 
 model FlightTransaction {
   id                  String   @id @default(uuid())
   customerId          String
-  paymentMethod       String //btc usdt eth
+  paymentMethod       String // btc, usdt, eth
   from                String
   to                  String
   scheduledFlightDate DateTime
-  type                String //Economy /Business /FirstClass
+  type                String // Economy, Business, FirstClass
   passengers          Int      @default(1)
 
   walletAddress String?
   walletNetwork String?
-  flightCost    String?
+  flightCost    Float? // in NGN
 
-  status BookingStatus @default(PendingAvailability)
-  note   String? //for more information when flights not available
-
-  transaction Transaction[]
-}
-
-enum TransactionStatus {
-  Pending
-  Completed
-  Failed
-}
-
-model Transaction {
-  id          String            @id @default(uuid())
-  description String
-  transId     String
-  transType   String
-  status      TransactionStatus
-
-  cryptoTransId String?
-  cryptoTrans   CryptoTransaction? @relation(fields: [cryptoTransId], references: [id])
-
-  flightTransId String?
-  flightTrans   FlightTransaction? @relation(fields: [flightTransId], references: [id])
-
-  giftcardTransId String?
-  giftcardTrans   GiftCardTransaction? @relation(fields: [giftcardTransId], references: [id])
-
-  customerId String
-  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  createdDate DateTime @default(now())
+  status      BookingStatus @default(PendingAvailability)
+  note        String? // when unavailable or additional info
+  Transaction Transaction[]
 }
 
 model CustomerBank {
@@ -186,6 +197,7 @@ model CustomerBank {
   customerId          String
   customer            User                  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   GiftCardTransaction GiftCardTransaction[]
+  CryptoTransaction   CryptoTransaction[]
 }
 
 model Setting {

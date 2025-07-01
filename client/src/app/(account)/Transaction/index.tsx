@@ -19,20 +19,22 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import { TransactionsTable } from "@/components/site/transaction-table";
-import { allTransactions } from "@/lib/data";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/utils/api";
-import { ApiResponse } from "@/utils/types";
+import { ApiResponse, Transaction } from "@/utils/types";
 
 export function TransactionsHistory() {
 	const [activeTab, setActiveTab] = useState("all");
 
-	const data = useQuery({
+	const { data: allTransactions } = useQuery({
 		queryKey: ["fetch_transactions"],
-		queryFn: () => {
-			api.get("/my-transactions").then((response) => {
-				//const result.data as ApiResponse<>;
-			});
+		queryFn: async () => {
+			const response = await api.get("/transactions/me");
+			const result = response.data as ApiResponse<Transaction[]>;
+			if (result.success) {
+				return result.data;
+			}
+			return [];
 		},
 	});
 
@@ -40,11 +42,17 @@ export function TransactionsHistory() {
 	const getFilteredTransactions = () => {
 		switch (activeTab) {
 			case "flights":
-				return allTransactions.filter((tx) => tx.type === "flight");
+				return allTransactions?.filter(
+					(tx) => tx.transType.toLowerCase() === "flight"
+				);
 			case "crypto":
-				return allTransactions.filter((tx) => tx.type === "crypto");
+				return allTransactions?.filter(
+					(tx) => tx.transType.toLowerCase() === "crypto sell"
+				);
 			case "giftcards":
-				return allTransactions.filter((tx) => tx.type === "giftcard");
+				return allTransactions?.filter(
+					(tx) => tx.transType.toLowerCase() === "giftcard"
+				);
 			default:
 				return allTransactions;
 		}
@@ -127,22 +135,22 @@ export function TransactionsHistory() {
 
 						<TabsContent value="all">
 							<TransactionsTable
-								transactions={filteredTransactions}
+								transactions={filteredTransactions || []}
 							/>
 						</TabsContent>
 						<TabsContent value="flights">
 							<TransactionsTable
-								transactions={filteredTransactions}
+								transactions={filteredTransactions || []}
 							/>
 						</TabsContent>
 						<TabsContent value="crypto">
 							<TransactionsTable
-								transactions={filteredTransactions}
+								transactions={filteredTransactions || []}
 							/>
 						</TabsContent>
 						<TabsContent value="giftcards">
 							<TransactionsTable
-								transactions={filteredTransactions}
+								transactions={filteredTransactions || []}
 							/>
 						</TabsContent>
 					</Tabs>

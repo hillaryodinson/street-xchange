@@ -4,6 +4,7 @@ import {
 	confirmCryptoOrder,
 	createCryptoSellOrder,
 	createGiftCardTransaction,
+	getCustomerTransactions,
 	getTransactionByTransId,
 } from "../controllers/transaction.controller";
 import { authorize, tryCatch } from "../middlewares/middleware";
@@ -325,90 +326,6 @@ transRoute.put(
 
 /**
  * @swagger
- * /transactions/{transId}:
- *   get:
- *     summary: Get transaction by transaction ID
- *     description: Endpoint to retrieve a transaction by its ID.
- *     tags:
- *       - Transactions
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: parameter
- *         name: transId
- *         required: true
- *         schema:
- *           type: string
- *         description: The transaction ID to confirm.
- *         example: ase3rsefgt5
- *
- *     responses:
- *       200:
- *         description: Gift card order confirmed successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Indicates if the confirmation was successful.
- *                 message:
- *                   type: string
- *                   description: A message indicating the status of the confirmation.
- *       400:
- *         description: Bad request. Invalid input data.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Indicates if the confirmation was successful.
- *                   example: false
- *                 message:
- *                   type: string
- *                   description: A message indicating the status of the confirmation.
- *                   example: "Bad request"
- *       401:
- *         description: Unauthorized. User is not authorized to confirm the order.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Indicates if the confirmation was successful.
- *                   example: false
- *                 message:
- *                   type: string
- *                   description: A message indicating the status of the confirmation.
- *                   example: "Unauthorized"
- *                 code:
- *                   type: string
- *                   example: E1104
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Indicates if the confirmation was successful.
- *                   example: false
- *                 message:
- *                   type: string
- *                   description: A message indicating the status of the confirmation.
- *                   example: "An error occurred, please contact admin"
- */
-transRoute.get("/:transId", authorize, tryCatch(getTransactionByTransId));
-
-/**
- * @swagger
  * /transactions/giftcard/sell-order:
  *   post:
  *     summary: Create a giftcard sell order
@@ -533,4 +450,196 @@ transRoute.post(
 	authorize,
 	tryCatch(createGiftCardTransaction)
 );
+
+/**
+ * @swagger
+ * /transactions/me:
+ *   get:
+ *     summary: Gets all customer transactions
+ *     description: Gets all transactions that belongs to a customer
+ *     tags:
+ *       - Transactions
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: The id of the transaction
+ *                 example: 24f633bd-cf93-4ed3-95f3-defd9fd1bec5
+ *               description:
+ *                 type: string
+ *                 description: The description of the transaction
+ *                 example: Flight Booking - lax to lhr
+ *               transId:
+ *                 type: string
+ *                 description: Unique transaction id
+ *                 example: ZM8HDCX
+ *               status:
+ *                 type: string
+ *                 description: The status of the transaction
+ *                 example: Pending
+ *               transType:
+ *                 type: string
+ *                 description: The transaction type (flight, crypto sell or giftcard)
+ *                 example: flight
+ *               createdDate:
+ *                 type: string
+ *                 description: The date transaction was created
+ *                 example: 2025-06-06 18:24:42.95
+ *
+ *     responses:
+ *       201:
+ *         description: Gift card sell order created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *       400:
+ *         description: Bad request. Invalid input data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *                   example: "Bad request"
+ *       401:
+ *         description: Unauthorized. User is not authorized to create a sell order.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *                   example: "Unauthorized"
+ *                 code:
+ *                   type: string
+ *                   example: E1104
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the sell order was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the sell order.
+ *                   example: "An error occurred, please contact admin"
+ */
+transRoute.get("/me", authorize, tryCatch(getCustomerTransactions));
+
+/**
+ * @swagger
+ * /transactions/{transId}:
+ *   get:
+ *     summary: Get transaction by transaction ID
+ *     description: Endpoint to retrieve a transaction by its ID.
+ *     tags:
+ *       - Transactions
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: parameter
+ *         name: transId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The transaction ID to confirm.
+ *         example: ase3rsefgt5
+ *
+ *     responses:
+ *       200:
+ *         description: Gift card order confirmed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *       400:
+ *         description: Bad request. Invalid input data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *                   example: "Bad request"
+ *       401:
+ *         description: Unauthorized. User is not authorized to confirm the order.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *                   example: "Unauthorized"
+ *                 code:
+ *                   type: string
+ *                   example: E1104
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Indicates if the confirmation was successful.
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the status of the confirmation.
+ *                   example: "An error occurred, please contact admin"
+ */
+transRoute.get("/:transId", authorize, tryCatch(getTransactionByTransId));
+
 export default transRoute;

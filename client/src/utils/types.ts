@@ -51,14 +51,6 @@ export type ImageType = {
 };
 
 export type UnitImageInfo = z.infer<typeof ImageSchema>[];
-export interface Transaction {
-	id: string;
-	date: string;
-	type: "flight" | "crypto" | "giftcard";
-	description: string;
-	amount: number;
-	status: "pending" | "completed" | "failed";
-}
 
 export type BankType = z.infer<typeof BankSchema> & { id?: string };
 export type KYCType = z.infer<typeof KYCSchema>;
@@ -90,3 +82,18 @@ export type networkType = {
 export type giftCardFormType = z.infer<typeof giftCardTransactionFormSchema> & {
 	id?: string;
 };
+
+export interface Transaction {
+	id: string;
+	date: string;
+	transId: string;
+	transType: "flight" | "crypto" | "giftcard";
+	description: string;
+	amount: number;
+	status: "pending" | "completed" | "failed";
+	cryptoTransId: string;
+	flightTransId: string;
+	giftcardTransId: string;
+	customerId: string;
+	createdDate: string;
+}

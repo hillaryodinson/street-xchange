@@ -19,7 +19,7 @@ export const populateDB = async () => {
 		global.prisma
 	) {
 		try {
-			const admin = await prisma.user.findFirst();
+			const admin = await prisma.admin.findFirst();
 			if (!admin) {
 				console.log("No database found, initializing...");
 				await prisma.admin.create({

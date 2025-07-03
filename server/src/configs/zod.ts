@@ -106,7 +106,7 @@ export const CryptoTransactionSchema = z.object({
 	currentUSDRate: z.coerce.number(),
 	walletAddress: z.string(),
 	walletNetwork: z.string(),
-	...bankSchema.shape,
+	bankAccountId: z.string(),
 });
 
 /*

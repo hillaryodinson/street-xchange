@@ -45,7 +45,7 @@ export type FlightBookingType = z.infer<typeof bookingSchema>;
 export type TransactionType = {
 	transType: string;
 	description: string;
-	transId: string;
+	reference: string;
 	customerId: string;
 };
 

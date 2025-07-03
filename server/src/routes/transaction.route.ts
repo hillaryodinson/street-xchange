@@ -167,6 +167,10 @@ transRoute.post("/flight/book", authorize, tryCatch(bookFlight));
  *                 type: string
  *                 description: The network of the wallet address.
  *                 example: "Bitcoin"
+ *               bankAccountId:
+ *                 type: string
+ *                 description: The bank account id. Get from banks endpoint
+ *                 example: "1A1zP-P5QGe-2DMPT-TLfNa"
  *
  *     responses:
  *       201:
@@ -236,6 +240,7 @@ transRoute.post(
 	authorize,
 	tryCatch(createCryptoSellOrder)
 );
+
 /**
  * @swagger
  * /transactions/crypto/confirm-order:

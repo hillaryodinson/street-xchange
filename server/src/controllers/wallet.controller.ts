@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { z } from "zod";
 import { TypedRequestBody, TypedRequestQuery } from "../configs/requests";
 import { AppError, ERROR_CODES } from "../utils/errors";
 import db from "../configs/db";

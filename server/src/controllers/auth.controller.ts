@@ -5,7 +5,7 @@ import {
 } from "../configs/zod";
 import db from "../configs/db";
 import JWT from "jsonwebtoken";
-import { RequestWithUser, TypedRequest } from "../configs/requests";
+import { TypedRequest } from "../configs/requests";
 import {
 	AccessTokenType,
 	ConfirmPasswordResetType,

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { DefaultSettings, SettingColunns } from "./constants";
 require("dotenv").config();
 

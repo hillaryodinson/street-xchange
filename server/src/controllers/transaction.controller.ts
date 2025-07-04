@@ -18,10 +18,7 @@ import {
 } from "../configs/types";
 import db from "../configs/db";
 import { AppError, ERROR_CODES } from "../utils/errors";
-import {
-	generateRandomString,
-	generateUniqueRandomStrings,
-} from "../utils/helper";
+import { generateRandomString } from "../utils/helper";
 import { NodemailerDB } from "../services/nodemailer-db";
 import { TransactionType } from "@prisma/client";
 

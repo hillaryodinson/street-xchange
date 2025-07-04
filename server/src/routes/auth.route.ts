@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
 import {
 	activateAccount,
 	adminLogin,
@@ -6,17 +6,11 @@ import {
 	login,
 	resetPassword,
 } from "../controllers/auth.controller";
-import {
-	CustomResponse,
-	TypedRequest,
-	TypedRequestBody,
-	TypedResponse,
-} from "../configs/requests";
+import { TypedRequest } from "../configs/requests";
 import {
 	ConfirmPasswordResetType,
 	LoginType,
 	ResetPasswordType,
-	UserType,
 } from "../configs/types";
 import { tryCatch } from "../middlewares/middleware";
 

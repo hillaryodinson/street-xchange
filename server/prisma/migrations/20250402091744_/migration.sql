@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "CustomerBank" ADD COLUMN     "deletedAt" TIMESTAMP(3),
-ALTER COLUMN "createdAt" SET DEFAULT CURRENT_TIMESTAMP;

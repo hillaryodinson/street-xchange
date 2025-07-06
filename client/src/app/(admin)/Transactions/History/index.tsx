@@ -29,11 +29,17 @@ export function AdminTransactionHistoryPage() {
 	const getFilteredTransactions = () => {
 		switch (activeTab) {
 			case "flights":
-				return allTransactions.filter((tx) => tx.type === "flight");
+				return allTransactions.filter(
+					(tx) => tx.transactionType === "FLIGHT"
+				);
 			case "crypto":
-				return allTransactions.filter((tx) => tx.type === "crypto");
+				return allTransactions.filter(
+					(tx) => tx.transactionType === "CRYPTO"
+				);
 			case "giftcards":
-				return allTransactions.filter((tx) => tx.type === "giftcard");
+				return allTransactions.filter(
+					(tx) => tx.transactionType === "GIFT_CARD"
+				);
 			default:
 				return allTransactions;
 		}

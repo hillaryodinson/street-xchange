@@ -115,6 +115,7 @@ export interface UserType {
 	phoneNo: string;
 	isVerified: 0 | 1 | 2 | 3;
 	createdAt: Date;
+	role: string;
 
 	kyc: Kyc[];
 	customerBank: CustomerBank[];

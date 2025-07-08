@@ -69,7 +69,6 @@ function App() {
 			path: "/reset/confirm",
 			element: <PasswordResetConfirmationPage />,
 		},
-
 		{
 			path: "/",
 			element: (

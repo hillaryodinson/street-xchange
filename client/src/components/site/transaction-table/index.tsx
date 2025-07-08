@@ -16,13 +16,13 @@ interface TransactionsTableProps {
 }
 
 export function TransactionsTable({ transactions }: TransactionsTableProps) {
-	const getTypeIcon = (type: Transaction["transType"]) => {
+	const getTypeIcon = (type: Transaction["transactionType"]) => {
 		switch (type.toLowerCase()) {
 			case "flight":
 				return <Plane className="h-4 w-4 text-blue-500" />;
-			case "crypto sell":
+			case "crypto":
 				return <Wallet className="h-4 w-4 text-purple-500" />;
-			case "giftcard":
+			case "gift_card":
 				return <Gift className="h-4 w-4 text-amber-500" />;
 		}
 	};
@@ -112,13 +112,19 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
 									{index + 1}
 								</TableCell>
 								<TableCell>
-									{formatDate(transaction.createdDate)}
+									{formatDate(
+										transaction.createdDate.toISOString()
+									)}
 								</TableCell>
 								<TableCell>
 									<div className="flex items-center gap-2">
-										{getTypeIcon(transaction.transType)}
+										{getTypeIcon(
+											transaction.transactionType
+										)}
 										<span className="capitalize">
-											{transaction.transType}
+											{transaction.transactionType
+												.replace("_", " ")
+												.toLocaleLowerCase()}
 										</span>
 									</div>
 								</TableCell>

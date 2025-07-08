@@ -43,15 +43,15 @@ export function TransactionsHistory() {
 		switch (activeTab) {
 			case "flights":
 				return allTransactions?.filter(
-					(tx) => tx.transType.toLowerCase() === "flight"
+					(tx) => tx.transactionType.toLowerCase() === "flight"
 				);
 			case "crypto":
 				return allTransactions?.filter(
-					(tx) => tx.transType.toLowerCase() === "crypto sell"
+					(tx) => tx.transactionType.toLowerCase() === "crypto"
 				);
 			case "giftcards":
 				return allTransactions?.filter(
-					(tx) => tx.transType.toLowerCase() === "giftcard"
+					(tx) => tx.transactionType.toLowerCase() === "gift_card"
 				);
 			default:
 				return allTransactions;

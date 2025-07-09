@@ -6,6 +6,7 @@ import * as argon2 from "argon2";
 import { NodemailerDB } from "../services/nodemailer-db";
 import { randomUUID } from "crypto";
 import { TypedRequestBody } from "../configs/requests";
+import { equal } from "assert";
 
 export const register = async (req: Request, res: Response) => {
 	//validate the user payload
@@ -196,5 +197,60 @@ export const updateProfile = async (req: Request, res: Response) => {
 	res.status(200).json({
 		success: true,
 		message: "Profile updated successfully",
+	});
+};
+
+export const accountOverview = async (req: Request, res: Response) => {
+	//validate the user
+	const request = req as TypedRequestBody<{
+		id: string;
+	}>;
+	const user = request.user;
+
+	if (!user)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"Unathenticated",
+			401
+		);
+
+	const account = await db.user.findFirst({
+		where: {
+			id: user.id,
+		},
+		select: {
+			id: true,
+			firstname: true,
+			lastname: true,
+			email: true,
+			residentialAddress: true,
+			dob: true,
+			phoneNo: true,
+			Wallet: {
+				select: {
+					balance: true,
+				},
+			},
+			Transaction: {
+				where: {
+					status: "Pending",
+				},
+				select: {
+					status: true,
+				},
+			},
+		},
+	});
+
+	if (!account)
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"User not found",
+			404
+		);
+
+	res.status(200).json({
+		success: true,
+		data: account,
 	});
 };

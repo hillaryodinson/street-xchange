@@ -18,7 +18,7 @@ import { registerFormSchema } from "@/utils/zod";
 import api from "@/utils/api";
 import { ApiResponse } from "@/utils/types";
 import { toast } from "react-toastify";
-import { Country } from "react-phone-number-input";
+// import { Country } from "react-phone-number-input";
 import { Logo } from "@/components/site/logo";
 import { Helmet } from "react-helmet";
 // import { ChevronDownIcon, Home } from "lucide-react";
@@ -38,7 +38,7 @@ export function SignupPage() {
 	const [regSuccess, setRegSuccess] = useState<boolean>(false);
 	// const [countryName, setCountryName] = useState<string>("");
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [_, setCountryIso] = useState<Country>("CA");
+	// const [_, setCountryIso] = useState<Country>("CA");
 	// const [stateName, setStateName] = useState<string>("");
 	// const [open, setOpen] = useState(false);
 	// const [date, setDate] = useState<Date | undefined>(undefined);

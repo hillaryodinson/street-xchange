@@ -16,7 +16,9 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import { Transaction } from "@/utils/types";
+import { ApiResponse, Transaction } from "@/utils/types";
+import moment from "moment";
+import api from "@/utils/api";
 
 const DashboardPage = () => {
 	const user = useAuthStore((state) => state.user);
@@ -27,16 +29,18 @@ const DashboardPage = () => {
 			{
 				queryKey: ["fetch_transactions"],
 				queryFn: async () => {
-					const response = await fetch("/api/transactions/me");
-					const result = await response.json();
+					const response = await api.get("/transactions/me");
+					const result = response.data as ApiResponse<Transaction[]>;
+
+					console.log(result);
 					return result.data;
 				},
 			},
 			{
 				queryKey: ["fetch_account_overview"],
 				queryFn: async () => {
-					const response = await fetch("/api/account/overview");
-					const result = await response.json();
+					const response = await api.get("/account/overview");
+					const result = response.data as ApiResponse<any>;
 					return result.data;
 				},
 			},
@@ -123,45 +127,63 @@ const DashboardPage = () => {
 							Your recent activity on Xchange
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="flex-1">
-						<div className="space-y-4">
-							{transactions &&
-								transactions.map((tranx: Transaction) => (
-									<div className="flex items-center justify-between border-b pb-4">
-										<div className="flex items-center gap-4">
-											<div className="rounded-full bg-primary/10 p-2">
-												{getTypeIcon(
-													tranx.transactionType
-												)}
-											</div>
-											<div>
-												<p className="font-medium">
-													{tranx.description}
-												</p>
-												<p className="text-sm text-muted-foreground">
-													{tranx.createdDate.toDateString()}
-												</p>
-											</div>
-										</div>
-										<p className="font-medium">
-											+$1,200.00
-										</p>
-									</div>
-								))}
-						</div>
-					</CardContent>
-					<CardFooter>
-						<Link
-							to="/customer-dashboard/transactions"
-							className={cn(
-								buttonVariants({
-									variant: "outline",
-									size: "sm",
-								})
-							)}>
-							View All Transactions
-						</Link>
-					</CardFooter>
+					{transactions && transactions.length > 0 ? (
+						<>
+							<CardContent className="flex-1">
+								<div className="space-y-4">
+									{transactions &&
+										transactions.map(
+											(tranx: Transaction) => (
+												<div className="flex items-center justify-between border-b pb-4">
+													<div className="flex items-center gap-4">
+														<div className="rounded-full bg-primary/10 p-2 hidden lg:block">
+															{getTypeIcon(
+																tranx.transactionType
+															)}
+														</div>
+														<div className="flex flex-col ">
+															<p className="font-medium text-sm">
+																{
+																	tranx.description
+																}
+															</p>
+															<p className="text-xs text-muted-foreground">
+																{moment(
+																	tranx.createdDate
+																).from(
+																	moment()
+																)}
+															</p>
+														</div>
+													</div>
+													<p className="text-sm">
+														{tranx.status}
+													</p>
+												</div>
+											)
+										)}
+								</div>
+							</CardContent>
+							<CardFooter>
+								<Link
+									to="/customer-dashboard/transactions"
+									className={cn(
+										buttonVariants({
+											variant: "outline",
+											size: "sm",
+										})
+									)}>
+									View All Transactions
+								</Link>
+							</CardFooter>
+						</>
+					) : (
+						<CardContent>
+							<p className=" text-sm">
+								No recent transactions found.
+							</p>
+						</CardContent>
+					)}
 				</Card>
 
 				<Card>
@@ -177,7 +199,7 @@ const DashboardPage = () => {
 								Available Balance
 							</p>
 							<p className="text-3xl font-bold">
-								{accountOverview.wallet.balance ?? 0}
+								{accountOverview?.wallet?.balance ?? 0}
 							</p>
 						</div>
 						<div className="grid grid-cols-2 gap-4">
@@ -192,8 +214,8 @@ const DashboardPage = () => {
 									Pending Withdrawals
 								</p>
 								<p className="text-xl font-bold">
-									{accountOverview.transaction
-										.pendingWithdrawalCounts ?? 0}
+									{accountOverview?.transaction
+										?.pendingWithdrawalCounts ?? 0}
 								</p>
 							</div>
 						</div>

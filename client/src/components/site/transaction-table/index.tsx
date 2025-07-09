@@ -10,6 +10,7 @@ import {
 import { Transaction } from "@/utils/types";
 import { Link } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
+import moment from "moment";
 
 interface TransactionsTableProps {
 	transactions: Transaction[];
@@ -59,19 +60,19 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
 		}
 	};
 
-	const formatDate = (dateString: string) => {
-		if (dateString && dateString.length > 0) {
-			console.log(JSON.stringify(dateString));
-			const date = new Date(dateString);
-			return new Intl.DateTimeFormat("en-US", {
-				year: "numeric",
-				month: "short",
-				day: "numeric",
-				hour: "2-digit",
-				minute: "2-digit",
-			}).format(date);
-		}
-	};
+	// const formatDate = (dateString: string) => {
+	// 	if (dateString && dateString.length > 0) {
+	// 		console.log(JSON.stringify(dateString));
+	// 		const date = new Date(dateString);
+	// 		return new Intl.DateTimeFormat("en-US", {
+	// 			year: "numeric",
+	// 			month: "short",
+	// 			day: "numeric",
+	// 			hour: "2-digit",
+	// 			minute: "2-digit",
+	// 		}).format(date);
+	// 	}
+	// };
 
 	// const formatAmount = (amount: number) => {
 	// 	const formatter = new Intl.NumberFormat("en-US", {
@@ -112,8 +113,8 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
 									{index + 1}
 								</TableCell>
 								<TableCell>
-									{formatDate(
-										transaction.createdDate.toISOString()
+									{moment(transaction.createdDate).from(
+										moment()
 									)}
 								</TableCell>
 								<TableCell>

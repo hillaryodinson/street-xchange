@@ -136,3 +136,65 @@ export const changePassword = async (req: Request, res: Response) => {
 		message: "Password changed successfully",
 	});
 };
+
+export const updateProfile = async (req: Request, res: Response) => {
+	//validate the user
+	const request = req as TypedRequestBody<{
+		firstname: string;
+		lastname: string;
+		address: string;
+		phoneNumber: string;
+		dateOfBirth?: string;
+		country?: string;
+		state?: string;
+	}>;
+	const user = request.user;
+
+	if (!user)
+		throw new AppError(
+			ERROR_CODES.VALIDATION_UNAUTHENTICATED,
+			"Unathenticated",
+			401
+		);
+
+	const {
+		firstname,
+		lastname,
+		address,
+		phoneNumber,
+		dateOfBirth,
+		country,
+		state,
+	} = request.body;
+
+	const existingUser = await db.user.findFirst({
+		where: {
+			id: user.id,
+		},
+	});
+
+	if (!existingUser)
+		throw new AppError(
+			ERROR_CODES.DB_RECORD_NOT_FOUND,
+			"User not found",
+			404
+		);
+
+	await db.user.update({
+		where: { id: user.id },
+		data: {
+			firstname: firstname || existingUser.firstname,
+			lastname: lastname || existingUser.lastname,
+			phoneNo: phoneNumber || existingUser.phoneNo,
+			dob: dateOfBirth || existingUser.dob,
+			residentialAddress:
+				`${address}, ${state}, ${country}` ||
+				existingUser.residentialAddress,
+		},
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "Profile updated successfully",
+	});
+};

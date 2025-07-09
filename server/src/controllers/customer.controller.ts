@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import { newAccountSchema } from "../configs/zod";
+import { newAccountSchema, updateAccountSchema } from "../configs/zod";
 import db from "../configs/db";
 import { AppError, ERROR_CODES } from "../utils/errors";
 import * as argon2 from "argon2";
 import { NodemailerDB } from "../services/nodemailer-db";
 import { randomUUID } from "crypto";
 import { TypedRequestBody } from "../configs/requests";
-import { equal } from "assert";
 
 export const register = async (req: Request, res: Response) => {
 	//validate the user payload
@@ -37,9 +36,7 @@ export const register = async (req: Request, res: Response) => {
 			lastname: payload.lastname,
 			email: payload.email,
 			password: hashedPassword,
-			residentialAddress: payload.address,
 			phoneNo: payload.phoneNumber,
-			dob: new Date(payload.dateOfBirth),
 			actiToken: activationToken,
 		},
 	});
@@ -174,6 +171,18 @@ export const updateProfile = async (req: Request, res: Response) => {
 		},
 	});
 
+	const zodResponse = updateAccountSchema.safeParse({
+		firstname,
+		lastname,
+		address,
+		phoneNumber,
+		dateOfBirth,
+		country,
+		state,
+	});
+
+	if (zodResponse.error) throw zodResponse;
+
 	if (!existingUser)
 		throw new AppError(
 			ERROR_CODES.DB_RECORD_NOT_FOUND,
@@ -226,11 +235,11 @@ export const accountOverview = async (req: Request, res: Response) => {
 			residentialAddress: true,
 			dob: true,
 			phoneNo: true,
-			Wallet: {
-				select: {
-					balance: true,
-				},
-			},
+			// Wallet: {
+			// 	select: {
+			// 		balance: true,
+			// 	},
+			// },
 			Transaction: {
 				where: {
 					status: "Pending",

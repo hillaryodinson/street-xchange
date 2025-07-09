@@ -18,8 +18,8 @@ model User {
   firstname          String
   lastname           String
   email              String    @unique
-  dob                DateTime
-  residentialAddress String
+  dob                DateTime?
+  residentialAddress String?
   phoneNo            String
   password           String
   resetToken         String?

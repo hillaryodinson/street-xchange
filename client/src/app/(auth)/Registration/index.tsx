@@ -8,7 +8,7 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-	FormDescription,
+	// FormDescription,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,26 +21,27 @@ import { toast } from "react-toastify";
 import { Country } from "react-phone-number-input";
 import { Logo } from "@/components/site/logo";
 import { Helmet } from "react-helmet";
-import { ChevronDownIcon, Home } from "lucide-react";
+// import { ChevronDownIcon, Home } from "lucide-react";
 import Notification from "@/components/site/notification";
-import LocationSelector from "@/components/site/location-picker";
+import { Home } from "lucide-react";
+// import LocationSelector from "@/components/site/location-picker";
 
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+// import {
+// 	Popover,
+// 	PopoverContent,
+// 	PopoverTrigger,
+// } from "@/components/ui/popover";
+// import { Calendar } from "@/components/ui/calendar";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();
 	const [regSuccess, setRegSuccess] = useState<boolean>(false);
-	const [countryName, setCountryName] = useState<string>("");
+	// const [countryName, setCountryName] = useState<string>("");
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [_, setCountryIso] = useState<Country>("CA");
-	const [stateName, setStateName] = useState<string>("");
-	const [open, setOpen] = useState(false);
-	const [date, setDate] = useState<Date | undefined>(undefined);
+	// const [stateName, setStateName] = useState<string>("");
+	// const [open, setOpen] = useState(false);
+	// const [date, setDate] = useState<Date | undefined>(undefined);
 
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),
@@ -48,8 +49,6 @@ export function SignupPage() {
 			firstname: "",
 			lastname: "",
 			email: "",
-			dateOfBirth: "",
-			address: "",
 			phoneNumber: "",
 			password: "",
 			confirmPassword: "",
@@ -59,7 +58,7 @@ export function SignupPage() {
 	const onSubmit = async (values: z.infer<typeof registerFormSchema>) => {
 		startTransition(async () => {
 			try {
-				values.address = `${values.address}, ${stateName}, ${countryName}`;
+				// values.address = `${values.address}, ${stateName}, ${countryName}`;
 				const res = await api.post("/customers/register", values);
 				const result = (await res.data) as ApiResponse<undefined>;
 				if (result.success) {
@@ -100,8 +99,14 @@ export function SignupPage() {
 				<div className="absolute inset-0 image-wrap z-1 hero-bg-2"></div>
 
 				<div className="container relative z-3 mx-auto w-full">
-					<div className="flex justify-center w-full">
-						<div className="max-w-[600px] w-full m-auto p-6 bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md">
+					<div className="flex justify-center w-full max-w-[800px] mx-auto p-6 bg-white dark:bg-slate-900 shadow-md shadow-l-none dark:shadow-gray-700 rounded-md">
+						<div className="w-1/2 pr-4">
+							<img
+								src={"/images/signup_bg.jpg"}
+								className=" object-cover w-full h-full rounded-md "
+							/>
+						</div>
+						<div className="w-1/2 m-auto px-4">
 							<Logo />
 							<h5 className="my-6 text-xl font-semibold text-center">
 								Create your account
@@ -110,7 +115,7 @@ export function SignupPage() {
 								<form
 									onSubmit={form.handleSubmit(onSubmit)}
 									className="space-y-4">
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<div className="grid grid-cols-1 md:grid-cols-1 gap-4">
 										<FormField
 											control={form.control}
 											name="firstname"
@@ -150,7 +155,7 @@ export function SignupPage() {
 										/>
 									</div>
 
-									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+									<div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
 										<FormField
 											control={form.control}
 											name="email"
@@ -189,7 +194,7 @@ export function SignupPage() {
 										/>
 									</div>
 
-									<FormField
+									{/* <FormField
 										control={form.control}
 										name="dateOfBirth"
 										render={({ field }) => (
@@ -242,9 +247,9 @@ export function SignupPage() {
 												<FormMessage />
 											</FormItem>
 										)}
-									/>
+									/> */}
 
-									<FormItem>
+									{/* <FormItem>
 										<FormLabel>Select Country</FormLabel>
 										<FormControl>
 											<LocationSelector
@@ -268,9 +273,9 @@ export function SignupPage() {
 											be appear after selecting country
 										</FormDescription>
 										<FormMessage />
-									</FormItem>
+									</FormItem> */}
 
-									<FormField
+									{/* <FormField
 										control={form.control}
 										name="address"
 										render={({ field }) => (
@@ -287,9 +292,9 @@ export function SignupPage() {
 												<FormMessage />
 											</FormItem>
 										)}
-									/>
+									/> */}
 
-									<div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+									<div className="grid gap-4 grid-cols-1 sm:grid-cols-1">
 										<FormField
 											control={form.control}
 											name="password"

@@ -15,13 +15,6 @@ export const registerFormSchema = z
 			.min(2, "First name must be at least 2 characters"),
 		lastname: z.string().min(2, "Last name must be at least 2 characters"),
 		email: z.string().email("Please enter a valid email address"),
-		dateOfBirth: z.string().refine((date) => {
-			const today = new Date();
-			const dob = new Date(date);
-			const age = today.getFullYear() - dob.getFullYear();
-			return age >= 18;
-		}, "You must be at least 18 years old"),
-		address: z.string().min(5, "Please enter a valid address"),
 		phoneNumber: z.string().min(10, "Please enter a valid phone number"),
 		password: z.string().min(8, "Password must be at least 8 characters"),
 		confirmPassword: z.string(),
@@ -29,6 +22,30 @@ export const registerFormSchema = z
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "Passwords do not match",
 		path: ["confirmPassword"],
+	});
+
+export const updateProfileFormSchema = z
+	.object({
+		firstname: z
+			.string()
+			.min(2, "First name must be at least 2 characters"),
+		lastname: z.string().min(2, "Last name must be at least 2 characters"),
+		dateOfBirth: z.string().refine((date) => {
+			const today = new Date();
+			const dob = new Date(date);
+			const age = today.getFullYear() - dob.getFullYear();
+			return age >= 18;
+		}, "You must be at least 18 years old"),
+		country: z.string().min(2, "Please enter a valid country").optional(),
+		state: z.string().min(2, "Please enter a valid state").optional(),
+		address: z.string().min(5, "Please enter a valid address").optional(),
+		phoneNumber: z.string().min(10, "Please enter a valid phone number"),
+	})
+	.refine((data) => {
+		if (data.address) {
+			return !!data.country && !!data.state;
+		}
+		return true;
 	});
 
 export const ResetPasswordSchema = z.object({

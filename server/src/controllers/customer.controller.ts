@@ -33,8 +33,7 @@ export const register = async (req: Request, res: Response) => {
 	const customer = await db.user.create({
 		data: {
 			firstname: payload.firstname,
-			surname: payload.surname,
-			middlename: payload.middlename,
+			lastname: payload.lastname,
 			email: payload.email,
 			password: hashedPassword,
 			residentialAddress: payload.address,
@@ -128,7 +127,7 @@ export const changePassword = async (req: Request, res: Response) => {
 		subject: "Password change successful",
 		template: "password_change_notification",
 		context: {
-			name: `${validatedUser.firstname} ${validatedUser.surname}`,
+			name: `${validatedUser.firstname} ${validatedUser.lastname}`,
 		},
 	});
 

@@ -21,9 +21,16 @@ import { toast } from "react-toastify";
 import { Country } from "react-phone-number-input";
 import { Logo } from "@/components/site/logo";
 import { Helmet } from "react-helmet";
-import { Home } from "lucide-react";
+import { ChevronDownIcon, Home } from "lucide-react";
 import Notification from "@/components/site/notification";
 import LocationSelector from "@/components/site/location-picker";
+
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();
@@ -32,13 +39,14 @@ export function SignupPage() {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [_, setCountryIso] = useState<Country>("CA");
 	const [stateName, setStateName] = useState<string>("");
+	const [open, setOpen] = useState(false);
+	const [date, setDate] = useState<Date | undefined>(undefined);
 
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),
 		defaultValues: {
 			firstname: "",
-			middlename: "",
-			surname: "",
+			lastname: "",
 			email: "",
 			dateOfBirth: "",
 			address: "",
@@ -124,7 +132,7 @@ export function SignupPage() {
 
 										<FormField
 											control={form.control}
-											name="middlename"
+											name="lastname"
 											render={({ field }) => (
 												<FormItem>
 													<FormLabel>
@@ -141,23 +149,6 @@ export function SignupPage() {
 											)}
 										/>
 									</div>
-
-									<FormField
-										control={form.control}
-										name="surname"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Surname</FormLabel>
-												<FormControl>
-													<Input
-														placeholder="Smith"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
 
 									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 										<FormField
@@ -202,16 +193,52 @@ export function SignupPage() {
 										control={form.control}
 										name="dateOfBirth"
 										render={({ field }) => (
-											<FormItem>
+											<FormItem className="w-full">
 												<FormLabel>
 													Date of Birth
 												</FormLabel>
 												<FormControl>
-													<Input
-														type="date"
-														{...field}
-													/>
+													<Popover
+														open={open}
+														onOpenChange={setOpen}>
+														<PopoverTrigger asChild>
+															<Button
+																variant="outline"
+																id="date"
+																className="w-48 justify-between font-normal">
+																{date
+																	? date.toLocaleDateString()
+																	: "Select date"}
+																<ChevronDownIcon />
+															</Button>
+														</PopoverTrigger>
+														<PopoverContent
+															className="w-auto overflow-hidden p-0"
+															align="start">
+															<Calendar
+																mode="single"
+																selected={date}
+																captionLayout="dropdown"
+																onSelect={(
+																	date
+																) => {
+																	setDate(
+																		date
+																	);
+																	setOpen(
+																		false
+																	);
+																	form.setValue(
+																		field.name,
+																		date?.toISOString() ||
+																			""
+																	);
+																}}
+															/>
+														</PopoverContent>
+													</Popover>
 												</FormControl>
+
 												<FormMessage />
 											</FormItem>
 										)}

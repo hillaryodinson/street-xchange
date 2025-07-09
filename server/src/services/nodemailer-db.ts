@@ -15,17 +15,19 @@ export class NodemailerDB {
 	private _transporter;
 	private _hbsOptions;
 
-	constructor(db: PrismaClient) {
-		this._db = db;
+	constructor(db: PrismaClient | null) {
+		if (db) {
+			this._db = db;
+		}
 		this._transporter = nodemailer.createTransport({
-			host: "sandbox.smtp.mailtrap.io",
-			port: 2525,
-			secure: false, // use SSL
+			host: process.env.MAIL_HOST || "sandbox.smtp.mailtrap.io",
+			port: Number(process.env.MAIL_PORT) || 2525,
+			secure: process.env.MAIL_SECURE === "true", // use SSL
 			auth: {
 				user: process.env.MAILTRAP_USER,
 				pass: process.env.MAILTRAP_PASS,
 			},
-		});
+		} as nodemailer.TransportOptions);
 
 		this._hbsOptions = {
 			viewEngine: {
@@ -36,26 +38,26 @@ export class NodemailerDB {
 		};
 	}
 
-	async dispatchMail(
-		to: string,
-		subject: string,
-		template: string,
-		context: string,
-		from: string
-	) {
-		//prepare the mail to be sent
-		await this._db.mail.create({
-			data: {
-				to,
-				subject,
-				content: JSON.stringify({
-					template,
-					context,
-				}),
-				from,
-			},
-		});
-	}
+	// async dispatchMail(
+	// 	to: string,
+	// 	subject: string,
+	// 	template: string,
+	// 	context: string,
+	// 	from: string
+	// ) {
+	// 	//prepare the mail to be sent
+	// 	await this._db.mail.create({
+	// 		data: {
+	// 			to,
+	// 			subject,
+	// 			content: JSON.stringify({
+	// 				template,
+	// 				context,
+	// 			}),
+	// 			from,
+	// 		},
+	// 	});
+	// }
 
 	async sendMail(options: MailOptions) {
 		try {

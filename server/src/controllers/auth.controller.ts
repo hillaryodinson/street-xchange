@@ -78,7 +78,7 @@ export const login = async (
 	const token = JWT.sign(
 		{
 			id: dbResponse.id,
-			name: `${dbResponse.firstname} ${dbResponse.surname}`,
+			name: `${dbResponse.firstname} ${dbResponse.lastname}`,
 			email: dbResponse.email,
 			role: "user",
 		},
@@ -88,7 +88,7 @@ export const login = async (
 		}
 	);
 
-	const { id, firstname, middlename, surname, email, createdAt, isVerified } =
+	const { id, firstname, lastname, email, createdAt, isVerified } =
 		dbResponse;
 
 	//send the jwt token in the response
@@ -100,8 +100,7 @@ export const login = async (
 			user: {
 				id,
 				firstname,
-				middlename,
-				surname,
+				lastname,
 				email,
 				createdAt,
 				role: "customer",
@@ -157,7 +156,7 @@ export const resetPassword = async (
 		subject: "Password Reset",
 		template: "password_reset",
 		context: {
-			name: `${user.firstname} ${user.surname}`,
+			name: `${user.firstname} ${user.lastname}`,
 			resetUrl,
 		},
 		from: "B9vY1@example.com",
@@ -214,7 +213,7 @@ export const confirmPasswordReset = async (
 		subject: "Password Reset",
 		template: "password_reset_success",
 		context: {
-			name: `${user.firstname} ${user.surname}`,
+			name: `${user.firstname} ${user.lastname}`,
 		},
 		from: SITEMAIL,
 	});

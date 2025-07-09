@@ -49,15 +49,10 @@ const options = {
 							example: "Jane",
 							description: "First name of the user",
 						},
-						middlename: {
-							type: "string",
-							example: "Samuel",
-							description: "Middle name of the user",
-						},
-						surname: {
+						lastname: {
 							type: "string",
 							example: "Smith",
-							description: "Surname of the user",
+							description: "Lastname of the user",
 						},
 						email: {
 							type: "string",

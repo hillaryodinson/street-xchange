@@ -15,10 +15,44 @@ import "@/backend.css";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useQueries } from "@tanstack/react-query";
+import { Transaction } from "@/utils/types";
 
 const DashboardPage = () => {
 	const user = useAuthStore((state) => state.user);
 	const isVerified = useAuthStore((state) => state.isVerified);
+
+	const [{ data: transactions }, { data: accountOverview }] = useQueries({
+		queries: [
+			{
+				queryKey: ["fetch_transactions"],
+				queryFn: async () => {
+					const response = await fetch("/api/transactions/me");
+					const result = await response.json();
+					return result.data;
+				},
+			},
+			{
+				queryKey: ["fetch_account_overview"],
+				queryFn: async () => {
+					const response = await fetch("/api/account/overview");
+					const result = await response.json();
+					return result.data;
+				},
+			},
+		],
+	});
+
+	const getTypeIcon = (type: Transaction["transactionType"]) => {
+		switch (type.toLowerCase()) {
+			case "flight":
+				return <Plane className="h-4 w-4 text-primary" />;
+			case "crypto":
+				return <Wallet className="h-4 w-4 text-primary" />;
+			case "gift_card":
+				return <Gift className="h-4 w-4 text-primary" />;
+		}
+	};
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -82,69 +116,51 @@ const DashboardPage = () => {
 			)}
 
 			<div className="grid gap-6 md:grid-cols-2">
-				<Card>
+				<Card className="flex flex-col items-between">
 					<CardHeader>
 						<CardTitle>Recent Transactions</CardTitle>
 						<CardDescription>
 							Your recent activity on Xchange
 						</CardDescription>
 					</CardHeader>
-					<CardContent>
+					<CardContent className="flex-1">
 						<div className="space-y-4">
-							<div className="flex items-center justify-between border-b pb-4">
-								<div className="flex items-center gap-4">
-									<div className="rounded-full bg-primary/10 p-2">
-										<Wallet className="h-4 w-4 text-primary" />
-									</div>
-									<div>
+							{transactions &&
+								transactions.map((tranx: Transaction) => (
+									<div className="flex items-center justify-between border-b pb-4">
+										<div className="flex items-center gap-4">
+											<div className="rounded-full bg-primary/10 p-2">
+												{getTypeIcon(
+													tranx.transactionType
+												)}
+											</div>
+											<div>
+												<p className="font-medium">
+													{tranx.description}
+												</p>
+												<p className="text-sm text-muted-foreground">
+													{tranx.createdDate.toDateString()}
+												</p>
+											</div>
+										</div>
 										<p className="font-medium">
-											Bitcoin Sale
-										</p>
-										<p className="text-sm text-muted-foreground">
-											Mar 14, 2023
+											+$1,200.00
 										</p>
 									</div>
-								</div>
-								<p className="font-medium">+$1,200.00</p>
-							</div>
-							<div className="flex items-center justify-between border-b pb-4">
-								<div className="flex items-center gap-4">
-									<div className="rounded-full bg-primary/10 p-2">
-										<Gift className="h-4 w-4 text-primary" />
-									</div>
-									<div>
-										<p className="font-medium">
-											Amazon Gift Card
-										</p>
-										<p className="text-sm text-muted-foreground">
-											Mar 10, 2023
-										</p>
-									</div>
-								</div>
-								<p className="font-medium">+$50.00</p>
-							</div>
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-4">
-									<div className="rounded-full bg-primary/10 p-2">
-										<Plane className="h-4 w-4 text-primary" />
-									</div>
-									<div>
-										<p className="font-medium">
-											Flight Booking
-										</p>
-										<p className="text-sm text-muted-foreground">
-											Mar 5, 2023
-										</p>
-									</div>
-								</div>
-								<p className="font-medium">-$350.00</p>
-							</div>
+								))}
 						</div>
 					</CardContent>
 					<CardFooter>
-						<Button variant="outline" className="w-full">
+						<Link
+							to="/customer-dashboard/transactions"
+							className={cn(
+								buttonVariants({
+									variant: "outline",
+									size: "sm",
+								})
+							)}>
 							View All Transactions
-						</Button>
+						</Link>
 					</CardFooter>
 				</Card>
 
@@ -160,20 +176,25 @@ const DashboardPage = () => {
 							<p className="text-sm font-medium leading-none">
 								Available Balance
 							</p>
-							<p className="text-3xl font-bold">$2,450.50</p>
+							<p className="text-3xl font-bold">
+								{accountOverview.wallet.balance ?? 0}
+							</p>
 						</div>
 						<div className="grid grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<p className="text-sm font-medium leading-none text-muted-foreground">
-									Total Earnings
+									Referals
 								</p>
-								<p className="text-xl font-bold">$12,450.50</p>
+								<p className="text-xl font-bold">Coming soon</p>
 							</div>
 							<div className="space-y-2">
 								<p className="text-sm font-medium leading-none text-muted-foreground">
-									Pending
+									Pending Withdrawals
 								</p>
-								<p className="text-xl font-bold">$450.00</p>
+								<p className="text-xl font-bold">
+									{accountOverview.transaction
+										.pendingWithdrawalCounts ?? 0}
+								</p>
 							</div>
 						</div>
 					</CardContent>

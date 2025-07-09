@@ -107,8 +107,7 @@ export type TransactionStatus = "Pending" | "Completed" | "Failed";
 export interface UserType {
 	id: string;
 	firstname: string;
-	middlename?: string | null;
-	surname: string;
+	lastname: string;
 	email: string;
 	dob: Date;
 	residentialAddress: string;

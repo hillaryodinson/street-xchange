@@ -18,7 +18,7 @@ const UserDropdown = () => {
 	const logout = useAuthStore((state) => state.clearSession);
 	const getUserInitials = () => {
 		if (!user) return "U";
-		return `${user.firstname.charAt(0).toUpperCase()}${user.surname
+		return `${user.firstname.charAt(0).toUpperCase()}${user.lastname
 			.charAt(0)
 			.toUpperCase()}`;
 	};
@@ -40,7 +40,7 @@ const UserDropdown = () => {
 				<DropdownMenuLabel>
 					<div className="flex flex-col space-y-1">
 						<p className="text-sm font-medium leading-none">
-							{user && `${user.firstname} ${user.surname}`}
+							{user && `${user.firstname} ${user.lastname}`}
 						</p>
 						<p className="text-xs leading-none text-muted-foreground">
 							{user && user.email}

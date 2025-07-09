@@ -243,7 +243,14 @@ export const activateAccount = async (req: Request, res: Response) => {
 		},
 	});
 
-	if (!user || (user.tokenExpiresAt && user.tokenExpiresAt < new Date())) {
+	if (!user) {
+		throw new AppError(
+			ERROR_CODES.USER_NOT_FOUND,
+			"Invalid or expired token"
+		);
+	}
+
+	if (user.tokenExpiresAt && user.tokenExpiresAt < new Date()) {
 		if (user) {
 			await generateActivationToken(user);
 		}

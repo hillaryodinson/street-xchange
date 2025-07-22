@@ -192,72 +192,90 @@ kycRoute.post("/", authorize, tryCatch(addKYC));
  *                   items:
  *                     type: string
  */
-
 kycRoute.post("/process", authorize, tryCatch(processKYCRequest));
 /**
  * @swagger
  * /kyc:
  *   get:
- *     summary: List all KYC requests
+ *     summary: List KYC requests and return dashboard data
  *     tags: [KYC Verification]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [all, pending, approved, failed]
+ *         description: Filter KYC requests by status
  *     responses:
  *       200:
- *         description: List of KYC requests retrieved successfully
+ *         description: List of KYC requests with dashboard summary
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                     description: ID of the KYC request
- *                   customerId:
- *                     type: string
- *                     description: ID of the user who submitted the request
- *                   customer:
- *                     type: object
- *                     properties:
- *                      firstname:
- *                          type: string
- *                          description: The first name of the customer.
- *                      middlename:
- *                          type: string
- *                          description: The middle name of the customer (optional).
- *                      surname:
- *                          type: string
- *                          description: The surname of the customer.
- *                      email:
- *                          type: string
- *                          description: The email address of the customer. Must be unique.
- *                      dob:
- *                          type: string
- *                          format: date
- *                          description: The date of birth of the customer.
- *                      residentialAddress:
- *                          type: string
- *                          description: The residential address of the customer.
- *                      phoneNo:
- *                          type: string
- *                          description: The phone number of the customer.
- *                   type:
- *                     type: string
- *                     description: ID of the user who submitted the request
- *                   number:
- *                     type: string
- *                     description: ID of the user who submitted the request
- *                   frontimage:
- *                     type: string
- *                     description: ID of the user who submitted the request
- *                   backimage:
- *                     type: string
- *                     description: ID of the user who submitted the request
- *                   isApproved:
- *                     type: boolean
- *                     description: Current status of the KYC request
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     dashdata:
+ *                       type: object
+ *                       properties:
+ *                         totalApproved:
+ *                           type: integer
+ *                           description: Number of approved KYC requests this month
+ *                         totalReviewed:
+ *                           type: integer
+ *                           description: Number of reviewed KYC requests this month
+ *                         approvalRate:
+ *                           type: string
+ *                           description: Percentage of approvals (e.g., "85.00%")
+ *                     kycs:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             description: ID of the KYC request
+ *                           customerId:
+ *                             type: string
+ *                             description: ID of the customer
+ *                           customer:
+ *                             type: object
+ *                             properties:
+ *                               isVerified:
+ *                                 type: integer
+ *                                 description: Verification status of the customer
+ *                           type:
+ *                             type: string
+ *                             description: Type of identification (e.g., "NIN", "Passport")
+ *                           number:
+ *                             type: string
+ *                             description: Identification number
+ *                           frontimage:
+ *                             type: string
+ *                             description: Front image of the ID
+ *                           backimage:
+ *                             type: string
+ *                             description: Back image of the ID (if provided)
+ *                           status:
+ *                             type: string
+ *                             enum: [pending, approved, declined]
+ *                             description: Status of the KYC request
+ *                           declineReason:
+ *                             type: string
+ *                             nullable: true
+ *                             description: Reason for declining (if status is declined)
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             description: Timestamp when KYC was submitted
  *       401:
  *         description: Unauthorized
  */

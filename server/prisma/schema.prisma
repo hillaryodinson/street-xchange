@@ -50,16 +50,23 @@ model Mail {
   createdAt   DateTime @default(now())
 }
 
+enum ApprovalStatus {
+  approved
+  declined
+  pending
+}
+
 model Kyc {
-  id         String   @id @default(uuid())
-  customerId String
-  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  type       String
-  number     String
-  frontimage String
-  backimage  String?
-  isApproved Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id            String         @id @default(uuid())
+  customerId    String
+  customer      User           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  type          String
+  number        String
+  frontimage    String
+  backimage     String?
+  status        ApprovalStatus @default(pending)
+  declineReason String?
+  createdAt     DateTime       @default(now())
 }
 
 enum PaymentTransactionStatus {

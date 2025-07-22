@@ -24,8 +24,8 @@ export class NodemailerDB {
 			port: Number(process.env.MAIL_PORT) || 2525,
 			secure: process.env.MAIL_SECURE === "true", // use SSL
 			auth: {
-				user: process.env.MAILTRAP_USER,
-				pass: process.env.MAILTRAP_PASS,
+				user: process.env.MAIL_USER,
+				pass: process.env.MAIL_PASS,
 			},
 		} as nodemailer.TransportOptions);
 
@@ -65,9 +65,9 @@ export class NodemailerDB {
 			//send the mail
 			await this._transporter.sendMail(options, (err, info) => {
 				if (err) {
-					console.log(err);
+					console.log("Error occurred while sending mail: ", err);
 				} else {
-					console.log(info);
+					console.log("Message sent: %s", info.messageId);
 				}
 			});
 		} catch (error) {

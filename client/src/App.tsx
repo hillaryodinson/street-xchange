@@ -27,6 +27,7 @@ import AdminProtectedRoute from "./middleware/AdminProtectedRoute";
 import SettingsPage from "./app/(admin)/Setting";
 import Payment from "./app/(account)/Payment";
 import BackendErrorFallback from "./components/layout/backend-fallback";
+import KYCApprovalPage from "./app/(admin)/Kyc";
 
 function App() {
 	const queryClient = new QueryClient();
@@ -134,6 +135,7 @@ function App() {
 				},
 				{
 					path: "/sxadmin/user/verification/pending",
+					element: <KYCApprovalPage />,
 				},
 				{
 					path: "/sxadmin/settings",

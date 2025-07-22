@@ -1,6 +1,6 @@
 const HeroSection = () => {
 	return (
-		<section className="hero-bg relative overflow-hidden md:h-screen flex items-center md:py-0 py-36 pt-24 bg-orange-300 dark:bg-orange-700/20 ">
+		<section className="hero-bg relative overflow-hidden md:h-screen flex items-center md:py-0 py-36 pt-24 bg-white dark:bg-white ">
 			<div className="container relative">
 				<div className="grid grid-cols-1 items-center mt-10">
 					<div className="md:text-start text-center">

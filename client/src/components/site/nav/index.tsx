@@ -1,4 +1,4 @@
-import { UserIcon } from "lucide-react";
+// import { UserIcon } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -54,18 +54,18 @@ const Nav = ({ className }: { className?: string }) => {
 						</div>
 
 						<ul className="buy-button list-none mb-0">
-							<li className="inline mb-0">
+							{/* <li className="inline mb-0">
 								<Link
 									to="/login"
 									className="btn btn-icon bg-orange-600 hover:bg-orange-700 border-orange-600 dark:border-orange-600 text-white !rounded-full">
 									<UserIcon width={18} height={18} />
 								</Link>
-							</li>
+							</li> */}
 							<li className="sm:inline ps-1 mb-0 hidden">
 								<Link
 									to="/signup"
 									className="btn bg-orange-600 hover:bg-orange-700 border-orange-600 dark:border-orange-600 text-white !rounded-full">
-									Signup
+									Get Started
 								</Link>
 							</li>
 						</ul>

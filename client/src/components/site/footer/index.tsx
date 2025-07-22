@@ -66,9 +66,9 @@ const Footer = () => {
 										/>
 									</a>
 									<p className="mt-6 text-gray-300">
-										A great plateform to buy, sell and rent
-										your properties without any agent or
-										commisions.
+										A great platform to buy, sell your
+										giftcard or crypto and book your flight
+										without any agent or commisions.
 									</p>
 								</div>
 
@@ -122,7 +122,7 @@ const Footer = () => {
 
 								<div className="lg:col-span-3 md:col-span-4">
 									<h5 className="tracking-[1px] text-gray-100 font-semibold">
-										Usefull Links
+										Useful Links
 									</h5>
 									<ul className="list-none footer-list mt-6">
 										<li>

@@ -66,7 +66,7 @@ const TagLine = () => {
 								<a
 									href="mailto:contact@example.com"
 									className="ms-2 text-slate-300 hover:text-slate-200">
-									contact@example.com
+									contact@streetxchange.ng
 								</a>
 							</li>
 							<li className="inline-flex items-center ms-2">

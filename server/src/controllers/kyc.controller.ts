@@ -185,6 +185,11 @@ export const listKYCRequests = async (
 			include: {
 				customer: {
 					select: {
+						firstname: true,
+						lastname: true,
+						residentialAddress: true,
+						phoneNo: true,
+						email: true,
 						isVerified: true,
 					},
 				},
@@ -198,18 +203,58 @@ export const listKYCRequests = async (
 		});
 	} else if (type == "approved") {
 		kycs = await db.kyc.findMany({
+			include: {
+				customer: {
+					select: {
+						firstname: true,
+						lastname: true,
+						residentialAddress: true,
+						phoneNo: true,
+						email: true,
+						dob: true,
+						isVerified: true,
+					},
+				},
+			},
 			where: {
 				status: ApprovalStatus.approved,
 			},
 		});
 	} else if (type == "failed") {
 		kycs = await db.kyc.findMany({
+			include: {
+				customer: {
+					select: {
+						firstname: true,
+						lastname: true,
+						residentialAddress: true,
+						phoneNo: true,
+						email: true,
+						dob: true,
+						isVerified: true,
+					},
+				},
+			},
 			where: {
 				status: ApprovalStatus.declined,
 			},
 		});
 	} else {
-		kycs = await db.kyc.findMany();
+		kycs = await db.kyc.findMany({
+			include: {
+				customer: {
+					select: {
+						firstname: true,
+						lastname: true,
+						residentialAddress: true,
+						phoneNo: true,
+						dob: true,
+						email: true,
+						isVerified: true,
+					},
+				},
+			},
+		});
 	}
 
 	res.status(200).json({

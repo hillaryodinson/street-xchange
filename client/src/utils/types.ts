@@ -43,7 +43,11 @@ export type ImageType = {
 export type UnitImageInfo = z.infer<typeof ImageSchema>[];
 
 export type BankType = z.infer<typeof BankSchema> & { id?: string };
-export type KYCType = z.infer<typeof KYCSchema>;
+export type KYCType = z.infer<typeof KYCSchema> & {
+	id?: string;
+	status: string;
+	customer: 
+};
 export type ChangePasswordType = z.infer<typeof ChangePasswordSchema>;
 
 export type GeneralFormValues = z.infer<typeof generalFormSchema>;

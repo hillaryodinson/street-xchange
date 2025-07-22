@@ -252,6 +252,21 @@ kycRoute.post("/process", authorize, tryCatch(processKYCRequest));
  *                               isVerified:
  *                                 type: integer
  *                                 description: Verification status of the customer
+ *                               firstname:
+ *                                 type: string
+ *                                 description: First name of the customer
+ *                               lastname:
+ *                                 type: string
+ *                                 description: Last name of the customer
+ *                               email:
+ *                                 type: string
+ *                                 description: Email address of the customer
+ *                               dob:
+ *                                 type: string
+ *                                 description: Date of birth of the customer
+ *                               residentialAddress:
+ *                                 type: string
+ *                                 description: Address of the customer
  *                           type:
  *                             type: string
  *                             description: Type of identification (e.g., "NIN", "Passport")

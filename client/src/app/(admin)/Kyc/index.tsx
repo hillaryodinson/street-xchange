@@ -20,7 +20,9 @@ import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
 import DataTable from "@/components/datatable/datatable";
 import { getColumns } from "./components/column";
-import { UserType } from "@/utils/types";
+import { KYCType, UserType } from "@/utils/types";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/utils/api";
 
 const KYCApprovalPage = () => {
 	const [cardsVisible, setCardVisible] = useState(true);
@@ -28,6 +30,14 @@ const KYCApprovalPage = () => {
 	const onView = () => {};
 	const onApprove = () => {};
 	const onDecline = () => {};
+
+	const query = useQuery({
+		queryKey: ["fetch_kyc"],
+		queryFn: async () => {
+			const kycs = await api.get("/kyc");
+			const result = kycs.data as KYCType[];
+		},
+	});
 
 	const columns = useMemo(
 		() => getColumns({ onView, onApprove, onDecline }),

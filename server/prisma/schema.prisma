@@ -54,6 +54,7 @@ enum ApprovalStatus {
   approved
   declined
   pending
+  not_started
 }
 
 model Kyc {
@@ -64,7 +65,7 @@ model Kyc {
   number        String
   frontimage    String
   backimage     String?
-  status        ApprovalStatus @default(pending)
+  status        ApprovalStatus @default(not_started)
   declineReason String?
   createdAt     DateTime       @default(now())
 }

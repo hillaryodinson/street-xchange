@@ -63,7 +63,6 @@ export const errorHandler: ErrorRequestHandler = (
 	res: Response,
 	next: NextFunction
 ) => {
-	console.log(err);
 	if (err instanceof ZodError) {
 		res.status(400).json({
 			success: false,

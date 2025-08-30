@@ -11,6 +11,7 @@ import { AppError, ERROR_CODES } from "../utils/errors";
 import db from "../configs/db";
 import { moveImageToLive } from "../utils/helper";
 import { ApprovalStatus } from "@prisma/client";
+import { getKycApprovalRateThisMonth } from "../services/customerReport";
 
 export const addKYC = async (
 	req: Request,
@@ -266,41 +267,3 @@ export const listKYCRequests = async (
 		},
 	});
 };
-
-async function getKycApprovalRateThisMonth() {
-	const now = new Date();
-	const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-	const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-
-	// Count only KYC decisions made (approved or declined)
-	const totalReviewed = await db.kyc.count({
-		where: {
-			status: {
-				in: ["approved", "declined"],
-			},
-			createdAt: {
-				gte: startOfMonth,
-				lt: endOfMonth,
-			},
-		},
-	});
-
-	const totalApproved = await db.kyc.count({
-		where: {
-			status: "approved",
-			createdAt: {
-				gte: startOfMonth,
-				lt: endOfMonth,
-			},
-		},
-	});
-
-	const approvalRate =
-		totalReviewed === 0 ? 0 : (totalApproved / totalReviewed) * 100;
-
-	return {
-		totalApproved,
-		totalReviewed,
-		approvalRate: approvalRate.toFixed(2) + "%",
-	};
-}

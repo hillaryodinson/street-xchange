@@ -24,6 +24,7 @@ const scrollToSection = (id: string) => {
 export default function StickyNavbar() {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const app_url = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -88,7 +89,7 @@ export default function StickyNavbar() {
 
 					<div className="hidden lg:flex gap-2">
 						<Link
-							href={"/login"}
+							href={`${app_url}/login`}
 							className={buttonVariants({
 								variant: "ghost",
 								className:
@@ -97,7 +98,7 @@ export default function StickyNavbar() {
 							Log in
 						</Link>
 						<Link
-							href={"/signup"}
+							href={`${app_url}/signup`}
 							className={buttonVariants({
 								className:
 									"rounded-sm rounded-tr-[30px] bg-orange-600 text-white hover:bg-gray-800 transition-colors",
@@ -208,7 +209,7 @@ export default function StickyNavbar() {
 								whileTap={{ scale: 0.95 }}
 								variants={itemVariants}>
 								<Link
-									href={"/"}
+									href={`${app_url}/login`}
 									className={buttonVariants({
 										variant: "outline",
 										className:
@@ -223,7 +224,7 @@ export default function StickyNavbar() {
 								whileTap={{ scale: 0.95 }}
 								variants={itemVariants}>
 								<Link
-									href={"/"}
+									href={`${app_url}/signup`}
 									className={buttonVariants({
 										className:
 											"w-full rounded-sm rounded-tr-[30px] bg-orange-600 text-white transition-colors",

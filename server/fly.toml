@@ -2,8 +2,8 @@ app = "street-xchange"
 primary_region = "lhr"
 
 [build]
-  builder = "heroku/buildpacks:20"
-  
+  builder = "heroku/buildpacks:24"
+
 [http_service]
   internal_port = 8080
   force_https = true

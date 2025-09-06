@@ -65,3 +65,18 @@ export type GiftCardTransactionType = z.infer<
 	isPending?: boolean;
 	customerId?: string;
 };
+
+export const MailJobSchema = z.object({
+	to: z.string().email(),
+	subject: z.string().min(1),
+	template: z.string().min(1), // handlebars template name without extension
+	context: z.record(z.any()).default({}),
+	from: z
+		.string()
+		.min(3)
+		.default(process.env.MAIL_FROM || "no-reply@example.com"),
+	// optional: for idempotency
+	dedupeKey: z.string().optional(),
+});
+
+export type MailJob = z.infer<typeof MailJobSchema>;

@@ -15,15 +15,17 @@ healthCheckRoute.get("/mail-check", async (req: Request, res: Response) => {
 		const mailer = new NodemailerDB(null);
 
 		// Check if the mailer is properly configured
-		const sent = await mailer.sendMail({
-			to: "insanedude.developer@gmail.com",
-			from: process.env.APP_NO_REPLY || "<noreply@streetxchange.com>",
-			subject: "Health Check Mail",
-			template: "health_check",
-			context: {},
-		});
-
-		console.log("Email was sent: ", sent);
+		mailer
+			.enqueueMail({
+				to: "hclinton007@gmail.com",
+				from:
+					process.env.APP_NO_REPLY ||
+					'"Street Xchange Team" <noreply@streetxchange.ng>',
+				subject: "Health Check Mail",
+				template: "health_check",
+				context: {},
+			})
+			.then((sent) => console.log("Email was sent: ", sent));
 
 		res.status(200).json({
 			success: true,

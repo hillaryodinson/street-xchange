@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
+import { MailJob, MailJobSchema } from "../configs/types";
+import { mailQueue } from "../configs/mail/queue";
 
 interface MailOptions {
 	context: Record<string, any>;
@@ -19,9 +21,15 @@ export class NodemailerDB {
 		if (db) {
 			this._db = db;
 		}
+		console.log(
+			"sending mail: ",
+			process.env.MAIL_USER,
+			process.env.MAIL_PASS,
+			process.env.MAIL_HOST
+		);
 		this._transporter = nodemailer.createTransport({
 			host: process.env.MAIL_HOST || "sandbox.smtp.mailtrap.io",
-			port: Number(process.env.MAIL_PORT) || 2525,
+			port: Number(process.env.MAIL_PORT) || 587,
 			secure: process.env.MAIL_SECURE === "true", // use SSL
 			auth: {
 				user: process.env.MAIL_USER,
@@ -63,7 +71,7 @@ export class NodemailerDB {
 		try {
 			this._transporter.use("compile", hbs(this._hbsOptions));
 			//send the mail
-			await this._transporter.sendMail(options, (err, info) => {
+			return await this._transporter.sendMail(options, (err, info) => {
 				if (err) {
 					console.log("Error occurred while sending mail: ", err);
 				} else {
@@ -72,6 +80,20 @@ export class NodemailerDB {
 			});
 		} catch (error) {
 			console.log(error);
+			return null;
 		}
+	}
+
+	async enqueueMail(job: MailJob) {
+		const parsed = MailJobSchema.parse(job);
+
+		// Optional: idempotency via dedupeKey
+		const jobId = parsed.dedupeKey;
+
+		return mailQueue.add("send", parsed, {
+			jobId, // if provided, duplicate adds are ignored
+			// You can also schedule delayed mails:
+			// delay: 0
+		});
 	}
 }

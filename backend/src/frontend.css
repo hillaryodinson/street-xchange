@@ -7965,9 +7965,9 @@ button {
 
 }
 .hero-bg-2 {
-	background:var(--color-orange-100) url('/images/hero_bg_5.png');
+	background:var(--color-orange-100) url('/images/bg.png');
 	background-repeat: no-repeat;
-	background-size: contain;
+	background-size: cover;
 
 }
 

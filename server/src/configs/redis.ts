@@ -1,6 +1,8 @@
 import IORedis from "ioredis";
 
-const { REDIS_URL } = process.env;
+const REDIS_URL =
+	process.env.REDIS_URL ||
+	"ediss://default:AaYFAAIncDE2ZTg5ZDY4YjE4MDk0YTU2YTkwZTk0YzJiOTFkOTliY3AxNDI1MDE@relieved-boa-42501.upstash.io:6379";
 
 if (!REDIS_URL) {
 	throw new Error("REDIS_URL is required");

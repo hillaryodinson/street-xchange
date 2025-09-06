@@ -6,33 +6,15 @@ import {
 	FormLabel,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { banks } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-// import {
-// 	Popover,
-// 	PopoverContent,
-// 	PopoverTrigger,
-// } from "@/components/ui/popover";
-// import {
-// 	Command,
-// 	CommandEmpty,
-// 	CommandGroup,
-// 	CommandInput,
-// 	CommandItem,
-// 	CommandList,
-// } from "@/components/ui/command";
-// import { cn } from "@/lib/utils";
-import {
-	// ChevronsUpDown, Check,
-	Save,
-} from "lucide-react";
+import { CheckCircle, Loader, Save, XCircle } from "lucide-react";
 import api from "@/utils/api";
 import { ApiResponse, BankType } from "@/utils/types";
 import { toast } from "react-toastify";
 import { BankSchema } from "@/utils/zod";
+import { banks } from "@/lib/banks";
 import {
 	Select,
 	SelectContent,
@@ -42,9 +24,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
+import { useState } from "react";
 
 const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
-	// const [open, setOpen] = useState(false);
+	const [isValidAccountName, setIsValidAccountName] = useState(false);
+	const [isSearching, setIsSearching] = useState(false);
 	const form = useForm({
 		resolver: zodResolver<BankType>(BankSchema),
 		values: {
@@ -53,6 +38,41 @@ const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
 			accountNo: "",
 		},
 	});
+
+	const getAccountName = async (accountNo: string, bankName: string) => {
+		setIsSearching(true);
+		try {
+			if (accountNo && accountNo.length === 10 && bankName) {
+				const bankCode = getBanksCode(bankName);
+				if (!bankCode) {
+					throw new Error("Invalid bank selected");
+				}
+				// https://nubapi.com/api/verify?account_number={#}&bank_code={#}',
+				const response = await axios.get(
+					`https://nubapi.com/api/verify?account_number=${accountNo}&bank_code=${bankCode}`,
+					{
+						headers: {
+							Authorization: `Bearer ${
+								import.meta.env.VITE_NUBAPI_TOKEN
+							}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+				const result = response.data as { account_name: string };
+				form.setValue("accountName", result.account_name);
+				setIsValidAccountName(true);
+			}
+			setIsSearching(false);
+		} catch (error) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			toast.error((error as any)?.response?.data?.message || error);
+			console.log(error);
+			setIsSearching(false);
+			form.setValue("accountName", "");
+			setIsValidAccountName(false);
+		}
+	};
 
 	const doSubmit = async (data: BankType) => {
 		try {
@@ -70,6 +90,7 @@ const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
 			console.log(error);
 		}
 	};
+
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(doSubmit)} className="space-y-4">
@@ -79,68 +100,6 @@ const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Bank Name</FormLabel>
-
-							{/* <Popover open={open} onOpenChange={setOpen}>
-								<PopoverTrigger asChild>
-									<FormControl className="w-full">
-										<Button
-											variant="outline"
-											role="combobox"
-											className={cn(
-												"w-full justify-between",
-												!field.value &&
-													"text-muted-foreground"
-											)}>
-											{field.value
-												? banks.find(
-														(bank) =>
-															bank.name ===
-															field.value
-												  )?.name
-												: "Select Bank"}
-											<ChevronsUpDown className="opacity-50" />
-										</Button>
-									</FormControl>
-								</PopoverTrigger>
-								<PopoverContent className="w-full p-0">
-									<Command>
-										<CommandInput
-											placeholder="Search framework..."
-											className="h-9"
-										/>
-										<CommandList>
-											<CommandEmpty>
-												No framework found.
-											</CommandEmpty>
-											<CommandGroup>
-												{banks.map((bank, index) => (
-													<CommandItem
-														value={bank.name}
-														key={index}
-														onSelect={() => {
-															form.setValue(
-																field.name,
-																bank.name
-															);
-															setOpen(false);
-														}}>
-														{bank.name}
-														<Check
-															className={cn(
-																"ml-auto",
-																bank.name ===
-																	field.value
-																	? "opacity-100"
-																	: "opacity-0"
-															)}
-														/>
-													</CommandItem>
-												))}
-											</CommandGroup>
-										</CommandList>
-									</Command>
-								</PopoverContent>
-							</Popover> */}
 
 							<Select
 								{...field}
@@ -153,13 +112,17 @@ const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
 								<SelectContent>
 									<SelectGroup>
 										<SelectLabel>Bank</SelectLabel>
-										{banks.map((bank, index) => (
-											<SelectItem
-												value={bank.name}
-												key={index}>
-												{bank.name}
-											</SelectItem>
-										))}
+										{[...banks]
+											.sort((a, b) =>
+												a.name.localeCompare(b.name)
+											)
+											.map((bank, index) => (
+												<SelectItem
+													value={bank.name}
+													key={index}>
+													{bank.name}
+												</SelectItem>
+											))}
 									</SelectGroup>
 								</SelectContent>
 							</Select>
@@ -178,6 +141,25 @@ const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
 									type="text"
 									{...field}
 									placeholder="e.g 1010001101"
+									maxLength={10}
+									onBlur={() =>
+										getAccountName(
+											field.value,
+											form.getValues("bankName")
+										)
+									}
+									onChange={(e) => {
+										setIsValidAccountName(false);
+										field.onChange(e);
+										if (e.target.value.length === 10) {
+											getAccountName(
+												e.target.value,
+												form.getValues("bankName")
+											);
+										} else {
+											form.setValue("accountName", "");
+										}
+									}}
 								/>
 							</FormControl>
 						</FormItem>
@@ -191,11 +173,23 @@ const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
 						<FormItem>
 							<FormLabel>Account Name</FormLabel>
 							<FormControl>
-								<Input
-									type="text"
-									{...field}
-									placeholder="e.g John Doe"
-								/>
+								<div className="flex items-center space-x-2">
+									<Input
+										type="text"
+										disabled
+										{...field}
+										placeholder="e.g John Doe"
+									/>
+									{isSearching ? (
+										<Loader className="animate-spin" />
+									) : isValidAccountName ? (
+										<CheckCircle className="text-green-600 w-4 h-4 animate-in" />
+									) : (
+										field.value && (
+											<XCircle className="text-red-600 w-4 h-4 animate-in" />
+										)
+									)}
+								</div>
 							</FormControl>
 						</FormItem>
 					)}
@@ -211,3 +205,7 @@ const BankAccountForm = ({ onComplete }: { onComplete: () => void }) => {
 };
 
 export default BankAccountForm;
+function getBanksCode(bankName: string): string | undefined {
+	const bank = banks.find((b) => b.name === bankName);
+	return bank?.code;
+}

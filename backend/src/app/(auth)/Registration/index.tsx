@@ -18,30 +18,14 @@ import { registerFormSchema } from "@/utils/zod";
 import api from "@/utils/api";
 import { ApiResponse } from "@/utils/types";
 import { toast } from "react-toastify";
-// import { Country } from "react-phone-number-input";
 import { Logo } from "@/components/site/logo";
 import { Helmet } from "react-helmet";
-// import { ChevronDownIcon, Home } from "lucide-react";
 import Notification from "@/components/site/notification";
 import { Home } from "lucide-react";
-// import LocationSelector from "@/components/site/location-picker";
-
-// import {
-// 	Popover,
-// 	PopoverContent,
-// 	PopoverTrigger,
-// } from "@/components/ui/popover";
-// import { Calendar } from "@/components/ui/calendar";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();
 	const [regSuccess, setRegSuccess] = useState<boolean>(false);
-	// const [countryName, setCountryName] = useState<string>("");
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// const [_, setCountryIso] = useState<Country>("CA");
-	// const [stateName, setStateName] = useState<string>("");
-	// const [open, setOpen] = useState(false);
-	// const [date, setDate] = useState<Date | undefined>(undefined);
 
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),
@@ -53,6 +37,7 @@ export function SignupPage() {
 			password: "",
 			confirmPassword: "",
 		},
+		mode: "onTouched",
 	});
 
 	const onSubmit = async (values: z.infer<typeof registerFormSchema>) => {
@@ -64,9 +49,13 @@ export function SignupPage() {
 				if (result.success) {
 					setRegSuccess(true);
 				}
-			} catch (error) {
-				console.log(error);
-				toast.error("An error occured please contact admin");
+			} catch (error: Error | any) {
+				console.log(error?.response?.data);
+				toast.error(
+					error.response && error?.response?.data
+						? error.response.data.message
+						: "An error occured please contact admin"
+				);
 			}
 		});
 	};
@@ -95,18 +84,18 @@ export function SignupPage() {
 			<Helmet>
 				<title>{`Signup | ${import.meta.env.VITE_APP_NAME}`}</title>
 			</Helmet>
-			<section className="md:h-screen py-36 flex items-center relative overflow-hidden zoom-image">
+			<section className="md:min-h-screen py-36 flex items-center relative overflow-y-scroll zoom-image">
 				<div className="absolute inset-0 image-wrap z-1 hero-bg-2"></div>
 
 				<div className="container relative z-3 mx-auto w-full">
-					<div className="flex justify-center w-full max-w-[800px] mx-auto p-6 bg-white dark:bg-slate-900 shadow-md shadow-l-none dark:shadow-gray-700 rounded-md">
-						<div className="w-1/2 pr-4">
+					<div className="flex flex-col md:flex-row justify-center w-full mx-auto bg-white dark:bg-slate-900 shadow-md shadow-l-none dark:shadow-gray-700 rounded-md overflow-hidden">
+						<div className="w-full md:w-1/2 pr-4 hidden md:block">
 							<img
 								src={"/images/signup_bg.jpg"}
-								className=" object-cover w-full h-full rounded-md "
+								className=" object-cover w-full h-full "
 							/>
 						</div>
-						<div className="w-1/2 m-auto px-4">
+						<div className="flex-1 px-6 py-8">
 							<Logo />
 							<h5 className="my-6 text-xl font-semibold text-center">
 								Create your account
@@ -114,23 +103,26 @@ export function SignupPage() {
 							<Form {...form}>
 								<form
 									onSubmit={form.handleSubmit(onSubmit)}
-									className="space-y-4">
-									<div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+									className="space-y-1">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 										<FormField
 											control={form.control}
 											name="firstname"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>
+													<FormLabel className="text-md font-semibold">
 														First Name
 													</FormLabel>
 													<FormControl>
 														<Input
+															className="rounded-sm shadow-none"
 															placeholder="John"
 															{...field}
 														/>
 													</FormControl>
-													<FormMessage />
+													<div className="h-[22px] text-xs">
+														<FormMessage />
+													</div>
 												</FormItem>
 											)}
 										/>
@@ -140,203 +132,119 @@ export function SignupPage() {
 											name="lastname"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>
+													<FormLabel className="text-md font-semibold">
 														Last Name
 													</FormLabel>
 													<FormControl>
 														<Input
+															className="rounded-sm shadow-none"
 															placeholder="Doe"
 															{...field}
 														/>
 													</FormControl>
-													<FormMessage />
+													<div className="h-[22px] text-xs">
+														<FormMessage />
+													</div>
 												</FormItem>
 											)}
 										/>
 									</div>
 
-									<div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-										<FormField
-											control={form.control}
-											name="email"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>Email</FormLabel>
-													<FormControl>
-														<Input
-															type="email"
-															placeholder="john.doe@example.com"
-															{...field}
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-
-										<FormField
-											control={form.control}
-											name="phoneNumber"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>
-														Phone Number
-													</FormLabel>
-													<FormControl>
-														<Input
-															placeholder="+1234567890"
-															{...field}
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-									</div>
-
-									{/* <FormField
+									<FormField
 										control={form.control}
-										name="dateOfBirth"
-										render={({ field }) => (
-											<FormItem className="w-full">
-												<FormLabel>
-													Date of Birth
-												</FormLabel>
-												<FormControl>
-													<Popover
-														open={open}
-														onOpenChange={setOpen}>
-														<PopoverTrigger asChild>
-															<Button
-																variant="outline"
-																id="date"
-																className="w-48 justify-between font-normal">
-																{date
-																	? date.toLocaleDateString()
-																	: "Select date"}
-																<ChevronDownIcon />
-															</Button>
-														</PopoverTrigger>
-														<PopoverContent
-															className="w-auto overflow-hidden p-0"
-															align="start">
-															<Calendar
-																mode="single"
-																selected={date}
-																captionLayout="dropdown"
-																onSelect={(
-																	date
-																) => {
-																	setDate(
-																		date
-																	);
-																	setOpen(
-																		false
-																	);
-																	form.setValue(
-																		field.name,
-																		date?.toISOString() ||
-																			""
-																	);
-																}}
-															/>
-														</PopoverContent>
-													</Popover>
-												</FormControl>
-
-												<FormMessage />
-											</FormItem>
-										)}
-									/> */}
-
-									{/* <FormItem>
-										<FormLabel>Select Country</FormLabel>
-										<FormControl>
-											<LocationSelector
-												onCountryChange={(country) => {
-													setCountryName(
-														country?.name || ""
-													);
-													setCountryIso(
-														country?.iso2 as Country
-													);
-												}}
-												onStateChange={(state) => {
-													setStateName(
-														state?.name || ""
-													);
-												}}
-											/>
-										</FormControl>
-										<FormDescription>
-											If your country has states, it will
-											be appear after selecting country
-										</FormDescription>
-										<FormMessage />
-									</FormItem> */}
-
-									{/* <FormField
-										control={form.control}
-										name="address"
+										name="email"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>
-													Residential Address
+												<FormLabel className="text-md font-semibold">
+													Email
 												</FormLabel>
 												<FormControl>
 													<Input
-														placeholder="123 Main St"
+														className="rounded-sm shadow-none"
+														type="email"
+														placeholder="john.doe@example.com"
 														{...field}
 													/>
 												</FormControl>
-												<FormMessage />
+												<div className="h-[22px] text-xs">
+													<FormMessage />
+												</div>
 											</FormItem>
 										)}
-									/> */}
+									/>
 
-									<div className="grid gap-4 grid-cols-1 sm:grid-cols-1">
-										<FormField
-											control={form.control}
-											name="password"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>
-														Password
-													</FormLabel>
-													<FormControl>
-														<Input
-															type="password"
-															{...field}
-														/>
-													</FormControl>
+									<FormField
+										control={form.control}
+										name="phoneNumber"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel className="text-md font-semibold">
+													Phone Number
+												</FormLabel>
+												<FormControl>
+													<Input
+														className="rounded-sm shadow-none"
+														placeholder="+1234567890"
+														{...field}
+													/>
+												</FormControl>
+												<div className="h-[22px] text-xs">
 													<FormMessage />
-												</FormItem>
-											)}
-										/>
+												</div>
+											</FormItem>
+										)}
+									/>
 
-										<FormField
-											control={form.control}
-											name="confirmPassword"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>
-														Confirm Password
-													</FormLabel>
-													<FormControl>
-														<Input
-															type="password"
-															{...field}
-														/>
-													</FormControl>
+									<FormField
+										control={form.control}
+										name="password"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel className="text-md font-semibold">
+													Password
+												</FormLabel>
+												<FormControl>
+													<Input
+														className="rounded-sm shadow-none"
+														type="password"
+														{...field}
+													/>
+												</FormControl>
+												<div className="h-[22px] text-xs">
 													<FormMessage />
-												</FormItem>
-											)}
-										/>
-									</div>
+												</div>
+											</FormItem>
+										)}
+									/>
+
+									<FormField
+										control={form.control}
+										name="confirmPassword"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel className="text-md font-semibold">
+													Confirm Password
+												</FormLabel>
+												<FormControl>
+													<Input
+														className="rounded-sm shadow-none"
+														type="password"
+														{...field}
+													/>
+												</FormControl>
+												<div className="h-[22px] text-xs">
+													<FormMessage />
+												</div>
+											</FormItem>
+										)}
+									/>
+
 									<Button
 										type="submit"
-										className="w-full"
-										disabled={isLoading}>
+										className="w-full h-12"
+										disabled={
+											isLoading || !form.formState.isValid
+										}>
 										{isLoading
 											? "Registering..."
 											: "Register"}

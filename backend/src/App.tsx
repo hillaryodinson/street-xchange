@@ -1,5 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./app/(public)/Home";
+import {
+	createBrowserRouter,
+	Navigate,
+	RouterProvider,
+} from "react-router-dom";
 import FrontendLayout from "./components/layout/frontend";
 import LoginPage from "./app/(auth)/Login";
 import DashboardPage from "./app/(account)/Dashboard";
@@ -38,7 +41,7 @@ function App() {
 			children: [
 				{
 					index: true,
-					element: <HomePage />,
+					element: <Navigate to="/dashboard" replace={true} />,
 				},
 				{
 					path: "*",

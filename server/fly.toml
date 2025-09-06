@@ -2,7 +2,7 @@ app = "street-xchange"
 primary_region = "lhr"
 
 [build]
-  builder = "heroku/builder:24"
+  image = "heroku/buildpacks:22" # or :22 (not :24, it doesn’t exist)
 
 [http_service]
   internal_port = 8080
@@ -13,4 +13,4 @@ primary_region = "lhr"
   processes = ["app"]
 
 [scale]
-count = 1
+  count = 1

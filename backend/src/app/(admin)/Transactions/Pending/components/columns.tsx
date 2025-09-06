@@ -8,15 +8,15 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { CirclePlus, EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PropertyType } from "@/utils/types";
 import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
+import { Transaction } from "@/utils/types";
+import { toCurrency } from "@/utils/helper";
 
 interface ColumnProps {
-	onView?: (id: PropertyType) => void;
-	onAddUnit?: (id: PropertyType) => void;
-	onEdit?: (id: PropertyType) => void;
-	onDelete?: (id: PropertyType) => void;
+	onView?: (id: Transaction) => void;
+	onAddUnit?: (id: Transaction) => void;
+	onEdit?: (id: Transaction) => void;
+	onDelete?: (id: Transaction) => void;
 }
 
 export const getColumns = ({
@@ -24,7 +24,7 @@ export const getColumns = ({
 	onAddUnit,
 	onEdit,
 	onDelete,
-}: ColumnProps): ColumnDef<PropertyType>[] => [
+}: ColumnProps): ColumnDef<Transaction>[] => [
 	{
 		accessorKey: "id",
 		header: "#",
@@ -34,12 +34,13 @@ export const getColumns = ({
 	{
 		accessorKey: "name",
 		cell: ({ row }) => {
-			const currentMember = row.original as PropertyType;
+			const currentMember = row.original as Transaction;
 			return (
 				<Link to="#" onClick={() => onView && onView(currentMember)}>
-					<div className="font-medium">{currentMember.name}</div>
+					<div className="font-medium"></div>
 					<div className="text-xs text-muted-foreground">
-						{currentMember.address}
+						{currentMember?.customer?.firstname}{" "}
+						{currentMember?.customer?.lastname}
 					</div>
 				</Link>
 			);
@@ -51,46 +52,29 @@ export const getColumns = ({
 	{
 		accessorKey: "type",
 		cell: ({ row }) => {
-			const currentMember = row.original.category.name;
-			return <div className="font-medium">{currentMember}</div>;
+			const currentMember = row.original;
+			return (
+				<div className="font-medium">
+					{currentMember.transactionType}
+				</div>
+			);
 		},
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Type" />
 		),
 	},
 	{
-		accessorKey: "rentalType",
+		accessorKey: "amount",
 		cell: ({ row }) => {
-			const currentMember = row.original.rentalType;
+			const currentMember = row.original.amount;
 			return (
 				<div className="w-full flex align-items-center">
-					<Badge variant={"outline"} className="capitalize">
-						{currentMember !== "whole"
-							? "units"
-							: currentMember + " Property"}
-					</Badge>
+					{toCurrency(currentMember || 0)}
 				</div>
 			);
 		},
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Rental Type" />
-		),
-	},
-	{
-		accessorKey: "units",
-		cell: ({ row }) => {
-			//const col = row.original.units.length;
-			return (
-				<div className="font-medium text-center">
-					{row.original.units.length} unit(s)
-				</div>
-			);
-		},
-		header: ({ column }) => (
-			<DataTableColumnHeader
-				column={column}
-				title="Total Units/Apartment"
-			/>
+			<DataTableColumnHeader column={column} title="Amount" />
 		),
 	},
 
@@ -99,7 +83,7 @@ export const getColumns = ({
 		header: "",
 		size: 50,
 		cell: ({ row }) => {
-			const currentMember = row.original as PropertyType;
+			const currentMember = row.original as Transaction;
 			return onView || onAddUnit || onEdit || onDelete ? (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>

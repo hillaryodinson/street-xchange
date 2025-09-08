@@ -10,10 +10,8 @@ export const LoginSchema = z.object({
 
 export const registerFormSchema = z
 	.object({
-		firstname: z
-			.string()
-			.min(2, "First name must be at least 2 characters"),
-		lastname: z.string().min(2, "Last name must be at least 2 characters"),
+		firstname: z.string().min(1, "First name is required"),
+		lastname: z.string().min(1, "Last name is required"),
 		email: z.string().email("Please enter a valid email address"),
 		phoneNumber: z.string().min(10, "Please enter a valid phone number"),
 		password: z.string().min(8, "Password must be at least 8 characters"),
@@ -26,10 +24,8 @@ export const registerFormSchema = z
 
 export const updateProfileFormSchema = z
 	.object({
-		firstname: z
-			.string()
-			.min(2, "First name must be at least 2 characters"),
-		lastname: z.string().min(2, "Last name must be at least 2 characters"),
+		firstname: z.string().min(2, "First name is required"),
+		lastname: z.string().min(2, "Last name is required"),
 		dateOfBirth: z.string().refine((date) => {
 			const today = new Date();
 			const dob = new Date(date);

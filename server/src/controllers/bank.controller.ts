@@ -39,7 +39,7 @@ export const addBankAccount = async (req: Request, res: Response) => {
 	const mailer = new NodemailerDB(db);
 	const CLIENT_URL = process.env.CLIENT_URL || "localhost:3001";
 	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
-	await mailer.sendMail({
+	await mailer.sendOrQueue({
 		to: customer.email,
 		subject: "Verify Bank Account",
 		template: "verify_bank_account",

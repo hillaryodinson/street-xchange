@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { NodemailerDB } from "../services/nodemailer-db";
+import db from "../configs/db";
 
 const healthCheckRoute = Router();
 
@@ -12,11 +13,11 @@ healthCheckRoute.get("/", (req, res) => {
 });
 healthCheckRoute.get("/mail-check", async (req: Request, res: Response) => {
 	try {
-		const mailer = new NodemailerDB(null);
+		const mailer = new NodemailerDB(db);
 
 		// Check if the mailer is properly configured
 		mailer
-			.enqueueMail({
+			.sendOrQueue({
 				to: "hclinton007@gmail.com",
 				from:
 					process.env.APP_NO_REPLY ||
@@ -43,9 +44,9 @@ healthCheckRoute.get("/mail-check", async (req: Request, res: Response) => {
 });
 
 healthCheckRoute.get("/run-checks", (req, res) => {
-	const mailer = new NodemailerDB(null);
+	const mailer = new NodemailerDB(db);
 
-	mailer.sendMail({
+	mailer.sendOrQueue({
 		to: "hclinton007@gmail.com",
 		from: process.env.APP_NO_REPLY || "<no-reply@example.com>",
 		subject: "Health Check Mail",

@@ -17,7 +17,7 @@ export class NodemailerDB {
 	private _transporter;
 	private _hbsOptions;
 
-	constructor(db: PrismaClient | null) {
+	constructor(db: PrismaClient) {
 		if (db) {
 			this._db = db;
 		}
@@ -46,26 +46,42 @@ export class NodemailerDB {
 		};
 	}
 
-	// async dispatchMail(
-	// 	to: string,
-	// 	subject: string,
-	// 	template: string,
-	// 	context: string,
-	// 	from: string
-	// ) {
-	// 	//prepare the mail to be sent
-	// 	await this._db.mail.create({
-	// 		data: {
-	// 			to,
-	// 			subject,
-	// 			content: JSON.stringify({
-	// 				template,
-	// 				context,
-	// 			}),
-	// 			from,
-	// 		},
-	// 	});
-	// }
+	async dispatchMail(options: MailOptions) {
+		this._transporter.use("compile", hbs(this._hbsOptions));
+
+		if (!this._db) {
+			throw new Error("Database not initialized");
+		}
+
+		try {
+			const info = await this._transporter.sendMail(options);
+			await this._db.mail.create({
+				data: {
+					to: options.to,
+					from: options.from,
+					subject: options.subject,
+					template: options.template,
+					context: options.context,
+					status: "sent",
+				},
+			});
+			return info;
+		} catch (err: any) {
+			console.error("Error sending mail:", err.message);
+			await this._db.mail.create({
+				data: {
+					to: options.to,
+					from: options.from,
+					subject: options.subject,
+					template: options.template,
+					context: options.context,
+					status: "failed",
+					error: err.message,
+				},
+			});
+			return null;
+		}
+	}
 
 	async sendMail(options: MailOptions) {
 		try {
@@ -91,9 +107,54 @@ export class NodemailerDB {
 		const jobId = parsed.dedupeKey;
 
 		return mailQueue.add("send", parsed, {
-			jobId, // if provided, duplicate adds are ignored
-			// You can also schedule delayed mails:
-			// delay: 0
+			jobId,
 		});
+	}
+
+	async sendOrQueue(mail: {
+		to: string;
+		from: string;
+		subject: string;
+		template: string;
+		context: Record<string, any>;
+	}) {
+		// try Redis first
+		try {
+			await mailQueue.add("sendMail", mail, {
+				attempts: 5,
+				backoff: { type: "exponential", delay: 60 * 1000 }, // 1m initial
+				removeOnComplete: { age: 3600, count: 1000 },
+				removeOnFail: { age: 60 * 60 * 24, count: 1000 },
+			});
+			// mark as queued (optional)
+			await this._db?.mail.create({
+				data: {
+					to: mail.to,
+					from: mail.from,
+					subject: mail.subject,
+					template: mail.template,
+					context: mail.context,
+					status: "queued",
+				},
+			});
+			return { ok: true, queued: true };
+		} catch (err: any) {
+			// Redis down or add failed -> fallback to DB
+			console.error(
+				"Failed to add job to Redis, falling back to DB:",
+				err.message || err
+			);
+			await this._db?.mail.create({
+				data: {
+					to: mail.to,
+					from: mail.from,
+					subject: mail.subject,
+					template: mail.template,
+					context: mail.context,
+					status: "pending",
+				},
+			});
+			return { ok: true, fallbackToDB: true };
+		}
 	}
 }

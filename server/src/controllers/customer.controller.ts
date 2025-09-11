@@ -45,7 +45,7 @@ export const register = async (req: Request, res: Response) => {
 	const CLIENT_URL = process.env.CLIENT_URL || "localhost:3001";
 	const activationUrl = `${CLIENT_URL}activate?token=${activationToken}`;
 	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
-	await mailer.sendMail({
+	await mailer.sendOrQueue({
 		to: customer.email,
 		subject: "Activate Account",
 		template: "activate_account",
@@ -119,7 +119,7 @@ export const changePassword = async (req: Request, res: Response) => {
 
 	const mailer = new NodemailerDB(db);
 	const SITEMAIL = process.env.APP_NO_REPLY || "noreply@appname.com";
-	await mailer.sendMail({
+	await mailer.sendOrQueue({
 		to: validatedUser.email,
 		from: SITEMAIL,
 		subject: "Password change successful",

@@ -4,6 +4,7 @@ import { MAIL_QUEUE_NAME } from "./queue";
 import { MailJob } from "../types";
 import { redis } from "../redis";
 import { NodemailerDB } from "../../services/nodemailer-db";
+import db from "../db";
 
 // Optional: a dead-letter queue for permanently failed jobs
 const DLQ_NAME = "mail-dlq";
@@ -16,7 +17,7 @@ const worker = new Worker<MailJob>(
 	MAIL_QUEUE_NAME,
 	async (job) => {
 		const { to, from, subject, template, context } = job.data;
-		const mailer = new NodemailerDB(null);
+		const mailer = new NodemailerDB(db);
 
 		await mailer.sendMail({
 			from,
@@ -24,6 +25,18 @@ const worker = new Worker<MailJob>(
 			subject,
 			template,
 			context,
+		});
+
+		// optionally mark DB row sent (if you created one when queued)
+		await db.mail.create({
+			data: {
+				to,
+				from,
+				subject,
+				template,
+				context,
+				status: "sent",
+			},
 		});
 
 		// return something to store in BullMQ result
@@ -53,6 +66,18 @@ worker.on("failed", async (job, err) => {
 	console.error(
 		`[worker][failed] id=${job.id} attempts=${attemptsMade}/${maxAttempts} reason=${err?.message}`
 	);
+
+	await db.mail.create({
+		data: {
+			to: job.data.to,
+			from: job.data.from,
+			subject: job.data.subject,
+			template: job.data.template,
+			context: job.data.context,
+			status: "failed",
+			error: err?.message || "unknown",
+		},
+	});
 });
 
 worker.on("completed", (job) => {

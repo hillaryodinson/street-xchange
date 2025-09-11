@@ -151,7 +151,7 @@ export const resetPassword = async (
 	const mailer = new NodemailerDB(db);
 	const resetUrl = `${callback_url}?token=${token}`;
 
-	await mailer.sendMail({
+	await mailer.sendOrQueue({
 		to: user.email,
 		subject: "Password Reset",
 		template: "password_reset",
@@ -208,7 +208,7 @@ export const confirmPasswordReset = async (
 	const mailer = new NodemailerDB(db);
 	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
 
-	await mailer.sendMail({
+	await mailer.sendOrQueue({
 		to: user.email,
 		subject: "Password Reset",
 		template: "password_reset_success",
@@ -276,7 +276,7 @@ export const activateAccount = async (req: Request, res: Response) => {
 	const mailer = new NodemailerDB(db);
 	const SITENAME = process.env.APP_NAME || "APP NAME";
 	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@appname.com";
-	await mailer.sendMail({
+	await mailer.sendOrQueue({
 		to: user.email,
 		subject: "Welcome to " + SITENAME,
 		template: "welcome_email",

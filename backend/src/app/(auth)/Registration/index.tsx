@@ -84,12 +84,12 @@ export function SignupPage() {
 			<Helmet>
 				<title>{`Signup | ${import.meta.env.VITE_APP_NAME}`}</title>
 			</Helmet>
-			<section className="py-6 md:py-36 flex items-center zoom-image md:overflow-hidden md:absolute">
+			<section className="py-6 md:py-36 flex items-center zoom-image overflow-x-hidden md:overflow-hidden md:absolute">
 				<div className="absolute inset-0 image-wrap z-1 hero-bg-2 top-0 bottom-0 left-0"></div>
 
 				<div className="container relative z-3 mx-auto w-full">
 					<div className="flex flex-col md:flex-row justify-center w-full mx-auto bg-white dark:bg-slate-900 shadow-md shadow-l-none dark:shadow-gray-700 rounded-md overflow-hidden">
-						<div className="w-full md:w-1/2 pr-4 hidden md:block">
+						<div className="w-full md:w-1/2 md:pr-4 hidden md:block">
 							<img
 								src={"/images/signup_bg.jpg"}
 								className=" object-cover w-full h-full "
@@ -120,7 +120,7 @@ export function SignupPage() {
 															{...field}
 														/>
 													</FormControl>
-													<div className="h-[22px] text-xs">
+													<div className="h-[12px] text-xs">
 														<FormMessage className="text-right" />
 													</div>
 												</FormItem>
@@ -142,7 +142,7 @@ export function SignupPage() {
 															{...field}
 														/>
 													</FormControl>
-													<div className="h-[22px] text-xs">
+													<div className="h-[12px] text-xs">
 														<FormMessage className="text-right" />
 													</div>
 												</FormItem>

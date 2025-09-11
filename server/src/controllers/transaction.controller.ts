@@ -130,7 +130,7 @@ export const bookFlight = async (
 	const mailer = new NodemailerDB(db);
 	const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@admin.com";
 	const SITEMAIL = process.env.APP_NO_REPLY || "admin@admin.com";
-	mailer.sendMail({
+	mailer.sendOrQueue({
 		to: ADMIN_EMAIL,
 		from: SITEMAIL,
 		subject: "Service Request - (Flight Booking)",
@@ -302,7 +302,7 @@ export const confirmCryptoOrder = async (req: Request, res: Response) => {
 	const SITEMAIL = process.env.APP_NO_REPLY || "no-reply@sitename.com";
 	const APP_URL = process.env.APP_URL || "https://sitename.com";
 	const TransactionLink = `${APP_URL}/sxadmin/transactions/${transaction.reference}`;
-	mailer.sendMail({
+	mailer.sendOrQueue({
 		to: ADMIN_EMAIL,
 		from: SITEMAIL,
 		subject: "Service Request - (Crypto Exchange)",
@@ -363,7 +363,7 @@ export const createGiftCardTransaction = async (
 	const SITEMAIL = process.env.APP_NO_REPLY || "noreply@sitename.com";
 	const APP_URL = process.env.APP_URL || "https://localhost:3000";
 	const TransactionLink = `${APP_URL}/sxadmin/transactions/${transactionDetails.reference}`;
-	mailer.sendMail({
+	mailer.sendOrQueue({
 		to: ADMIN_EMAIL,
 		from: SITEMAIL,
 		subject: "Service Request - (GiftCard Exchange)",

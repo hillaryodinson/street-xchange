@@ -16,3 +16,12 @@ redis.on("error", (err) => {
 redis.on("connect", () => {
 	console.log("✅ Connected to Redis @ upstash.com");
 });
+
+export async function checkRedis(redis: IORedis) {
+	try {
+		await redis.ping();
+		return true;
+	} catch (err) {
+		return false;
+	}
+}

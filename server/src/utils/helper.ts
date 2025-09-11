@@ -11,7 +11,7 @@ export const sendActivationEmail = async (token: string, user: User) => {
 	const ACTIVATION_URL = `${CLIENT_URL}${ACTIVATION_ROUTE}?token=${token}`;
 
 	const mailer = new NodemailerDB(db);
-	await mailer.sendMail({
+	await mailer.sendOrQueue({
 		to: user.email,
 		subject: "Activate Your Account",
 		template: `activate_account`,

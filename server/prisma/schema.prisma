@@ -41,13 +41,17 @@ model Admin {
 }
 
 model Mail {
-  id          String   @id @default(uuid())
-  to          String
-  subject     String
-  content     Json
-  from        String
-  isDelivered Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  to        String
+  subject   String
+  from      String
+  template  String
+  context   Json
+  status    String   @default("pending") // pending, sent, failed
+  attempts  Int      @default(0)
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ApprovalStatus {

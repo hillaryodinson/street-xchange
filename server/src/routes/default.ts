@@ -8,6 +8,8 @@ import kycRoute from "./kyc.route";
 import walletRoute from "./wallet.route";
 import settingRoute from "./setting.route";
 import healthCheckRoute from "./healthCheck.route";
+import AdminTransactionRoute from "./admin/transaction.route";
+import AdminReportRoute from "./admin/report.route";
 
 const initRoutes = (baseRoute: string, app: Express) => {
 	app.use(`${baseRoute}/customers`, customerRoutes);
@@ -19,6 +21,8 @@ const initRoutes = (baseRoute: string, app: Express) => {
 	app.use(`${baseRoute}/wallets`, walletRoute);
 	app.use(`${baseRoute}/settings`, settingRoute);
 	app.use(`${baseRoute}/health`, healthCheckRoute);
+	app.use(`${baseRoute}/admin/transactions`, AdminTransactionRoute);
+	app.use(`${baseRoute}/admin/report`, AdminReportRoute);
 };
 
 export default initRoutes;

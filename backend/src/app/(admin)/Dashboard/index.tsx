@@ -798,7 +798,7 @@ function AdminDashboardPage() {
 								</Card>
 							</div>
 
-							<Card>
+							<Card className="relative w-full">
 								<CardHeader>
 									<CardTitle>All Flight Bookings</CardTitle>
 									<CardDescription>
@@ -807,7 +807,7 @@ function AdminDashboardPage() {
 								</CardHeader>
 								<CardContent>
 									<div className="overflow-x-auto">
-										<table className="w-full">
+										{/* <table className="w-full">
 											<thead>
 												<tr className="border-b">
 													<th className="text-left p-2">
@@ -899,7 +899,7 @@ function AdminDashboardPage() {
 													)
 												)}
 											</tbody>
-										</table>
+										</table> */}
 									</div>
 								</CardContent>
 							</Card>
@@ -1047,8 +1047,8 @@ function AdminDashboardPage() {
 									</CardDescription>
 								</CardHeader>
 								<CardContent>
-									<div className="overflow-x-auto">
-										<table className="w-full">
+									<div className="overflow-x-scroll w-full">
+										{/* <table className="w-full">
 											<thead>
 												<tr className="border-b">
 													<th className="text-left p-2">
@@ -1126,7 +1126,7 @@ function AdminDashboardPage() {
 													</tr>
 												))}
 											</tbody>
-										</table>
+										</table> */}
 									</div>
 								</CardContent>
 							</Card>
@@ -1299,7 +1299,7 @@ function AdminDashboardPage() {
 								</CardHeader>
 								<CardContent>
 									<div className="overflow-x-auto">
-										<table className="w-full">
+										{/* <table className="w-full">
 											<thead>
 												<tr className="border-b">
 													<th className="text-left p-2">
@@ -1391,7 +1391,7 @@ function AdminDashboardPage() {
 													</tr>
 												))}
 											</tbody>
-										</table>
+										</table> */}
 									</div>
 								</CardContent>
 							</Card>

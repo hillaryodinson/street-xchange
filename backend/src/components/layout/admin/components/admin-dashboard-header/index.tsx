@@ -6,7 +6,7 @@ import AdminDropdown from "@/components/site/admin-dropdown";
 export function AdminDashboardHeader() {
 	return (
 		<header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-6">
-			<div className="flex flex-1 items-center justify-end md:justify-between">
+			<div className="flex flex-1 items-center justify-between ml-10 md:ml-0">
 				<Logo className="w-[150px]" />
 
 				<div className="flex items-center gap-4">

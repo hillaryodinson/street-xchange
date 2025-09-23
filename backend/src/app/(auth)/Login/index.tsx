@@ -1,11 +1,12 @@
 import { Logo } from "@/components/site/logo";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import api from "@/utils/api";
 import { ApiResponse, AuthResponse } from "@/utils/types";
 import { LoginSchema } from "@/utils/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useTransition } from "react";
+import { Eye, EyeClosed, Loader2 } from "lucide-react";
+import { useState, useTransition } from "react";
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
@@ -17,6 +18,7 @@ const LoginPage = () => {
 	const { setSession, isAuthenticated } = useAuthStore((state) => state);
 	const redirect = useNavigate();
 	const [isLoading, startTransition] = useTransition();
+	const [passwordVisible, setPasswordVisible] = useState(false);
 
 	const {
 		register,
@@ -68,6 +70,8 @@ const LoginPage = () => {
 		return <Navigate to="/dashboard" />;
 	}
 
+	const togglePasswordPreview = () => setPasswordVisible((state) => !state);
+
 	return (
 		<>
 			<Helmet>
@@ -113,14 +117,31 @@ const LoginPage = () => {
 											htmlFor="LoginPassword">
 											Password:
 										</label>
-										<input
-											id="LoginPassword"
-											type="password"
-											{...register("password")}
-											className="form-input border !border-gray-200 dark:!border-gray-800 mt-3"
-											placeholder="Password"
-											disabled={isLoading}
-										/>
+										<div className="flex form-input border !border-gray-200 dark:!border-gray-800 mt-3 items-center pr-0!">
+											<input
+												id="LoginPassword"
+												type={
+													passwordVisible
+														? "text"
+														: "password"
+												}
+												{...register("password")}
+												className=" shadow-none flex-1 focus:ring-0 focus:outline-0"
+												placeholder="Password"
+												disabled={isLoading}
+											/>
+											<Button
+												variant={"ghost"}
+												size={"icon"}
+												className="shadow-none hover:bg-transparent"
+												onClick={togglePasswordPreview}>
+												{passwordVisible ? (
+													<EyeClosed size={14} />
+												) : (
+													<Eye size={14} />
+												)}
+											</Button>
+										</div>
 										{errors.password && (
 											<p className="text-red-500 text-sm">
 												{errors.password?.message}

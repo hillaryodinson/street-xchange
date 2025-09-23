@@ -21,11 +21,16 @@ import { toast } from "react-toastify";
 import { Logo } from "@/components/site/logo";
 import { Helmet } from "react-helmet";
 import Notification from "@/components/site/notification";
-import { Home } from "lucide-react";
+import { Eye, EyeClosed, Home } from "lucide-react";
 
 export function SignupPage() {
 	const [isLoading, startTransition] = useTransition();
 	const [regSuccess, setRegSuccess] = useState<boolean>(false);
+	const [passwordVisible, setPasswordVisible] = useState(false);
+	const [passwordVisible1, setPasswordVisible1] = useState(false);
+
+	const togglePasswordPreview = () => setPasswordVisible((state) => !state);
+	const togglePasswordPreview1 = () => setPasswordVisible1((state) => !state);
 
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),
@@ -204,11 +209,37 @@ export function SignupPage() {
 													Password
 												</FormLabel>
 												<FormControl>
-													<Input
-														className="rounded-sm shadow-none"
-														type="password"
-														{...field}
-													/>
+													<div className="flex rounded-sm shadow-none border !border-gray-200 dark:!border-gray-800 mt-3 items-center pr-0!">
+														<Input
+															type={
+																passwordVisible
+																	? "text"
+																	: "password"
+															}
+															{...field}
+															className=" shadow-none border-none flex-1 focus:ring-0 focus:outline-0 focus:border-none"
+															placeholder="Password"
+															disabled={isLoading}
+														/>
+														<Button
+															variant={"ghost"}
+															size={"icon"}
+															className="shadow-none hover:bg-transparent"
+															type="button"
+															onClick={
+																togglePasswordPreview
+															}>
+															{passwordVisible ? (
+																<EyeClosed
+																	size={14}
+																/>
+															) : (
+																<Eye
+																	size={14}
+																/>
+															)}
+														</Button>
+													</div>
 												</FormControl>
 												<div className="h-[12px] text-xs">
 													<FormMessage className="text-right" />
@@ -226,11 +257,37 @@ export function SignupPage() {
 													Confirm Password
 												</FormLabel>
 												<FormControl>
-													<Input
-														className="rounded-sm shadow-none"
-														type="password"
-														{...field}
-													/>
+													<div className="flex rounded-sm shadow-none border !border-gray-200 dark:!border-gray-800 mt-3 items-center pr-0!">
+														<Input
+															type={
+																passwordVisible1
+																	? "text"
+																	: "password"
+															}
+															{...field}
+															className=" shadow-none border-none flex-1 focus:ring-0 focus:outline-0"
+															placeholder="Confirm Password"
+															disabled={isLoading}
+														/>
+														<Button
+															variant={"ghost"}
+															size={"icon"}
+															className="shadow-none hover:bg-transparent"
+															type="button"
+															onClick={
+																togglePasswordPreview1
+															}>
+															{passwordVisible1 ? (
+																<EyeClosed
+																	size={14}
+																/>
+															) : (
+																<Eye
+																	size={14}
+																/>
+															)}
+														</Button>
+													</div>
 												</FormControl>
 												<div className="h-[12px] text-xs">
 													<FormMessage className="text-right" />

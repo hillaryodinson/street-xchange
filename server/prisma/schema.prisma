@@ -95,6 +95,8 @@ enum TransactionType {
   GIFT_CARD
   CRYPTO
   FLIGHT
+  WITHDRAWAL
+  DEPOSIT
 }
 
 enum TransactionStatus {

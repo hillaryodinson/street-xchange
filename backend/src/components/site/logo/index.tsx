@@ -9,7 +9,7 @@ export function Logo({
 	href?: string;
 }) {
 	return (
-		<Link to={href ? href : "/"}>
+		<Link to={href ? href : `${import.meta.env.VITE_APP_URL}`}>
 			<img
 				src="/images/logo-2.png"
 				className={cn("mx-auto w-[200px]", className)}

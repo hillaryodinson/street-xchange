@@ -95,7 +95,13 @@ export default function Home() {
 						<SnapText texts={texts} />
 					</h2>
 					<Button className="mt-6 md:mt-10 w-fit px-6 md:px-10 py-4 lg:py-6 bg-black text-white rounded-sm rounded-tr-[30px] font-semibold">
-						<Link href={"/"}>Get Started</Link>
+						<Link
+							href={`${
+								process.env.NEXT_PUBLIC_APP_URL ||
+								"localhost:3002"
+							}/login`}>
+							Get Started
+						</Link>
 					</Button>
 				</div>
 			</main>
@@ -159,9 +165,14 @@ export default function Home() {
 								straight to you.
 							</p>
 
-							<Button className=" rounded-tr-[50px]">
+							<Link
+								href={`${
+									process.env.NEXT_PUBLIC_APP_URL ||
+									"localhost:3002"
+								}/login`}
+								className="rounded-tr-[50px]">
 								Swap now
-							</Button>
+							</Link>
 						</motion.div>
 					</div>
 					<div className="flex flex-col md:flex-row w-full gap-5 items-center">
@@ -220,9 +231,9 @@ export default function Home() {
 								secure payments that put your digital wealth to
 								work in real life.
 							</p>
-							<Button className="rounded-tr-[50px]">
+							<Link href={""} className="rounded-tr-[50px]">
 								Start paying with crypto today
-							</Button>
+							</Link>
 						</motion.div>
 					</div>
 					<div className="flex flex-col md:flex-row w-full gap-5 items-center">

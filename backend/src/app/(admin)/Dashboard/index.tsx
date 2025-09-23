@@ -36,9 +36,9 @@ import {
 	Calendar,
 	Filter,
 	Download,
-	MapPin,
-	Clock,
-	Eye,
+	// MapPin,
+	// Clock,
+	// Eye,
 } from "lucide-react";
 
 // Mock data for charts
